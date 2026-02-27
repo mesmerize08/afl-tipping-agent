@@ -1,130 +1,211 @@
+"""
+predict.py  (UPDATED — now uses team news + prediction history)
+===============================================================
+The AI prediction engine. Feeds all data sources into Google Gemini
+and returns structured match predictions with probabilities.
+
+New in this version:
+  - Team selection / injury news injected into prompt
+  - Agent's own past accuracy and prediction history injected
+  - AI is instructed to learn from its past mistakes
+"""
+
 import google.generativeai as genai
 import os
-import json
+
+from team_news import format_team_news_for_ai
+from tracker import format_history_for_ai, save_predictions
 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
+
+# ─── Formatting Helpers ────────────────────────────────────────────────────────
+
 def format_form(form_list, team_name):
-    """Format form into readable string."""
+    """Format recent form into readable string."""
     if not form_list:
         return "No recent data available"
-    
-    results = []
-    for g in form_list:
-        results.append(f"{g['result']} vs {g['opponent']} ({g['score']}) on {g['date']}")
-    
-    wins = sum(1 for g in form_list if g['result'] == 'W')
-    return f"{wins}/{len(form_list)} wins recently. " + " | ".join(results)
+    wins = sum(1 for g in form_list if g["result"] == "W")
+    details = " | ".join(
+        f"{g['result']} vs {g['opponent']} ({g['score']}) on {g['date']}"
+        for g in form_list
+    )
+    return f"{wins}/{len(form_list)} wins. {details}"
+
 
 def format_h2h(h2h_list):
-    """Format H2H into readable string."""
+    """Format head-to-head history into readable string."""
     if not h2h_list:
         return "No H2H data available"
-    
-    results = []
-    for g in h2h_list[:5]:
-        results.append(f"{g['winner']} won ({g['score']}) at {g['venue']} in {g['year']}")
+    results = [
+        f"{g['winner']} won ({g['score']}) at {g['venue']} in {g['year']}"
+        for g in h2h_list[:6]
+    ]
     return " | ".join(results)
 
-def format_ladder(ladder_data, team_name):
+
+def format_ladder(ladder_data):
     """Format ladder position info."""
     if not ladder_data:
         return "Ladder data unavailable"
-    
-    pos = ladder_data.get("rank", "?")
-    wins = ladder_data.get("wins", "?")
-    losses = ladder_data.get("losses", "?")
-    pct = ladder_data.get("percentage", "?")
-    pts = ladder_data.get("pts", "?")
-    return f"Position {pos} | {wins}W-{losses}L | {pts} pts | {pct}% percentage"
+    pos   = ladder_data.get("rank", "?")
+    wins  = ladder_data.get("wins", "?")
+    loss  = ladder_data.get("losses", "?")
+    pct   = ladder_data.get("percentage", "?")
+    pts   = ladder_data.get("pts", "?")
+    return f"Position {pos} | {wins}W-{loss}L | {pts} pts | {pct}% percentage"
 
-def generate_prediction(match_data, news_context=""):
-    """Use Gemini to generate a prediction for a single match."""
-    
-    home = match_data["home_team"]
-    away = match_data["away_team"]
-    odds = match_data.get("betting_odds", {})
-    
-    # Build the odds section
+
+# ─── Single Match Prediction ───────────────────────────────────────────────────
+
+def generate_prediction(match_data, general_news_context=""):
+    """
+    Use Gemini to generate a prediction for a single match.
+    Now includes team news and the agent's own history.
+    """
+    home  = match_data["home_team"]
+    away  = match_data["away_team"]
+    odds  = match_data.get("betting_odds", {})
+
+    # ── Odds section ──
     if odds:
-        odds_text = f"""
-BETTING ODDS (averaged across bookmakers):
-- {home}: ${odds.get('home_odds', 'N/A')} (implied probability: {odds.get('home_implied_prob', 'N/A')}%)
-- {away}: ${odds.get('away_odds', 'N/A')} (implied probability: {odds.get('away_implied_prob', 'N/A')}%)
-"""
+        odds_text = (
+            f"BETTING ODDS (averaged across bookmakers):\n"
+            f"  - {home}: ${odds.get('home_odds', 'N/A')} "
+            f"(implied prob: {odds.get('home_implied_prob', 'N/A')}%)\n"
+            f"  - {away}: ${odds.get('away_odds', 'N/A')} "
+            f"(implied prob: {odds.get('away_implied_prob', 'N/A')}%)"
+        )
     else:
         odds_text = "BETTING ODDS: Not available this week."
-    
+
+    # ── Team news (injuries, selections, suspensions) ──
+    team_news_text = format_team_news_for_ai(home, away)
+
+    # ── Agent's own history & accuracy ──
+    history_text = format_history_for_ai(home, away)
+
+    # ── Full prompt ──
     prompt = f"""
-You are an expert AFL analyst. Analyse the following data for an upcoming AFL match and provide a data-driven, unbiased prediction.
+You are an expert AFL analyst with a data-driven, unbiased approach.
+Study ALL sections below carefully before making your prediction.
 
-=== MATCH DETAILS ===
-Round {match_data['round']}: {home} vs {away}
-Date: {match_data['date']}
-Venue: {match_data['venue']}
+════════════════════════════════════════════
+MATCH: {home} vs {away}
+Round {match_data['round']} | {match_data['date']} | {match_data['venue']}
+════════════════════════════════════════════
 
-=== LADDER STANDINGS ===
-{home}: {format_ladder(match_data['home_ladder'], home)}
-{away}: {format_ladder(match_data['away_ladder'], away)}
+━━━ LADDER STANDINGS ━━━
+{home}: {format_ladder(match_data['home_ladder'])}
+{away}: {format_ladder(match_data['away_ladder'])}
 
-=== RECENT FORM (last 5 games) ===
+━━━ RECENT FORM (last 5 games) ━━━
 {home}: {format_form(match_data['home_form'], home)}
 {away}: {format_form(match_data['away_form'], away)}
 
-=== HEAD TO HEAD (last 10 meetings) ===
+━━━ HOME/AWAY RECORD ━━━
+{home} is playing at HOME.
+{away} is playing AWAY.
+Home team wins approximately 58% of AFL games historically — factor this in.
+
+━━━ HEAD TO HEAD (last 10 meetings) ━━━
 {format_h2h(match_data['head_to_head'])}
 
-=== VENUE RECORD at {match_data['venue']} (last 5 games each) ===
-{home} at this venue: {format_form(match_data['home_venue_record'], home)}
-{away} at this venue: {format_form(match_data['away_venue_record'], away)}
+━━━ VENUE RECORD at {match_data['venue']} ━━━
+{home}: {format_form(match_data['home_venue_record'], home)}
+{away}: {format_form(match_data['away_venue_record'], away)}
 
-{odds_text}
+━━━ {odds_text} ━━━
 
-=== RECENT AFL NEWS (for context on injuries/suspensions/team news) ===
-{news_context[:1500] if news_context else "No news context available."}
+━━━ TEAM NEWS — INJURIES, SELECTIONS & SUSPENSIONS ━━━
+{team_news_text}
 
-=== YOUR TASK ===
-Based ONLY on the data above, provide:
+━━━ GENERAL AFL NEWS (context) ━━━
+{general_news_context[:1000] if general_news_context else "No general news available."}
 
-1. **PREDICTED WINNER**: State clearly which team you predict to win.
-2. **WIN PROBABILITY**: Your estimated probability (e.g., {home}: 62%, {away}: 38%). Do NOT just copy the betting implied probability — use it as one input alongside all other factors.
-3. **MARGIN**: Estimated winning margin in points.
-4. **KEY FACTORS**: The 3-4 most important data-driven reasons for your prediction.
-5. **CONFIDENCE**: Rate your confidence as Low / Medium / High and explain why.
-6. **RISKS**: What could cause the underdog to win?
+━━━ YOUR OWN PREDICTION HISTORY & ACCURACY ━━━
+{history_text}
 
-Be analytical, specific, and reference the actual data. Do not be vague. Format your response clearly with the headers above.
+NOTE: Review your past incorrect predictions above. If you have been consistently
+wrong about a particular team or factor, adjust your approach accordingly.
+If your upset-pick accuracy is low, be more conservative with underdog predictions.
+
+════════════════════════════════════════════
+YOUR PREDICTION — use EXACTLY this format:
+════════════════════════════════════════════
+
+**PREDICTED WINNER:** [Team name]
+
+**WIN PROBABILITY:** {home}: XX% | {away}: XX%
+(Do NOT simply copy the betting implied probability. Use it as one input
+alongside form, H2H, venue, team news, and your own historical accuracy.)
+
+**PREDICTED MARGIN:** ~XX points
+
+**KEY FACTORS:**
+1. [Most important reason, referencing specific data]
+2. [Second reason, referencing specific data]
+3. [Third reason, referencing specific data]
+4. [Fourth reason if relevant]
+
+**TEAM NEWS IMPACT:**
+[Explain specifically how any injuries, suspensions, or selection changes affect the prediction]
+
+**CONFIDENCE:** Low / Medium / High
+[Explain why — e.g. "High — all indicators agree" or "Low — injury uncertainty"]
+
+**UPSET RISK:** 
+[What specific factors could cause the underdog to win?]
+
+**SELF-CALIBRATION NOTE:**
+[Based on your past history above, note anything that makes you more or less
+confident in this specific prediction. If you've been wrong about one of these
+teams recently, acknowledge it and explain how it affects your tip.]
 """
-    
+
     try:
         model = genai.GenerativeModel("gemini-1.5-flash")
         response = model.generate_content(prompt)
         return response.text
     except Exception as e:
-        return f"Error generating prediction: {e}"
+        return f"⚠️ Error generating prediction: {e}"
+
+
+# ─── Run All Predictions for the Week ─────────────────────────────────────────
 
 def run_weekly_predictions(match_data_list, news_headlines):
-    """Run predictions for all this week's matches."""
-    
-    # Format news into a single context block
-    news_context = ""
+    """
+    Run predictions for all this week's matches and save to history.
+    """
+    # Format general news into a single context block
+    general_news = ""
     for item in news_headlines[:10]:
-        news_context += f"• {item['title']}: {item['summary']}\n"
-    
+        general_news += f"• {item['title']}: {item['summary']}\n"
+
     all_predictions = []
-    
+    round_number = None
+
     for match in match_data_list:
-        print(f"🏉 Predicting: {match['home_team']} vs {match['away_team']}...")
-        prediction_text = generate_prediction(match, news_context)
-        
+        home = match["home_team"]
+        away = match["away_team"]
+        print(f"\n🏉 Predicting: {home} vs {away}...")
+
+        prediction_text = generate_prediction(match, general_news)
+        round_number = match.get("round")
+
         all_predictions.append({
-            "round": match["round"],
-            "date": match["date"],
-            "venue": match["venue"],
-            "home_team": match["home_team"],
-            "away_team": match["away_team"],
+            "round":        round_number,
+            "date":         match.get("date", ""),
+            "venue":        match.get("venue", ""),
+            "home_team":    home,
+            "away_team":    away,
             "betting_odds": match.get("betting_odds", {}),
-            "prediction": prediction_text
+            "prediction":   prediction_text
         })
-    
+
+    # ── Auto-save to history ──
+    if all_predictions and round_number:
+        print(f"\n💾 Saving predictions for Round {round_number} to history...")
+        save_predictions(all_predictions, round_number)
+
     return all_predictions

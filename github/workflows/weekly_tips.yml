@@ -1,0 +1,54 @@
+name: Weekly AFL Tips
+
+on:
+  schedule:
+    # Runs every Thursday at 9am AEST (11pm Wednesday UTC)
+    - cron: '0 23 * * 3'
+  workflow_dispatch:  # Also allows manual trigger from GitHub
+
+jobs:
+  generate-tips:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+    
+    - name: Run prediction script
+      env:
+        ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      run: python -c "
+from dotenv import load_dotenv
+import os, json
+from data_fetcher import get_upcoming_fixtures, get_ladder, get_betting_odds, get_afl_news, compile_match_data
+from predict import run_weekly_predictions
+
+fixtures = get_upcoming_fixtures()
+ladder = get_ladder()
+odds = get_betting_odds()
+news = get_afl_news()
+match_data = [compile_match_data(g, ladder, odds) for g in fixtures]
+predictions = run_weekly_predictions(match_data, news)
+with open('predictions.json', 'w') as f:
+    json.dump(predictions, f, indent=2)
+print(f'Generated {len(predictions)} predictions')
+for p in predictions:
+    print(f\"\n{'='*50}\")
+    print(f\"🏉 {p['home_team']} vs {p['away_team']}\")
+    print(p['prediction'])
+"
+    
+    - name: Save predictions as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: weekly-tips
+        path: predictions.json
