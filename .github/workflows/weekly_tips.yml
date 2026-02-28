@@ -2,73 +2,63 @@ name: Weekly AFL Tips
 
 on:
   schedule:
-    # Runs every Thursday at 9am AEST (11pm Wednesday UTC)
     - cron: '0 23 * * 3'
-  workflow_dispatch:  # Also allows manual trigger from GitHub
+  workflow_dispatch:
 
 jobs:
   generate-tips:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Install dependencies
-      run: pip install -r requirements.txt
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
 
-    - name: Step 1 — Update last round's results first
-      env:
-        ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
-        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-      run: |
-        python -c "
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Update last round results
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python -c "
 from tracker import check_and_update_results
-print('Checking results from last round...')
 summary = check_and_update_results()
 if summary:
-    print(f'Season accuracy: {summary[\"overall_accuracy_pct\"]}%')
+    print('Season accuracy:', summary.get('overall_accuracy_pct'), '%')
 else:
     print('No pending results to update.')
 "
 
-    - name: Step 2 — Generate this week's predictions
-      env:
-        ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
-        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-      run: |
-        python -c "
+      - name: Generate predictions
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python -c "
 import json
 from data_fetcher import get_upcoming_fixtures, get_ladder, get_betting_odds, get_afl_news, compile_match_data
 from predict import run_weekly_predictions
-
 fixtures = get_upcoming_fixtures()
-ladder   = get_ladder()
-odds     = get_betting_odds()
-news     = get_afl_news()
-
-match_data   = [compile_match_data(g, ladder, odds) for g in fixtures]
-predictions  = run_weekly_predictions(match_data, news)
-
+ladder = get_ladder()
+odds = get_betting_odds()
+news = get_afl_news()
+match_data = [compile_match_data(g, ladder, odds) for g in fixtures]
+predictions = run_weekly_predictions(match_data, news)
 with open('predictions.json', 'w') as f:
     json.dump(predictions, f, indent=2)
-
-print(f'Generated {len(predictions)} predictions')
-for p in predictions:
-    print(f\"\n{'='*50}\")
-    print(f\"🏉 {p['home_team']} vs {p['away_team']}\")
-    print(p['prediction'])
+print('Generated', len(predictions), 'predictions')
 "
 
-    - name: Step 3 — Commit updated history back to repo
-      run: |
-        git config --global user.email "afl-agent@github-actions"
-        git config --global user.name "AFL Tipping Agent"
-        git add predictions_history.json predictions.json
-        git diff --staged --quiet || git commit -m "Auto: Round results + new predictions [skip ci]"
-        git push
+      - name: Commit history back to repo
+        run: |
+          git config --global user.email "afl-agent@github-actions"
+          git config --global user.name "AFL Tipping Agent"
+          git add predictions_history.json predictions.json
+          git diff --staged --quiet || git commit -m "Auto: weekly predictions [skip ci]"
+          git push
