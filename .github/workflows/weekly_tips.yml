@@ -21,41 +21,13 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Update last round results
+      - name: Run weekly predictions
         env:
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: |
-          python -c "
-from tracker import check_and_update_results
-summary = check_and_update_results()
-if summary:
-    print('Season accuracy:', summary.get('overall_accuracy_pct'), '%')
-else:
-    print('No pending results to update.')
-"
+        run: python run_weekly.py
 
-      - name: Generate predictions
-        env:
-          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: |
-          python -c "
-import json
-from data_fetcher import get_upcoming_fixtures, get_ladder, get_betting_odds, get_afl_news, compile_match_data
-from predict import run_weekly_predictions
-fixtures = get_upcoming_fixtures()
-ladder = get_ladder()
-odds = get_betting_odds()
-news = get_afl_news()
-match_data = [compile_match_data(g, ladder, odds) for g in fixtures]
-predictions = run_weekly_predictions(match_data, news)
-with open('predictions.json', 'w') as f:
-    json.dump(predictions, f, indent=2)
-print('Generated', len(predictions), 'predictions')
-"
-
-      - name: Commit history back to repo
+      - name: Commit results back to repo
         run: |
           git config --global user.email "afl-agent@github-actions"
           git config --global user.name "AFL Tipping Agent"
