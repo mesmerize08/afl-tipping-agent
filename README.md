@@ -14,7 +14,7 @@ Every week during the AFL season, this agent:
 2. Pulls live betting odds across three markets (win/loss, line, totals) from The Odds API
 3. Cross-checks against Squiggle's aggregated statistical model predictions
 4. Fetches weather forecasts for each venue from Open-Meteo
-5. Scrapes AFL.com.au for injury, suspension and team selection news
+5. Scrapes Zero Hanger for injury, suspension and team selection news across all 18 clubs
 6. Calculates travel fatigue and days rest for each team
 7. Analyses scoring trends (last 3 vs last 5 games)
 8. Reviews its own past prediction accuracy to self-calibrate
@@ -44,10 +44,16 @@ Instant accuracy context at the top of the page — see how the agent went last 
 Full season accuracy dashboard tracking every prediction against real results. The agent uses this history to improve future predictions — underperforming on underdog picks? It knows, and adjusts.
 
 ### 📰 Team News & Injuries
-Scraped from AFL.com.au team RSS feeds, filtered for injury, suspension and selection keywords. Best fetched Thursday–Friday after squads are named.
+Sourced from [Zero Hanger](https://zerohanger.com) — Australia's leading independent AFL news site. Covers all 18 clubs with daily updates on injuries, MRO decisions, tribunal outcomes, and team selections. Filtered using an expanded AFL vernacular keyword set (including Australian terms like "rubbed out", "in doubt", "casualty ward", and "concussion protocols"). Best fetched Thursday–Friday after squads are named.
+
+### ✈️ Travel & Fatigue Analysis
+Detects long-haul travel (e.g. Perth teams heading east), short turnarounds, and rest day disadvantages. Flags these as factors in the AI prompt.
+
+### 📈 Scoring Trends
+Compares each team's last-3 vs last-5 scoring averages to identify attack and defence trends. Injected into the AI prompt alongside form data.
 
 ### 🔄 Automated Weekly Pipeline
-GitHub Actions runs every Thursday automatically — updates last round's results, generates new predictions, and commits everything back to the repo.
+GitHub Actions runs every Thursday morning automatically — updates last round's results, generates new predictions, and commits everything back to the repo.
 
 ---
 
@@ -58,7 +64,7 @@ GitHub Actions runs every Thursday automatically — updates last round's result
 | [Squiggle API](https://api.squiggle.com.au) | Fixtures, ladder, form, H2H, results, model tips | Free |
 | [The Odds API](https://the-odds-api.com) | Win/loss, line and totals betting markets | Free tier |
 | [Open-Meteo](https://open-meteo.com) | Venue weather forecasts | Free, no key needed |
-| [AFL.com.au](https://afl.com.au) | Team news, injuries, selections | Free (RSS) |
+| [Zero Hanger](https://zerohanger.com) | Team news, injuries, MRO decisions, selections | Free (RSS) |
 | [Google Gemini](https://aistudio.google.com) | AI analysis and prediction generation | Free tier |
 
 ---
@@ -67,15 +73,15 @@ GitHub Actions runs every Thursday automatically — updates last round's result
 
 ```
 Python 3.11
-├── streamlit          — Web interface
-├── google-generativeai — Gemini AI
-├── requests           — API calls
-├── feedparser         — RSS scraping
-├── pandas             — Data display
-└── python-dotenv      — Environment variables
+├── streamlit            — Web interface
+├── google-generativeai  — Gemini AI (gemini-1.5-flash)
+├── requests             — API calls
+├── feedparser           — RSS scraping (Zero Hanger)
+├── pandas               — Data display
+└── python-dotenv        — Environment variables
 
-GitHub Actions         — Weekly automation
-Streamlit Cloud        — Free hosting
+GitHub Actions           — Weekly automation (Thursday 10am AEDT)
+Streamlit Cloud          — Free hosting
 ```
 
 ---
@@ -87,11 +93,12 @@ afl-tipping-agent/
 ├── app.py                      # Streamlit web app (4 tabs)
 ├── data_fetcher.py             # All API data fetching
 ├── predict.py                  # AI prediction engine
-├── team_news.py                # Injury & selection scraper
+├── team_news.py                # Zero Hanger injury & selection scraper
 ├── tracker.py                  # Accuracy tracking & history
 ├── weather.py                  # Venue weather forecasts
 ├── run_weekly.py               # Weekly automation script
 ├── predictions_history.json    # Auto-generated prediction history
+├── predictions.json            # Latest round predictions (auto-generated)
 ├── requirements.txt
 └── .github/
     └── workflows/
@@ -144,14 +151,26 @@ Rd 1: Essendon vs Carlton — tipped Essendon (58%) — ❌ WRONG
 
 ---
 
+## Round 0 / Opening Round
+
+The agent fully supports Opening Round (Round 0), which sits outside the regular season calendar:
+
+- Fixtures are fetched via a dedicated `round=0` Squiggle API call in addition to the year query
+- Since no 2026 games are completed at Round 0, form and scoring stats automatically fall back to 2025 season data
+- Team news uses a wider 21-day window during preseason (November–early March) to capture trial matches, MRO decisions, and preseason injuries
+
+---
+
 ## Weekly Workflow
 
 | Day | Action |
 |---|---|
-| **Thursday (auto)** | GitHub Actions runs — results updated, new tips generated |
-| **Thursday night** | Open app → Team News tab → check injuries → review tips |
+| **Thursday 10am (auto)** | GitHub Actions runs — results updated, new tips generated |
+| **Thursday ~2pm** | AFL releases official squad selections |
+| **Thursday afternoon** | Open app → Team News tab → check injuries and ins/outs |
+| **Thursday evening** | Hit Generate Tips again if squad news changes the picture |
 | **Before lockout** | Submit your picks! |
-| **Monday/Tuesday** | Open app → Update Results tab → record last round |
+| **Monday/Tuesday** | Open app → Update Results tab → record last round's results |
 
 ---
 
@@ -182,7 +201,7 @@ streamlit run app.py
 
 ### Deployment
 The app is deployed on [Streamlit Community Cloud](https://share.streamlit.io) — free tier.
-API keys are stored as secrets in the Streamlit app settings.
+API keys are stored as secrets in the Streamlit app settings and as GitHub Actions secrets.
 
 GitHub Actions secrets required:
 - `ODDS_API_KEY`
