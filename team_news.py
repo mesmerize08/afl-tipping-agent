@@ -26,6 +26,7 @@ TEAM_URLS is kept for backward compatibility but now points to club websites
 rather than the dead AFL.com.au team RSS paths.
 """
 
+import re
 import requests
 import feedparser
 from datetime import datetime, timedelta
@@ -89,6 +90,20 @@ INJURY_KEYWORDS = [
     "captain", "leadership group",
     # Opening round
     "opening round", "round 0", "round 1",
+    # ── Australian AFL vernacular ─────────────────────────────────────────
+    # "rubbed out" = suspended, "in doubt" = injured/uncertain,
+    # "miss" used specifically in AFL injury context, "casualty ward" etc.
+    "rubbed out", "in doubt", "doubt for", "will miss", "set to miss",
+    "race against", "under an injury", "health scare", "fitness test",
+    "fitness concern", "fitness cloud", "injury cloud", "injury scare",
+    "managed load", "manage his", "manage their", "rested",
+    "casualty ward", "line ball", "line-ball",
+    "forced off", "helped off", "subbed out", "sub out",
+    "under watch", "being monitored", "monitored closely",
+    "not expected", "unlikely to play", "unlikely to feature",
+    "doubtful", "questionable", "touch and go", "50-50",
+    "racing the clock", "beat the clock",
+    "protocols", "concussion protocols", "return to play protocol",
 ]
 
 # Broader terms for preseason (lower bar for capturing team news)
@@ -158,16 +173,40 @@ def is_preseason():
 
 # ─── Relevance filter ─────────────────────────────────────────────────────────
 
+# Short keywords that need word-boundary protection to avoid substring false-positives.
+# e.g. "out" would match "throughout", "test" would match "latest", etc.
+_SHORT_KW_PATTERNS = [
+    re.compile(r"\b" + kw + r"\b")
+    for kw in ("out", "back", "test", "hip", "rib", "shin", "neck", "miss", "rested")
+]
+
+# All other keywords are long enough that substring matching is safe.
+_LONG_KEYWORDS = [
+    kw for kw in INJURY_KEYWORDS
+    if kw not in {"out", "back", "test", "hip", "rib", "shin", "neck", "miss", "rested"}
+]
+
+
 def is_relevant_article(title, summary, strict=True):
     """
     Returns True if article is relevant to team news/injuries/selections.
+    Uses word-boundary matching for short ambiguous keywords to avoid false
+    positives (e.g. 'out' in 'throughout', 'test' in 'latest').
     strict=False includes broader terms (used in preseason).
     """
     text = (title + " " + summary).lower()
-    if any(kw in text for kw in INJURY_KEYWORDS):
+
+    # Long keywords: safe as substring
+    if any(kw in text for kw in _LONG_KEYWORDS):
         return True
+
+    # Short keywords: require word boundary
+    if any(pat.search(text) for pat in _SHORT_KW_PATTERNS):
+        return True
+
     if not strict and any(kw in text for kw in PRESEASON_BROAD_KEYWORDS):
         return True
+
     return False
 
 
