@@ -351,7 +351,7 @@ with tab1:
 
     with col_side:
         st.markdown("<div style='font-family:Barlow Condensed,sans-serif;font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8b949e;margin-bottom:0.75rem;'>Data Sources</div>", unsafe_allow_html=True)
-        st.markdown("<div style='font-family:Outfit,sans-serif;font-size:0.82rem;color:#8b949e;line-height:2;'>📊 Squiggle API<br>💰 Odds (h2h + line + totals)<br>🤖 Squiggle model cross-check<br>🌤️ Open-Meteo weather<br>📰 AFL.com.au team news<br>✈️ Travel & rest analysis<br>📈 Scoring trends<br>🧠 Season accuracy history</div>", unsafe_allow_html=True)
+        st.markdown("<div style='font-family:Outfit,sans-serif;font-size:0.82rem;color:#8b949e;line-height:2;'>📊 Squiggle API<br>💰 Odds (h2h + line + totals)<br>🤖 Squiggle model cross-check<br>🌤️ Open-Meteo weather<br>📰 Zero Hanger team news<br>✈️ Travel & rest analysis<br>📈 Scoring trends<br>🧠 Season accuracy history</div>", unsafe_allow_html=True)
         st.divider()
         st.markdown("<div style='font-family:Outfit,sans-serif;font-size:0.75rem;color:#484f58;line-height:1.6;'>For entertainment only.<br>Please gamble responsibly.</div>", unsafe_allow_html=True)
 
@@ -479,7 +479,7 @@ with tab2:
 # ── TAB 3: TEAM NEWS ──────────────────────────────────────────────────────────
 with tab3:
     st.markdown("<h2 style='margin-bottom:0.25rem;'>Team News, Injuries & Selections</h2>", unsafe_allow_html=True)
-    st.markdown("<p style='color:#8b949e;font-size:0.9rem;margin-bottom:1.5rem;'>Scraped from AFL.com.au. Best fetched Thursday–Friday after squads are named.</p>", unsafe_allow_html=True)
+    st.markdown("<p style='color:#8b949e;font-size:0.9rem;margin-bottom:1.5rem;'>Sourced from <strong style='color:#e6edf3;'>Zero Hanger</strong> — Australia's leading independent AFL news site. Covers all 18 clubs: injuries, MRO decisions, suspensions, and team selection.</p>", unsafe_allow_html=True)
 
     c1, c2 = st.columns([3, 1])
     with c1:
@@ -489,27 +489,30 @@ with tab3:
         fetch_btn = st.button("🔄 Fetch Latest News", type="primary")
 
     if fetch_btn:
-        with st.spinner("Fetching team news from AFL.com.au..."):
+        with st.spinner("Fetching team news from Zero Hanger..."):
             if selected_team == "All Teams":
                 all_news = get_all_teams_news_summary()
             else:
                 from team_news import get_team_news
-                all_news = get_team_news(selected_team, days_back=7)
+                all_news = get_team_news(selected_team, days_back=21)
 
         if not all_news:
-            st.warning("No recent selection/injury news found. Try Thursday or Friday when squads are named.")
+            st.warning("No relevant news found. Zero Hanger is updated daily — try again later, or check back Thursday–Friday when squads are named.")
         else:
             st.markdown(f"<div style='font-family:Barlow Condensed,sans-serif;font-size:0.9rem;font-weight:600;letter-spacing:0.05em;color:#3fb950;margin-bottom:1rem;'>✅ {len(all_news)} relevant articles found</div>", unsafe_allow_html=True)
             for article in all_news:
-                with st.expander(f"**{article.get('team','')}** — {article['title']}", expanded=False):
+                team_label = article.get('team', '')
+                source     = article.get('source', 'Zero Hanger')
+                header     = f"**{team_label}** — {article['title']}" if team_label and team_label != "General" else article['title']
+                with st.expander(header, expanded=False):
                     st.markdown(article["summary"])
-                    st.caption(f"Published: {article.get('published','Unknown')}")
+                    st.caption(f"Source: {source}  ·  Published: {article.get('published', 'Unknown')}")
     else:
         st.markdown("""<div style="background:#161b22;border:1px solid #30363d;border-radius:6px;padding:1.25rem;color:#8b949e;font-size:0.9rem;line-height:1.8;">
             <strong style="color:#e8b44b;">Best times to fetch:</strong><br>
             🗓️ <strong style="color:#e6edf3;">Thursday</strong> — Initial squads named<br>
             🗓️ <strong style="color:#e6edf3;">Friday</strong> — Final teams confirmed<br>
-            🗓️ <strong style="color:#e6edf3;">Any time</strong> — Injury and tribunal updates
+            🗓️ <strong style="color:#e6edf3;">Any time</strong> — MRO charges, injury updates &amp; tribunal news
         </div>""", unsafe_allow_html=True)
 
 
