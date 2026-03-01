@@ -171,10 +171,15 @@ def get_team_season_data(team_name, year=2026):
     Returns completed games sorted by date descending.
     If no completed games found for the current year (start of season),
     automatically falls back to the previous year for form calculations.
+    Returns [] gracefully if the Squiggle API is unreachable.
     """
-    url      = f"{SQUIGGLE_BASE}?q=games;year={year};team={requests.utils.quote(team_name)}"
-    response = requests.get(url, timeout=15)
-    games    = response.json().get("games", [])
+    try:
+        url      = f"{SQUIGGLE_BASE}?q=games;year={year};team={requests.utils.quote(team_name)}"
+        response = requests.get(url, timeout=15)
+        games    = response.json().get("games", [])
+    except Exception as e:
+        print(f"  Warning: Could not fetch season data for {team_name}: {e}")
+        return []
 
     completed = [g for g in games if g.get("complete") == 100]
     completed.sort(key=lambda x: x.get("date", ""), reverse=True)
@@ -182,11 +187,15 @@ def get_team_season_data(team_name, year=2026):
     # Fall back to previous year if no completed games yet this season
     if not completed:
         print(f"  No {year} data for {team_name} — falling back to {year - 1}")
-        fallback_url      = f"{SQUIGGLE_BASE}?q=games;year={year - 1};team={requests.utils.quote(team_name)}"
-        fallback_response = requests.get(fallback_url, timeout=15)
-        fallback_games    = fallback_response.json().get("games", [])
-        completed = [g for g in fallback_games if g.get("complete") == 100]
-        completed.sort(key=lambda x: x.get("date", ""), reverse=True)
+        try:
+            fallback_url      = f"{SQUIGGLE_BASE}?q=games;year={year - 1};team={requests.utils.quote(team_name)}"
+            fallback_response = requests.get(fallback_url, timeout=15)
+            fallback_games    = fallback_response.json().get("games", [])
+            completed = [g for g in fallback_games if g.get("complete") == 100]
+            completed.sort(key=lambda x: x.get("date", ""), reverse=True)
+        except Exception as e:
+            print(f"  Warning: Could not fetch fallback season data for {team_name}: {e}")
+            return []
 
     return completed
 

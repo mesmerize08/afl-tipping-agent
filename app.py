@@ -94,12 +94,18 @@ def extract_confidence(text):
     return "Medium"
 
 def extract_winner(text, home, away):
-    t = text.upper()
+    """
+    Extract predicted winner using full team name search — not last-word —
+    to avoid Melbourne/North Melbourne, Adelaide/Port Adelaide collisions.
+    """
+    t          = text.upper()
+    home_upper = home.upper()
+    away_upper = away.upper()
     if "PREDICTED WINNER:" in t:
-        idx = t.index("PREDICTED WINNER:")
-        snippet = t[idx:idx+120]
-        hp = snippet.find(home.upper().split()[-1])
-        ap = snippet.find(away.upper().split()[-1])
+        idx     = t.index("PREDICTED WINNER:")
+        snippet = t[idx:idx + 120]
+        hp = snippet.find(home_upper)
+        ap = snippet.find(away_upper)
         if hp != -1 and (ap == -1 or hp < ap): return home
         if ap != -1: return away
     return None

@@ -101,29 +101,35 @@ def extract_predicted_winner(prediction_text, home_team, away_team):
     """
     Parse the AI's prediction text to extract the predicted winner.
     Looks for 'PREDICTED WINNER:' header in the AI response.
+
+    Uses full team name matching (not last-word) to avoid collisions between
+    teams that share a last word:
+      Melbourne / North Melbourne  → both end in 'MELBOURNE'
+      Adelaide  / Port Adelaide    → both end in 'ADELAIDE'
+      Gold Coast / West Coast      → both end in 'COAST'
     """
-    text = prediction_text.upper()
+    text       = prediction_text.upper()
     home_upper = home_team.upper()
     away_upper = away_team.upper()
 
     # Look for the predicted winner section
     if "PREDICTED WINNER" in text:
-        idx = text.index("PREDICTED WINNER")
-        snippet = text[idx:idx+200]
+        idx     = text.index("PREDICTED WINNER")
+        snippet = text[idx:idx + 200]
 
-        # Check which team name appears first after the header
-        home_pos = snippet.find(home_upper.split()[-1])  # Use last word (e.g. "LIONS")
-        away_pos = snippet.find(away_upper.split()[-1])
+        # Search for full team names in the snippet (not just last word)
+        home_pos = snippet.find(home_upper)
+        away_pos = snippet.find(away_upper)
 
         if home_pos != -1 and (away_pos == -1 or home_pos < away_pos):
             return home_team
         elif away_pos != -1:
             return away_team
 
-    # Fallback: count mentions in first 300 chars
-    snippet = prediction_text[:300].upper()
-    home_count = snippet.count(home_upper.split()[-1])
-    away_count = snippet.count(away_upper.split()[-1])
+    # Fallback: count full team name mentions in first 300 chars
+    snippet     = prediction_text[:300].upper()
+    home_count  = snippet.count(home_upper)
+    away_count  = snippet.count(away_upper)
 
     if home_count > away_count:
         return home_team
