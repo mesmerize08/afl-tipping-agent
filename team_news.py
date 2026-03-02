@@ -478,32 +478,50 @@ def get_club_rss_news(team_name, days_back=None):
 def get_team_news(team_name, days_back=None):
     """
     Get all relevant news for a single team.
-    Combines Zero Hanger (filtered for this team) + club RSS (if available).
+    Combines all four sources:
+      1. Zero Hanger RSS (filtered to this team)
+      2. Zero Hanger Injuries & Suspensions hub
+      3. Zero Hanger per-team latest news page
+      4. Club RSS (supplementary)
     """
     preseason = is_preseason()
     if days_back is None:
         days_back = 21 if preseason else 7
 
-    # Zero Hanger filtered to this team
+    # 1. Zero Hanger RSS filtered to this team
     zh_all = get_zerohanger_news(days_back=days_back)
-    team_articles = [
-        a for a in zh_all
+    rss_articles = [
+        {**a, "team": team_name}
+        for a in zh_all
         if article_mentions_team(a["title"], a["summary"], team_name)
     ]
 
-    # Tag with team name
-    for a in team_articles:
-        a["team"] = team_name
+    # 2. Injuries & Suspensions hub
+    injuries_all     = get_zerohanger_injuries_page(days_back=days_back)
+    injuries_articles = [
+        {**a, "team": team_name}
+        for a in injuries_all
+        if article_mentions_team(a["title"], a["summary"], team_name)
+    ]
 
-    # Supplement with club RSS if available
-    club_articles = get_club_rss_news(team_name, days_back=days_back)
+    # 3. Per-team news page
+    team_page_articles = [
+        {**a, "team": team_name}
+        for a in get_zerohanger_team_page(team_name, days_back=days_back)
+    ]
+
+    # 4. Club RSS
+    club_articles = [
+        {**a, "team": team_name}
+        for a in get_club_rss_news(team_name, days_back=days_back)
+    ]
 
     # Merge and deduplicate by title
-    seen   = set()
-    merged = []
-    for a in team_articles + club_articles:
-        if a["title"] not in seen:
-            seen.add(a["title"])
+    seen, merged = set(), []
+    for a in rss_articles + injuries_articles + team_page_articles + club_articles:
+        key = a["title"].lower().strip()
+        if key not in seen:
+            seen.add(key)
             merged.append(a)
 
     return merged
@@ -614,23 +632,47 @@ def format_team_news_for_ai(home_team, away_team):
 def get_all_teams_news_summary():
     """
     Get relevant news for all 18 teams for the Team News tab.
-    Fetches Zero Hanger once and splits by team — efficient single request.
+
+    Fetches Zero Hanger RSS once (efficient — single request for all teams),
+    then supplements with the Injuries & Suspensions hub to catch mid-week
+    MRO decisions and tribunal outcomes that may have been pushed off the
+    20-article RSS cap by newer general news articles.
+
+    Per-team page scraping is intentionally skipped here (18 HTTP requests
+    would be too slow for the UI). It is used in format_team_news_for_ai
+    where only the two playing teams are fetched.
     """
     preseason = is_preseason()
     days_back = 21 if preseason else 7
-    all_zh    = get_zerohanger_news(days_back=days_back)
-    all_news  = []
+
+    # Fetch both sources once
+    all_zh       = get_zerohanger_news(days_back=days_back)
+    all_injuries = get_zerohanger_injuries_page(days_back=days_back)
+    all_news     = []
 
     for team in TEAM_URLS.keys():
-        team_articles = [
+        # RSS articles for this team
+        rss_articles = [
             {**a, "team": team}
             for a in all_zh
             if article_mentions_team(a["title"], a["summary"], team)
         ]
-        # Supplement with club RSS if it works
+        # Injuries hub articles for this team
+        injury_articles = [
+            {**a, "team": team}
+            for a in all_injuries
+            if article_mentions_team(a["title"], a["summary"], team)
+        ]
+        # Club RSS supplement
         club_articles = get_club_rss_news(team, days_back=days_back)
-        seen = set(a["title"] for a in team_articles)
-        merged = team_articles + [a for a in club_articles if a["title"] not in seen]
+
+        seen, merged = set(), []
+        for a in rss_articles + injury_articles + club_articles:
+            key = a["title"].lower().strip()
+            if key not in seen:
+                seen.add(key)
+                merged.append(a)
+
         all_news.extend(merged)
 
     return all_news
