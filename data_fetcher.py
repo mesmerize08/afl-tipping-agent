@@ -107,23 +107,38 @@ MEDIUM_TRAVEL_PAIRS = {
 def get_upcoming_fixtures():
     """
     Get this week's upcoming AFL games from Squiggle.
-    Explicitly fetches Round 0 (Opening Round) as well as the full year query
-    since Round 0 is not always returned in a general year query.
-    Uses a 10-day window to catch Opening Round games listed early.
+
+    Fetches three URLs to maximise coverage:
+      1. Full year query  — returns all 2026 games Squiggle has loaded
+      2. round=0 explicit — Opening Round (AFL's named round from 2024 onward)
+      3. round=1 fallback — in case Squiggle indexes Opening Round as round 1
+
+    Notes on the Squiggle API:
+      - From 2024, Opening Round = round 0 in Squiggle (preseason = round -1)
+      - Squiggle is a one-person project; fixtures may load 1-2 days before game week
+      - A proper User-Agent header is requested by the API owner
+      - The complete field is an integer (0=upcoming, 100=finished) but we guard
+        against string "0" and None defensively
+
+    Uses a 10-day window from today to catch Opening Round games.
     """
     today      = datetime.now()
     week_ahead = today + timedelta(days=10)
+    current_year = today.year
     upcoming   = []
     seen_ids   = set()
 
     urls = [
-        f"{SQUIGGLE_BASE}?q=games;year=2026",
-        f"{SQUIGGLE_BASE}?q=games;year=2026;round=0",
+        f"{SQUIGGLE_BASE}?q=games;year={current_year}",
+        f"{SQUIGGLE_BASE}?q=games;year={current_year};round=0",
+        f"{SQUIGGLE_BASE}?q=games;year={current_year};round=1",
     ]
+
+    headers = {"User-Agent": "AFL-Tipping-Agent/1.0 (github.com/mesmerize08/afl-tipping-agent)"}
 
     for url in urls:
         try:
-            response = requests.get(url, timeout=15)
+            response = requests.get(url, timeout=15, headers=headers)
             games    = response.json().get("games", [])
             for game in games:
                 game_id = game.get("id")
@@ -131,9 +146,15 @@ def get_upcoming_fixtures():
                     continue
                 seen_ids.add(game_id)
 
-                # Accept games not yet complete (complete == 0, None, or missing)
+                # Accept games not yet complete.
+                # complete is an integer: 0 = not started, 100 = finished.
+                # Guard against string "0" or None defensively.
                 complete = game.get("complete")
-                if complete not in (0, None, ""):
+                try:
+                    complete_int = int(complete) if complete is not None else 0
+                except (ValueError, TypeError):
+                    complete_int = 0
+                if complete_int >= 100:
                     continue
 
                 if game.get("date"):
@@ -171,15 +192,10 @@ def get_team_season_data(team_name, year=2026):
     Returns completed games sorted by date descending.
     If no completed games found for the current year (start of season),
     automatically falls back to the previous year for form calculations.
-    Returns [] gracefully if the Squiggle API is unreachable.
     """
-    try:
-        url      = f"{SQUIGGLE_BASE}?q=games;year={year};team={requests.utils.quote(team_name)}"
-        response = requests.get(url, timeout=15)
-        games    = response.json().get("games", [])
-    except Exception as e:
-        print(f"  Warning: Could not fetch season data for {team_name}: {e}")
-        return []
+    url      = f"{SQUIGGLE_BASE}?q=games;year={year};team={requests.utils.quote(team_name)}"
+    response = requests.get(url, timeout=15)
+    games    = response.json().get("games", [])
 
     completed = [g for g in games if g.get("complete") == 100]
     completed.sort(key=lambda x: x.get("date", ""), reverse=True)
@@ -187,15 +203,11 @@ def get_team_season_data(team_name, year=2026):
     # Fall back to previous year if no completed games yet this season
     if not completed:
         print(f"  No {year} data for {team_name} — falling back to {year - 1}")
-        try:
-            fallback_url      = f"{SQUIGGLE_BASE}?q=games;year={year - 1};team={requests.utils.quote(team_name)}"
-            fallback_response = requests.get(fallback_url, timeout=15)
-            fallback_games    = fallback_response.json().get("games", [])
-            completed = [g for g in fallback_games if g.get("complete") == 100]
-            completed.sort(key=lambda x: x.get("date", ""), reverse=True)
-        except Exception as e:
-            print(f"  Warning: Could not fetch fallback season data for {team_name}: {e}")
-            return []
+        fallback_url      = f"{SQUIGGLE_BASE}?q=games;year={year - 1};team={requests.utils.quote(team_name)}"
+        fallback_response = requests.get(fallback_url, timeout=15)
+        fallback_games    = fallback_response.json().get("games", [])
+        completed = [g for g in fallback_games if g.get("complete") == 100]
+        completed.sort(key=lambda x: x.get("date", ""), reverse=True)
 
     return completed
 
