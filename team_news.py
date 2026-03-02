@@ -114,44 +114,44 @@ PRESEASON_BROAD_KEYWORDS = [
 
 # Map common team name variants to canonical names for fuzzy matching
 TEAM_ALIASES = {
-    "crows":       "Adelaide",
-    "adelaide":    "Adelaide",
-    "brisbane":    "Brisbane Lions",
-    "lions":       "Brisbane Lions",
-    "carlton":     "Carlton",
-    "blues":       "Carlton",
-    "collingwood": "Collingwood",
-    "magpies":     "Collingwood",
-    "pies":        "Collingwood",
-    "essendon":    "Essendon",
-    "bombers":     "Essendon",
-    "fremantle":   "Fremantle",
-    "dockers":     "Fremantle",
-    "geelong":     "Geelong",
-    "cats":        "Geelong",
-    "gold coast":  "Gold Coast",
-    "suns":        "Gold Coast",
-    "gws":         "GWS Giants",
-    "giants":      "GWS Giants",
-    "hawthorn":    "Hawthorn",
-    "hawks":       "Hawthorn",
-    "melbourne":   "Melbourne",
-    "demons":      "Melbourne",
-    "north":       "North Melbourne",
-    "kangaroos":   "North Melbourne",
-    "roos":        "North Melbourne",
-    "port":        "Port Adelaide",
-    "power":       "Port Adelaide",
-    "richmond":    "Richmond",
-    "tigers":      "Richmond",
-    "st kilda":    "St Kilda",
-    "saints":      "St Kilda",
-    "sydney":      "Sydney",
-    "swans":       "Sydney",
-    "west coast":  "West Coast",
-    "eagles":      "West Coast",
-    "bulldogs":    "Western Bulldogs",
-    "dogs":        "Western Bulldogs",
+    # Nicknames only — full team names are matched directly by article_mentions_team
+    # and must NOT appear here, as they bypass the substring-collision guard.
+    # e.g. "melbourne" as alias would bypass the North Melbourne protection.
+    "crows":            "Adelaide",
+    "brisbane":         "Brisbane Lions",
+    "lions":            "Brisbane Lions",
+    "blues":            "Carlton",
+    "magpies":          "Collingwood",
+    "pies":             "Collingwood",
+    "bombers":          "Essendon",
+    "dockers":          "Fremantle",
+    "cats":             "Geelong",
+    "suns":             "Gold Coast",
+    "gws":              "GWS Giants",
+    "giants":           "GWS Giants",
+    "hawks":            "Hawthorn",
+    "demons":           "Melbourne",
+    "north":            "North Melbourne",
+    "kangaroos":        "North Melbourne",
+    "roos":             "North Melbourne",
+    "port":             "Port Adelaide",
+    "power":            "Port Adelaide",
+    "tigers":           "Richmond",
+    "saints":           "St Kilda",
+    "swans":            "Sydney",
+    "eagles":           "West Coast",
+    "bulldogs":         "Western Bulldogs",
+    "dogs":             "Western Bulldogs",
+    # Multi-word aliases are unambiguous — safe to include
+    "adelaide crows":   "Adelaide",
+    "brisbane lions":   "Brisbane Lions",
+    "gws giants":       "GWS Giants",
+    "western bulldogs": "Western Bulldogs",
+    "north melbourne":  "North Melbourne",
+    "port adelaide":    "Port Adelaide",
+    "gold coast":       "Gold Coast",
+    "west coast":       "West Coast",
+    "st kilda":         "St Kilda",
 }
 
 
@@ -212,19 +212,98 @@ def is_relevant_article(title, summary, strict=True):
 
 def article_mentions_team(title, summary, team_name):
     """
-    Check whether an article mentions a specific team by name or nickname.
-    Uses TEAM_ALIASES for fuzzy matching.
-    """
-    text = (title + " " + summary).lower()
+    Check whether an article is primarily about a specific team.
 
-    # Direct name match
-    if team_name.lower() in text:
+    The old implementation used simple substring matching, which caused three
+    classes of false positives visible in production:
+
+      1. Substring containment  — "melbourne" matched inside "north melbourne";
+                                   "adelaide" matched inside "port adelaide"
+      2. Opponent cross-tagging — article about North Melbourne vs Collingwood
+                                   was tagged to Collingwood because they appeared
+                                   in the summary
+      3. Venue cross-tagging    — article mentioning "Adelaide Oval" was tagged
+                                   to the Adelaide Crows
+
+    Fix strategy:
+      - Strip known venue names before any matching
+      - Use word-boundary regex throughout (never raw substring)
+      - Negative lookbehind guards the two substring-collision pairs:
+          "melbourne" not preceded by "north "
+          "adelaide"  not preceded by "port "
+      - Title is the primary signal — any match here always returns True
+      - Multi-team roundup articles (3+ teams in the text) suppress summary
+        matching entirely — title only
+      - Summary alias (Bombers, Cats, Dockers, etc.) counts as a strong signal
+      - Summary full team name requires 3+ occurrences (subject team repeats
+        their name; an opponent is typically mentioned once)
+    """
+    # ── Venue names to strip so they don't trigger team matches ───────────────
+    VENUE_NAMES = {
+        "adelaide oval", "optus stadium", "marvel stadium", "mcg", "scg",
+        "gabba", "people first stadium", "gmhba stadium", "mars stadium",
+        "engie stadium", "giants stadium", "tio stadium", "blundstone arena",
+        "manuka oval", "cazaly's stadium", "university of tasmania stadium",
+    }
+
+    # ── Teams whose names appear as substrings of another team name ───────────
+    # Maps team_name → the prefix word that, when present, means a DIFFERENT team
+    SUBSTRING_GUARDS = {
+        "Melbourne": "north",
+        "Adelaide":  "port",
+    }
+
+    def strip_venues(text):
+        for venue in VENUE_NAMES:
+            text = text.replace(venue, " ")
+        return text
+
+    def count_name(text, team):
+        guard = SUBSTRING_GUARDS.get(team)
+        if guard:
+            pattern = r'(?<!' + re.escape(guard) + r' )\b' + re.escape(team.lower()) + r'\b'
+        else:
+            pattern = r'\b' + re.escape(team.lower()) + r'\b'
+        return len(re.findall(pattern, text))
+
+    def count_aliases(text, team):
+        total = 0
+        for alias, canonical in TEAM_ALIASES.items():
+            if canonical == team:
+                total += len(re.findall(r'\b' + re.escape(alias.lower()) + r'\b', text))
+        return total
+
+    def is_roundup(t, s):
+        """True if 3+ distinct teams appear — multi-team roundup article."""
+        combined = strip_venues((t + " " + s).lower())
+        found = 0
+        for team in TEAM_ALIASES.values():
+            if count_name(combined, team) > 0 or count_aliases(combined, team) > 0:
+                found += 1
+            if found >= 3:
+                return True
+        return False
+
+    title_clean   = strip_venues(title.lower())
+    summary_clean = strip_venues(summary.lower())
+
+    # Title is always reliable — any match here is definitive
+    if count_name(title_clean, team_name) > 0:
+        return True
+    if count_aliases(title_clean, team_name) > 0:
         return True
 
-    # Match any alias that maps to this team
-    for alias, canonical in TEAM_ALIASES.items():
-        if canonical == team_name and alias in text:
-            return True
+    # Multi-team roundup — too noisy to draw team-specific conclusions from summary
+    if is_roundup(title, summary):
+        return False
+
+    # Summary: specific alias (Bombers, Cats, Dockers…) is strong enough alone
+    if count_aliases(summary_clean, team_name) > 0:
+        return True
+
+    # Summary: full team name repeated 3+ times = the article's subject
+    if count_name(summary_clean, team_name) >= 3:
+        return True
 
     return False
 
