@@ -1,5 +1,5 @@
 requests
-google-generativeai
+anthropic
 streamlit
 pandas
 python-dotenv

@@ -4,7 +4,7 @@ predict.py  (UPGRADED — uses scoring stats, travel, rest days, scoring trends)
 All new data fields from data_fetcher.py are now injected into the AI prompt.
 """
 
-import google.generativeai as genai
+import anthropic
 import os
 
 from team_news import format_team_news_for_ai
@@ -12,7 +12,10 @@ from tracker   import format_history_for_ai, save_predictions
 from weather   import format_weather_for_ai
 from data_fetcher import get_squiggle_tips, format_squiggle_tips_for_prompt
 
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+# Anthropic client — reads ANTHROPIC_API_KEY from environment automatically.
+# In Streamlit Cloud, set this under Settings → Secrets as:
+#   ANTHROPIC_API_KEY = "sk-ant-..."
+_anthropic_client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
 
 # ─── Formatting helpers ────────────────────────────────────────────────────────
@@ -256,9 +259,12 @@ If no conflicts exist, write "None identified."
 """
 
     try:
-        model    = genai.GenerativeModel("gemini-2.0-flash")
-        response = model.generate_content(prompt)
-        return response.text
+        message = _anthropic_client.messages.create(
+            model      = "claude-haiku-4-5-20251001",
+            max_tokens = 2048,
+            messages   = [{"role": "user", "content": prompt}],
+        )
+        return message.content[0].text
     except Exception as e:
         return f"⚠️ Error generating prediction: {e}"
 
