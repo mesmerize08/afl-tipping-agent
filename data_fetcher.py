@@ -66,6 +66,8 @@ VENUE_CITIES = {
     "Giants Stadium":                   "Sydney",
     "GIANTS Stadium":                   "Sydney",
     "Engie Stadium":                    "Sydney",
+    "ENGIE Stadium":                    "Sydney",
+    "Sydney Showground":                "Sydney",
     "Spotless Stadium":                 "Sydney",
     "TIO Stadium":                      "Darwin",
     "Traeger Park":                     "Alice Springs",
@@ -104,43 +106,86 @@ MEDIUM_TRAVEL_PAIRS = {
 
 # ─── Fixtures ──────────────────────────────────────────────────────────────────
 
+# Squiggle uses full team names that differ from our canonical names.
+# Normalise at fetch time so all downstream code uses consistent names.
+SQUIGGLE_TEAM_NAME_MAP = {
+    "Greater Western Sydney": "GWS Giants",
+    # All other Squiggle team names match our canonical names exactly.
+}
+
+
+def normalise_squiggle_game(game):
+    """
+    Normalise a raw Squiggle game dict to use canonical team/venue names.
+    - Maps "Greater Western Sydney" -> "GWS Giants"
+    - Strips dots from venue abbreviations: "S.C.G." -> "SCG", "M.C.G." -> "MCG"
+    """
+    g = dict(game)
+    g["hteam"] = SQUIGGLE_TEAM_NAME_MAP.get(g.get("hteam", ""), g.get("hteam", ""))
+    g["ateam"] = SQUIGGLE_TEAM_NAME_MAP.get(g.get("ateam", ""), g.get("ateam", ""))
+    # Strip dots from abbreviated venue names (Squiggle returns "S.C.G.", "M.C.G.")
+    venue = g.get("venue", "")
+    g["venue"] = venue.replace(".", "").replace("  ", " ").strip()
+    return g
+
+
 def get_upcoming_fixtures():
     """
     Get this week's upcoming AFL games from Squiggle.
-    Explicitly fetches Round 0 (Opening Round) as well as the full year query
-    since Round 0 is not always returned in a general year query.
-    Uses a 10-day window to catch Opening Round games listed early.
+
+    Query strategy (three complementary URLs):
+      1. complete=!100  — all incomplete games this year (the bare year= query
+                          only returns completed games, so this is essential)
+      2. round=0        — explicit Opening Round fallback
+      3. round=1        — Round 1 fallback
+
+    After collection, filters to the EARLIEST round found so that a wide
+    date window never accidentally returns two rounds at once.
+
+    Squiggle asks bots to set a User-Agent header; cloud IPs without one
+    can be silently rate-limited.
     """
-    today      = datetime.now()
-    week_ahead = today + timedelta(days=10)
-    upcoming   = []
-    seen_ids   = set()
+    today        = datetime.now()
+    week_ahead   = today + timedelta(days=14)   # wide enough to catch any round
+    current_year = today.year
+    upcoming     = []
+    seen_ids     = set()
+
+    headers = {
+        "User-Agent": "AFL-Tipping-Agent/1.0 (github.com/mesmerize08/afl-tipping-agent)"
+    }
 
     urls = [
-        f"{SQUIGGLE_BASE}?q=games;year=2026",
-        f"{SQUIGGLE_BASE}?q=games;year=2026;round=0",
+        f"{SQUIGGLE_BASE}?q=games;year={current_year};complete=!100",
+        f"{SQUIGGLE_BASE}?q=games;year={current_year};round=0",
+        f"{SQUIGGLE_BASE}?q=games;year={current_year};round=1",
     ]
 
     for url in urls:
         try:
-            response = requests.get(url, timeout=15)
-            games    = response.json().get("games", [])
-            for game in games:
-                game_id = game.get("id")
+            response = requests.get(url, timeout=15, headers=headers)
+            response.raise_for_status()
+            games = response.json().get("games", [])
+            for raw_game in games:
+                game_id = raw_game.get("id")
                 if game_id in seen_ids:
                     continue
                 seen_ids.add(game_id)
 
-                # Accept games not yet complete (complete == 0, None, or missing)
-                complete = game.get("complete")
-                if complete not in (0, None, ""):
+                # Skip completed games (complete is an int 0-100)
+                try:
+                    complete_int = int(raw_game.get("complete") or 0)
+                except (ValueError, TypeError):
+                    complete_int = 0
+                if complete_int >= 100:
                     continue
 
-                if game.get("date"):
+                date_str = raw_game.get("date", "")
+                if date_str:
                     try:
-                        game_date = datetime.strptime(game["date"][:10], "%Y-%m-%d")
+                        game_date = datetime.strptime(date_str[:10], "%Y-%m-%d")
                         if today <= game_date <= week_ahead:
-                            upcoming.append(game)
+                            upcoming.append(normalise_squiggle_game(raw_game))
                     except Exception:
                         pass
         except Exception as e:
@@ -148,8 +193,8 @@ def get_upcoming_fixtures():
 
     upcoming.sort(key=lambda x: x.get("date", ""))
 
-    # Return only the earliest round — the 10-day window may capture
-    # both Round 0 (Mar 5-8) and Round 1 (Mar 12+) simultaneously.
+    # Only return the earliest round — a wide date window can capture
+    # two rounds simultaneously (e.g. Round 0 Mar 5-8 AND Round 1 Mar 12+)
     if upcoming:
         earliest_round = min(g.get("round", 99) for g in upcoming)
         upcoming = [g for g in upcoming if g.get("round") == earliest_round]

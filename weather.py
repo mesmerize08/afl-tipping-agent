@@ -51,17 +51,16 @@ VENUE_DATA = {
 
 # Alternative name mappings (Squiggle sometimes uses different names)
 VENUE_ALIASES = {
-    "Docklands":           "Marvel Stadium",
-    "Etihad Stadium":      "Marvel Stadium",
-    "Kardinia Park":       "GMHBA Stadium",
-    "Carrara":             "People First Stadium",
-    "Stadium Australia":   "Engie Stadium",
-    "Spotless Stadium":    "Engie Stadium",
-    "ENGIE Stadium":       "Engie Stadium",
-    "GIANTS Stadium":      "Giants Stadium",
-    "Sydney Showground":   "Giants Stadium",  # Squiggle name for ENGIE/Giants Stadium
-    "Traeger Park":        "TIO Stadium",
-    "Aurora Stadium":      "University of Tasmania Stadium",
+    "Docklands":          "Marvel Stadium",
+    "Etihad Stadium":     "Marvel Stadium",
+    "Kardinia Park":      "GMHBA Stadium",
+    "Carrara":            "People First Stadium",
+    "Stadium Australia":  "Engie Stadium",
+    "Spotless Stadium":   "Engie Stadium",
+    "GIANTS Stadium":     "Giants Stadium",
+    "Sydney Showground":  "Giants Stadium",
+    "Traeger Park":       "TIO Stadium",
+    "Aurora Stadium":     "University of Tasmania Stadium",
 }
 
 
