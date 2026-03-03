@@ -51,7 +51,6 @@ TEAM_HOME_CITIES = {
 
 VENUE_CITIES = {
     "MCG":                              "Melbourne",
-    "MCGS":                             "Melbourne",  # typo guard
     "Marvel Stadium":                   "Melbourne",
     "Docklands":                        "Melbourne",
     "Etihad Stadium":                   "Melbourne",
@@ -64,14 +63,9 @@ VENUE_CITIES = {
     "People First Stadium":             "Gold Coast",
     "Carrara":                          "Gold Coast",
     "SCG":                              "Sydney",
-    # Squiggle returns dotted abbreviations — normalise_squiggle_game() strips
-    # the dots, but keep both forms here as a safety net
-    "SCG":                              "Sydney",
     "Giants Stadium":                   "Sydney",
     "GIANTS Stadium":                   "Sydney",
     "Engie Stadium":                    "Sydney",
-    "ENGIE Stadium":                    "Sydney",
-    "Sydney Showground":                "Sydney",   # Squiggle name for ENGIE Stadium
     "Spotless Stadium":                 "Sydney",
     "TIO Stadium":                      "Darwin",
     "Traeger Park":                     "Alice Springs",
@@ -110,87 +104,57 @@ MEDIUM_TRAVEL_PAIRS = {
 
 # ─── Fixtures ──────────────────────────────────────────────────────────────────
 
-# Squiggle uses full team names that differ from our canonical names.
-# Normalise at fetch time so all downstream code uses consistent names.
-SQUIGGLE_TEAM_NAME_MAP = {
-    "Greater Western Sydney": "GWS Giants",
-    # All other Squiggle names match our canonical names exactly.
-}
-
-def normalise_squiggle_game(game):
-    """Normalise team and venue names from Squiggle to our canonical values."""
-    g = dict(game)
-    g["hteam"] = SQUIGGLE_TEAM_NAME_MAP.get(g.get("hteam", ""), g.get("hteam", ""))
-    g["ateam"] = SQUIGGLE_TEAM_NAME_MAP.get(g.get("ateam", ""), g.get("ateam", ""))
-    # Normalise dotted venue abbreviations: S.C.G. → SCG, M.C.G. → MCG
-    venue = g.get("venue", "")
-    venue_clean = venue.replace(".", "").replace("  ", " ").strip()
-    g["venue"] = venue_clean
-    return g
-
-
 def get_upcoming_fixtures():
     """
     Get this week's upcoming AFL games from Squiggle.
-
-    Uses three complementary queries:
-      1. ?q=games;year=YYYY;complete=!100  — all incomplete games this year
-         (the bare year query only returns completed games)
-      2. ?q=games;year=YYYY;round=0        — explicit Opening Round fallback
-      3. ?q=games;year=YYYY;round=1        — Round 1 fallback
-
-    Squiggle API requires a User-Agent header — without one, requests from
-    cloud IPs may be silently rate-limited.
-
-    Team names are normalised (e.g. "Greater Western Sydney" → "GWS Giants")
-    and dotted venue abbreviations are cleaned (S.C.G. → SCG, M.C.G. → MCG).
+    Explicitly fetches Round 0 (Opening Round) as well as the full year query
+    since Round 0 is not always returned in a general year query.
+    Uses a 10-day window to catch Opening Round games listed early.
     """
-    today        = datetime.now()
-    week_ahead   = today + timedelta(days=10)
-    current_year = today.year
-    upcoming     = []
-    seen_ids     = set()
-
-    headers = {
-        "User-Agent": "AFL-Tipping-Agent/1.0 (github.com/mesmerize08/afl-tipping-agent)"
-    }
+    today      = datetime.now()
+    week_ahead = today + timedelta(days=10)
+    upcoming   = []
+    seen_ids   = set()
 
     urls = [
-        f"{SQUIGGLE_BASE}?q=games;year={current_year};complete=!100",
-        f"{SQUIGGLE_BASE}?q=games;year={current_year};round=0",
-        f"{SQUIGGLE_BASE}?q=games;year={current_year};round=1",
+        f"{SQUIGGLE_BASE}?q=games;year=2026",
+        f"{SQUIGGLE_BASE}?q=games;year=2026;round=0",
     ]
 
     for url in urls:
         try:
-            response = requests.get(url, timeout=15, headers=headers)
-            response.raise_for_status()
-            games = response.json().get("games", [])
-            for raw_game in games:
-                game_id = raw_game.get("id")
+            response = requests.get(url, timeout=15)
+            games    = response.json().get("games", [])
+            for game in games:
+                game_id = game.get("id")
                 if game_id in seen_ids:
                     continue
                 seen_ids.add(game_id)
 
-                # Skip completed games
-                try:
-                    complete_int = int(raw_game.get("complete") or 0)
-                except (ValueError, TypeError):
-                    complete_int = 0
-                if complete_int >= 100:
+                # Accept games not yet complete (complete == 0, None, or missing)
+                complete = game.get("complete")
+                if complete not in (0, None, ""):
                     continue
 
-                if raw_game.get("date"):
+                if game.get("date"):
                     try:
-                        game_date = datetime.strptime(raw_game["date"][:10], "%Y-%m-%d")
+                        game_date = datetime.strptime(game["date"][:10], "%Y-%m-%d")
                         if today <= game_date <= week_ahead:
-                            upcoming.append(normalise_squiggle_game(raw_game))
+                            upcoming.append(game)
                     except Exception:
                         pass
         except Exception as e:
             print(f"  Warning: Could not fetch fixtures from {url}: {e}")
 
     upcoming.sort(key=lambda x: x.get("date", ""))
+
+    # Return only the earliest round — the 10-day window may capture
+    # both Round 0 (Mar 5-8) and Round 1 (Mar 12+) simultaneously.
+    if upcoming:
+        earliest_round = min(g.get("round", 99) for g in upcoming)
+        upcoming = [g for g in upcoming if g.get("round") == earliest_round]
+        print(f"  Filtered to round {earliest_round}: {len(upcoming)} fixtures")
+
     print(f"  Found {len(upcoming)} upcoming fixtures")
     return upcoming
 
