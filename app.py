@@ -1,11 +1,13 @@
 """
-app.py  (FULL REDESIGN — Sports Night Broadcast aesthetic)
-===========================================================
+app.py  (OPTIMIZED — Environment validation, extracted utilities, DRY compliance)
+===================================================================================
 UI Upgrades:
   1. Full visual redesign — dark theme, gold accents, scoreboard typography
   2. Quick-glance summary table — scan the whole round at a glance
   3. Match lockout countdowns — live JS countdown per game card
   4. Last round performance banner — instant accuracy context at the top
+  5. Environment variable validation on startup
+  6. Extraction functions moved to shared module
 """
 
 import streamlit as st
@@ -13,12 +15,63 @@ import streamlit.components.v1 as components
 import pandas as pd
 import json
 import os
-import re
+import sys
 from datetime import datetime
 from dotenv import load_dotenv
 
 load_dotenv()
 
+# ── ENVIRONMENT VALIDATION (HIGH PRIORITY FIX) ────────────────────────────────
+def validate_environment():
+    """
+    Validate that all required environment variables are set.
+    Shows clear error message if any are missing.
+    """
+    required = {
+        "ANTHROPIC_API_KEY": "Primary AI engine (https://console.anthropic.com)",
+        "ODDS_API_KEY": "Betting odds data (https://the-odds-api.com)",
+    }
+    
+    optional = {
+        "GROQ_API_KEY": "Backup AI engine (https://console.groq.com)",
+    }
+    
+    missing_required = []
+    missing_optional = []
+    
+    for key, description in required.items():
+        if not os.getenv(key):
+            missing_required.append(f"  ❌ **{key}** — {description}")
+    
+    for key, description in optional.items():
+        if not os.getenv(key):
+            missing_optional.append(f"  ⚠️  **{key}** (optional) — {description}")
+    
+    if missing_required:
+        st.error("### ❌ Missing Required Environment Variables")
+        st.markdown("\n".join(missing_required))
+        st.markdown("""
+        ---
+        **How to fix:**
+        1. If running locally: Add keys to `.env` file in project root
+        2. If on Streamlit Cloud: Go to Settings → Secrets
+        3. If using GitHub Actions: Go to Settings → Secrets → Actions
+        
+        **Get your API keys:**
+        - Anthropic: https://console.anthropic.com/settings/keys
+        - The Odds API: https://the-odds-api.com/account
+        """)
+        st.stop()  # Stop execution until fixed
+    
+    if missing_optional:
+        st.warning("### ⚠️ Optional Environment Variables Not Set")
+        st.markdown("\n".join(missing_optional))
+        st.info("The app will work, but backup AI may not be available if primary fails.")
+
+# Run validation on startup
+validate_environment()
+
+# Now import other modules (after validation)
 from data_fetcher import (
     get_upcoming_fixtures, get_ladder,
     get_betting_odds, get_afl_news, compile_match_data,
@@ -28,6 +81,13 @@ from predict      import run_weekly_predictions
 from tracker      import check_and_update_results, get_accuracy_display_data, load_history
 from team_news    import get_all_teams_news_summary, TEAM_URLS
 from pdf_export   import generate_pdf
+from extraction_utils import (  # NEW: Import from shared module
+    extract_confidence,
+    extract_winner,
+    extract_probability,
+    extract_margin,
+    confidence_style
+)
 
 # ─── Page config ──────────────────────────────────────────────────────────────
 st.set_page_config(
@@ -83,47 +143,6 @@ st.markdown("""
   [data-testid="stSidebar"] { background: var(--surface) !important; border-right: 1px solid var(--border) !important; }
 </style>
 """, unsafe_allow_html=True)
-
-
-# ─── Extraction helpers ────────────────────────────────────────────────────────
-
-def extract_confidence(text):
-    t = text.upper()
-    if "CONFIDENCE:** HIGH" in t or "CONFIDENCE: HIGH" in t: return "High"
-    if "CONFIDENCE:** MEDIUM" in t or "CONFIDENCE: MEDIUM" in t: return "Medium"
-    if "CONFIDENCE:** LOW" in t or "CONFIDENCE: LOW" in t: return "Low"
-    return "Medium"
-
-def extract_winner(text, home, away):
-    t = text.upper()
-    if "PREDICTED WINNER:" in t:
-        idx = t.index("PREDICTED WINNER:")
-        snippet = t[idx:idx+120]
-        hp = snippet.find(home.upper().split()[-1])
-        ap = snippet.find(away.upper().split()[-1])
-        if hp != -1 and (ap == -1 or hp < ap): return home
-        if ap != -1: return away
-    return None
-
-def extract_probability(text, winner):
-    if not winner: return None
-    for m in re.findall(r'(\d{2,3}(?:\.\d)?)\s*%', text):
-        v = float(m)
-        if 50 <= v <= 99: return v
-    return None
-
-def extract_margin(text):
-    for m in re.findall(r'~?(\d{1,3})\s*points?', text.lower()):
-        v = int(m)
-        if 1 <= v <= 150: return v
-    return None
-
-def confidence_style(confidence):
-    return {
-        "High":   {"color": "#3fb950", "bg": "rgba(63,185,80,0.06)",  "label": "HIGH CONFIDENCE"},
-        "Medium": {"color": "#d29922", "bg": "rgba(210,153,34,0.06)", "label": "MEDIUM CONFIDENCE"},
-        "Low":    {"color": "#f85149", "bg": "rgba(248,81,73,0.06)",  "label": "LOW CONFIDENCE"},
-    }.get(confidence, {"color": "#d29922", "bg": "rgba(210,153,34,0.06)", "label": "MEDIUM CONFIDENCE"})
 
 
 # ─── Performance banner ────────────────────────────────────────────────────────
@@ -202,10 +221,6 @@ def render_summary_table(predictions):
 def _render_pdf_button():
     """
     Render the PDF download button from cached session_state bytes.
-    Using session_state means the button persists after being clicked —
-    clicking a st.download_button triggers a Streamlit rerun, but because
-    the bytes are already stored in session_state the button re-renders
-    immediately in every subsequent run without re-generating the PDF.
     """
     if st.session_state.get("pdf_bytes"):
         round_label = st.session_state.get("pdf_round", "")
@@ -396,7 +411,6 @@ with tab1:
         run_btn = st.button("⚡ GENERATE THIS WEEK'S TIPS", type="primary")
 
         # Persist predictions and PDF bytes across reruns
-        # (Streamlit reruns the full script on every interaction including download clicks)
         if "predictions" not in st.session_state:
             st.session_state.predictions = []
         if "pdf_bytes" not in st.session_state:
@@ -430,13 +444,14 @@ with tab1:
                     st.session_state.predictions = predictions
                     round_num = predictions[0]["round"]
 
-                    # Pre-generate PDF and cache it — survives the rerun triggered by clicking download
+                    # Pre-generate PDF and cache it
                     try:
                         st.session_state.pdf_bytes = generate_pdf(predictions)
                         st.session_state.pdf_round = round_num
                     except Exception as pdf_err:
                         st.session_state.pdf_bytes = None
                         st.caption(f"PDF unavailable: {pdf_err}")
+                    
                     high   = sum(1 for p in predictions if extract_confidence(p["prediction"]) == "High")
                     medium = sum(1 for p in predictions if extract_confidence(p["prediction"]) == "Medium")
                     low    = sum(1 for p in predictions if extract_confidence(p["prediction"]) == "Low")

@@ -1,5 +1,6 @@
 """
-pdf_export.py  —  AFL Tipping Agent
+pdf_export.py (OPTIMIZED — Uses extraction_utils, no duplication)
+===================================================================
 White paper, dark ink, print-ready layout.
 Requires: fpdf2
 """
@@ -7,6 +8,13 @@ Requires: fpdf2
 import re
 from fpdf import FPDF
 from datetime import datetime
+from typing import List, Dict
+from extraction_utils import (  # NEW: Import from shared module
+    extract_confidence,
+    extract_winner,
+    extract_probability,
+    extract_margin
+)
 
 # ── Unicode sanitiser ─────────────────────────────────────────────────────────
 _UMAP = {
@@ -62,7 +70,8 @@ R_INK      = (180,  35, 30)     # red on white
 R_BG       = (255, 228, 225)
 
 
-def _cc(conf):
+def _cc(conf: str) -> tuple:
+    """Get color tuple for confidence level."""
     return {
         "High":   (G_INK, G_BG),
         "Medium": (A_INK, A_BG),
@@ -70,51 +79,15 @@ def _cc(conf):
     }.get(conf, (A_INK, A_BG))
 
 
-# ── Extraction helpers ────────────────────────────────────────────────────────
-
-def _winner(text, home, away):
-    t = text.upper()
-    if "PREDICTED WINNER:" in t:
-        idx = t.index("PREDICTED WINNER:")
-        s   = t[idx:idx + 120]
-        hp  = s.find(home.upper().split()[-1])
-        ap  = s.find(away.upper().split()[-1])
-        if hp != -1 and (ap == -1 or hp < ap): return home
-        if ap != -1: return away
-    return None
-
-
-def _prob(text):
-    for m in re.findall(r"(\d{2,3}(?:\.\d)?)\s*%", text):
-        v = float(m)
-        if 50 <= v <= 99: return v
-    return None
-
-
-def _margin(text):
-    for m in re.findall(r"~?(\d{1,3})\s*points?", text.lower()):
-        v = int(m)
-        if 1 <= v <= 150: return v
-    return None
-
-
-def _conf(text):
-    t = text.upper()
-    if "CONFIDENCE:** HIGH" in t or "CONFIDENCE: HIGH" in t: return "High"
-    if "CONFIDENCE:** LOW"  in t or "CONFIDENCE: LOW"  in t: return "Low"
-    return "Medium"
-
-
 # ── PDF class ─────────────────────────────────────────────────────────────────
 
 class TipsPDF(FPDF):
     """
     AFL Tipping Agent PDF — white paper, print-optimised.
-    cell() and multi_cell() are overridden so _safe() runs on all text —
-    nothing can reach Helvetica unless it is Latin-1 safe.
+    cell() and multi_cell() are overridden so _safe() runs on all text.
     """
 
-    def __init__(self, round_num, generated_at):
+    def __init__(self, round_num: int, generated_at: str):
         super().__init__()
         self.round_num    = round_num
         self.generated_at = _safe(generated_at)
@@ -134,7 +107,6 @@ class TipsPDF(FPDF):
             split_only=split_only, link=link
         )
 
-    # ── Page header ───────────────────────────────────────────────────────────
     def header(self):
         # Navy banner
         self.set_fill_color(*NAVY)
@@ -163,7 +135,6 @@ class TipsPDF(FPDF):
         self.set_text_color(*INK)
         self.ln(7)
 
-    # ── Page footer ───────────────────────────────────────────────────────────
     def footer(self):
         self.set_y(-14)
         self.set_draw_color(*RULE_GRAY)
@@ -179,14 +150,12 @@ class TipsPDF(FPDF):
             align="C"
         )
 
-    # ── Thin horizontal rule ──────────────────────────────────────────────────
     def _rule(self, color=None):
         self.set_draw_color(*(color or RULE_GRAY))
         self.line(14, self.get_y(), 196, self.get_y())
         self.ln(3)
 
-    # ── Gold section label ────────────────────────────────────────────────────
-    def _section_label(self, title):
+    def _section_label(self, title: str):
         self.set_fill_color(*GOLD_BG)
         self.set_font("Helvetica", "B", 9)
         self.set_text_color(*GOLD)
@@ -194,15 +163,14 @@ class TipsPDF(FPDF):
         super().cell(182, 6, f"  {title}", fill=True, ln=True)
         self.ln(2)
 
-    # ── Summary table ─────────────────────────────────────────────────────────
-    def write_summary_table(self, predictions):
+    def write_summary_table(self, predictions: List[Dict]):
         self._section_label("ROUND SUMMARY -- ALL TIPS AT A GLANCE")
 
         # Column widths — must sum to 182
         CW   = [55, 28, 24, 38, 13, 16, 8]
         HDRS = ["MATCH", "VENUE", "DATE", "TIP", "PROB", "MARGIN", ""]
 
-        # Header row — navy background, white text
+        # Header row
         self.set_fill_color(*NAVY)
         self.set_text_color(*WHITE)
         self.set_font("Helvetica", "B", 7.5)
@@ -216,10 +184,12 @@ class TipsPDF(FPDF):
             home = _safe(pred.get("home_team", ""))
             away = _safe(pred.get("away_team", ""))
             text = pred.get("prediction", "")
-            conf = _conf(text)
-            win  = _winner(text, pred.get("home_team", ""), pred.get("away_team", ""))
-            prob = _prob(text)
-            mar  = _margin(text)
+            
+            # Use extraction_utils functions
+            conf = extract_confidence(text)
+            win  = extract_winner(text, pred.get("home_team", ""), pred.get("away_team", ""))
+            prob = extract_probability(text, win)
+            mar  = extract_margin(text)
             c_ink, c_bg = _cc(conf)
 
             # Alternating row backgrounds
@@ -240,7 +210,7 @@ class TipsPDF(FPDF):
             super().cell(CW[2], 9, _safe(pred.get("date", "")),
                          fill=True, align="C")
 
-            # Tip — coloured ink
+            # Tip
             self.set_font("Helvetica", "B", 8)
             self.set_text_color(*c_ink)
             super().cell(CW[3], 9, f"  {_safe(win)[:16]}" if win else "  --", fill=True)
@@ -253,7 +223,7 @@ class TipsPDF(FPDF):
             super().cell(CW[5], 9, f"~{mar}pts" if mar else "--",
                          fill=True, align="C")
 
-            # Confidence initial badge
+            # Confidence badge
             self.set_font("Helvetica", "B", 6.5)
             self.set_fill_color(*c_bg)
             self.set_text_color(*c_ink)
@@ -263,30 +233,30 @@ class TipsPDF(FPDF):
         self._rule()
         self.ln(4)
 
-    # ── Per-match section ─────────────────────────────────────────────────────
-    def write_match_section(self, pred):
+    def write_match_section(self, pred: Dict):
         home = _safe(pred.get("home_team", ""))
         away = _safe(pred.get("away_team", ""))
         text = pred.get("prediction", "")
-        conf = _conf(text)
-        win  = _winner(text, pred.get("home_team", ""), pred.get("away_team", ""))
-        prob = _prob(text)
-        mar  = _margin(text)
+        
+        # Use extraction_utils functions
+        conf = extract_confidence(text)
+        win  = extract_winner(text, pred.get("home_team", ""), pred.get("away_team", ""))
+        prob = extract_probability(text, win)
+        mar  = extract_margin(text)
         odds = pred.get("betting_odds", {}) or {}
         c_ink, c_bg = _cc(conf)
 
         if self.get_y() > 240:
             self.add_page()
 
-        # ── Match header bar ──────────────────────────────────────────────────
+        # Match header bar
         y0 = self.get_y()
         self.set_fill_color(*LIGHT_GRAY)
         self.rect(14, y0, 182, 20, "F")
-        # Left accent stripe in confidence colour
         self.set_fill_color(*c_ink)
         self.rect(14, y0, 4, 20, "F")
 
-        # Meta: round / venue / date
+        # Meta info
         self.set_xy(21, y0 + 2)
         self.set_font("Helvetica", "", 7)
         self.set_text_color(*CAP)
@@ -304,7 +274,7 @@ class TipsPDF(FPDF):
         self.set_text_color(*INK)
         super().cell(130, 11, f"{home}  vs  {away}", ln=False)
 
-        # Confidence badge (right-aligned)
+        # Confidence badge
         self.set_font("Helvetica", "B", 7.5)
         self.set_fill_color(*c_bg)
         self.set_text_color(*c_ink)
@@ -313,27 +283,23 @@ class TipsPDF(FPDF):
         self.set_text_color(*INK)
         self.ln(5)
 
-        # ── Tip summary panel ─────────────────────────────────────────────────
+        # Tip summary panel
         if win:
             y1 = self.get_y()
             self.set_fill_color(*c_bg)
             self.rect(14, y1, 182, 17, "F")
-            # Left accent bar
             self.set_fill_color(*c_ink)
             self.rect(14, y1, 3, 17, "F")
 
-            # "TIP:" label
             self.set_xy(20, y1 + 2.5)
             self.set_font("Helvetica", "B", 9)
             self.set_text_color(*c_ink)
             super().cell(12, 6, "TIP:", ln=False)
 
-            # Winner name
             self.set_font("Helvetica", "B", 13)
             self.set_text_color(*INK)
             super().cell(65, 6, _safe(win), ln=False)
 
-            # Stats inline
             self.set_font("Helvetica", "", 9)
             self.set_text_color(*SUB)
             stats = []
@@ -364,7 +330,7 @@ class TipsPDF(FPDF):
             self.set_text_color(*INK)
             self.ln(6)
 
-        # ── Full AI analysis ──────────────────────────────────────────────────
+        # Full AI analysis
         SECTION_STARTS = (
             "PREDICTED WINNER",  "WIN PROBABILITY",   "PREDICTED MARGIN",
             "KEY FACTORS",       "SCORING TRENDS",    "HOME GROUND",
@@ -402,7 +368,7 @@ class TipsPDF(FPDF):
 
 # ── Public API ────────────────────────────────────────────────────────────────
 
-def generate_pdf(predictions: list) -> bytes:
+def generate_pdf(predictions: List[Dict]) -> bytes:
     """
     Generate a print-ready PDF from a list of prediction dicts.
     Returns raw bytes suitable for st.download_button().
