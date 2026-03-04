@@ -4,3 +4,5 @@ pandas
 python-dotenv
 feedparser
 fpdf2
+beautifulsoup4
+lxml
