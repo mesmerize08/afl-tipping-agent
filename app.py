@@ -197,6 +197,27 @@ def render_summary_table(predictions):
     """, unsafe_allow_html=True)
 
 
+# ─── PDF download button ──────────────────────────────────────────────────────
+
+def _render_pdf_button():
+    """
+    Render the PDF download button from cached session_state bytes.
+    Using session_state means the button persists after being clicked —
+    clicking a st.download_button triggers a Streamlit rerun, but because
+    the bytes are already stored in session_state the button re-renders
+    immediately in every subsequent run without re-generating the PDF.
+    """
+    if st.session_state.get("pdf_bytes"):
+        round_label = st.session_state.get("pdf_round", "")
+        st.download_button(
+            label="📄 Download PDF Report",
+            data=st.session_state.pdf_bytes,
+            file_name=f"AFL_Tips_Round{round_label}.pdf",
+            mime="application/pdf",
+            key="pdf_dl",
+        )
+
+
 # ─── Match countdown ──────────────────────────────────────────────────────────
 
 def render_countdown(game_date_str, game_id):
@@ -374,9 +395,14 @@ with tab1:
     with col_main:
         run_btn = st.button("⚡ GENERATE THIS WEEK'S TIPS", type="primary")
 
-        # Persist predictions across reruns (clicking buttons re-runs the whole script)
+        # Persist predictions and PDF bytes across reruns
+        # (Streamlit reruns the full script on every interaction including download clicks)
         if "predictions" not in st.session_state:
             st.session_state.predictions = []
+        if "pdf_bytes" not in st.session_state:
+            st.session_state.pdf_bytes = None
+        if "pdf_round" not in st.session_state:
+            st.session_state.pdf_round = None
 
         if run_btn:
             with st.spinner("Fetching fixtures and market data..."):
@@ -403,6 +429,14 @@ with tab1:
                 if predictions:
                     st.session_state.predictions = predictions
                     round_num = predictions[0]["round"]
+
+                    # Pre-generate PDF and cache it — survives the rerun triggered by clicking download
+                    try:
+                        st.session_state.pdf_bytes = generate_pdf(predictions)
+                        st.session_state.pdf_round = round_num
+                    except Exception as pdf_err:
+                        st.session_state.pdf_bytes = None
+                        st.caption(f"PDF unavailable: {pdf_err}")
                     high   = sum(1 for p in predictions if extract_confidence(p["prediction"]) == "High")
                     medium = sum(1 for p in predictions if extract_confidence(p["prediction"]) == "Medium")
                     low    = sum(1 for p in predictions if extract_confidence(p["prediction"]) == "Low")
@@ -417,18 +451,7 @@ with tab1:
                     """, unsafe_allow_html=True)
 
                     render_summary_table(predictions)
-
-                    # PDF export
-                    try:
-                        pdf_bytes = generate_pdf(predictions)
-                        st.download_button(
-                            label="📄 Download PDF Report",
-                            data=pdf_bytes,
-                            file_name=f"AFL_Tips_Round{round_num}.pdf",
-                            mime="application/pdf",
-                        )
-                    except Exception as pdf_err:
-                        st.caption(f"PDF unavailable: {pdf_err}")
+                    _render_pdf_button()
 
                     st.markdown("<div style='font-family:Barlow Condensed,sans-serif;font-size:0.8rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8b949e;margin-bottom:1rem;'>── Detailed Match Analysis ──</div>", unsafe_allow_html=True)
                     for i, pred in enumerate(predictions):
@@ -450,6 +473,7 @@ with tab1:
             </div>
             """, unsafe_allow_html=True)
             render_summary_table(predictions)
+            _render_pdf_button()
             st.markdown("<div style='font-family:Barlow Condensed,sans-serif;font-size:0.8rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8b949e;margin-bottom:1rem;'>── Detailed Match Analysis ──</div>", unsafe_allow_html=True)
             for i, pred in enumerate(predictions):
                 render_prediction_card(pred, i)
