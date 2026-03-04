@@ -1,35 +1,28 @@
 """
-team_news.py  (REWRITTEN — Zero Hanger RSS replaces dead AFL.com.au feeds)
-===========================================================================
+team_news.py  (OPTIMIZED — Full article content fetching added)
+==================================================================
 Root problem: AFL.com.au has killed all their RSS feeds (all return 404).
 
 Solution: Zero Hanger (zerohanger.com) is Australia's leading independent
 AFL news site. Their RSS feed is live, covers all 18 clubs, and specialises
 in exactly what we need: injuries, suspensions, MRO decisions, and team
-selection news. It is scraped here as the primary news source.
+selection news.
+
+NEW IN THIS VERSION:
+  - Fetches full article content from URLs (not just headlines)
+  - Extracts actual player names, injuries, suspensions
+  - Provides meaningful content for AI analysis
 
 Sources used:
   PRIMARY  — Zero Hanger RSS (zerohanger.com/feed) — all teams, injuries & suspensions
   FALLBACK — Individual club websites (rss or /feed path, varies by club)
-
-Functions:
-  is_preseason()               : auto-detects preseason period
-  is_relevant_article()        : keyword filter for injury/selection news
-  get_zerohanger_news()        : fetch Zero Hanger RSS, filter for both teams
-  get_club_rss_news()          : try individual club RSS as supplementary source
-  get_team_news()              : fetch news for one team (used by Team News tab)
-  get_afl_wide_selection_news(): general AFL injury/suspension feed
-  format_team_news_for_ai()   : format all news into AI prompt string
-  get_all_teams_news_summary() : all 18 teams (used by Streamlit Team News tab)
-
-TEAM_URLS is kept for backward compatibility but now points to club websites
-rather than the dead AFL.com.au team RSS paths.
 """
 
 import re
 import requests
 import feedparser
 from datetime import datetime, timedelta
+from typing import List, Dict, Optional
 
 
 # ─── Zero Hanger — primary source ─────────────────────────────────────────────
@@ -37,8 +30,7 @@ from datetime import datetime, timedelta
 ZEROHANGER_RSS          = "https://www.zerohanger.com/feed"
 ZEROHANGER_INJURIES_URL = "https://www.zerohanger.com/afl/injuries-suspensions/"
 
-# Per-team latest news pages — not subject to the 20-article global RSS cap.
-# These cover team-specific news going back weeks even when the main feed rolls over.
+# Per-team latest news pages
 ZEROHANGER_TEAM_NEWS_URLS = {
     "Adelaide":         "https://www.zerohanger.com/afl/adelaide-crows-latest-news/",
     "Brisbane Lions":   "https://www.zerohanger.com/afl/brisbane-lions-latest-news/",
@@ -60,10 +52,7 @@ ZEROHANGER_TEAM_NEWS_URLS = {
     "Western Bulldogs": "https://www.zerohanger.com/afl/western-bulldogs-latest-news/",
 }
 
-# ─── Individual club website RSS feeds (supplementary) ────────────────────────
-# Most clubs run WordPress or similar and expose /feed or /rss
-# AFL.com.au team-specific RSS feeds are all dead as of early 2026
-
+# Individual club website RSS feeds (supplementary)
 TEAM_URLS = {
     "Adelaide":         "https://www.afc.com.au/feed",
     "Brisbane Lions":   "https://www.lions.com.au/feed",
@@ -114,9 +103,7 @@ INJURY_KEYWORDS = [
     "captain", "leadership group",
     # Opening round
     "opening round", "round 0", "round 1",
-    # ── Australian AFL vernacular ─────────────────────────────────────────
-    # "rubbed out" = suspended, "in doubt" = injured/uncertain,
-    # "miss" used specifically in AFL injury context, "casualty ward" etc.
+    # Australian AFL vernacular
     "rubbed out", "in doubt", "doubt for", "will miss", "set to miss",
     "race against", "under an injury", "health scare", "fitness test",
     "fitness concern", "fitness cloud", "injury cloud", "injury scare",
@@ -130,13 +117,13 @@ INJURY_KEYWORDS = [
     "protocols", "concussion protocols", "return to play protocol",
 ]
 
-# Broader terms for preseason (lower bar for capturing team news)
+# Broader terms for preseason
 PRESEASON_BROAD_KEYWORDS = [
     "player", "squad", "team", "season", "fixture", "fitness",
     "training", "camp", "preparing", "premiership",
 ]
 
-# Map common team name variants to canonical names for fuzzy matching
+# Map common team name variants to canonical names
 TEAM_ALIASES = {
     "crows":       "Adelaide",
     "adelaide":    "Adelaide",
@@ -179,9 +166,92 @@ TEAM_ALIASES = {
 }
 
 
+# ─── NEW: Fetch full article content ──────────────────────────────────────────
+
+def fetch_article_content(url: str, max_length: int = 800) -> str:
+    """
+    Fetch the full article content from a Zero Hanger URL.
+    Extracts the main article text with player names, injuries, etc.
+    
+    Args:
+        url: Article URL
+        max_length: Maximum characters to return
+        
+    Returns:
+        Article content or empty string if fetch fails
+    """
+    try:
+        headers = {"User-Agent": "AFL-Tipping-Agent/1.0 (github.com/mesmerize08/afl-tipping-agent)"}
+        response = requests.get(url, timeout=10, headers=headers)
+        response.raise_for_status()
+        html = response.text
+        
+        # Extract article content from common WordPress patterns
+        # Zero Hanger uses WordPress, so content is typically in:
+        # <div class="entry-content"> or <article> or <div class="post-content">
+        
+        # Try multiple patterns to extract article text
+        patterns = [
+            r'<div[^>]*class="[^"]*entry-content[^"]*"[^>]*>(.*?)</div>',
+            r'<div[^>]*class="[^"]*post-content[^"]*"[^>]*>(.*?)</div>',
+            r'<article[^>]*>(.*?)</article>',
+            r'<div[^>]*class="[^"]*article-content[^"]*"[^>]*>(.*?)</div>',
+        ]
+        
+        content = ""
+        for pattern in patterns:
+            match = re.search(pattern, html, re.DOTALL | re.IGNORECASE)
+            if match:
+                content = match.group(1)
+                break
+        
+        if not content:
+            # Fallback: try to find any large text block after the title
+            # Look for <p> tags with substantial content
+            paragraphs = re.findall(r'<p[^>]*>(.*?)</p>', html, re.DOTALL)
+            # Filter out short paragraphs (likely navigation/ads)
+            substantial = [p for p in paragraphs if len(p) > 50]
+            if substantial:
+                content = " ".join(substantial[:5])  # First 5 paragraphs
+        
+        if not content:
+            return ""
+        
+        # Clean HTML tags
+        content = re.sub(r'<script[^>]*>.*?</script>', '', content, flags=re.DOTALL)
+        content = re.sub(r'<style[^>]*>.*?</style>', '', content, flags=re.DOTALL)
+        content = re.sub(r'<[^>]+>', ' ', content)
+        
+        # Decode HTML entities
+        content = content.replace('&nbsp;', ' ')
+        content = content.replace('&amp;', '&')
+        content = content.replace('&lt;', '<')
+        content = content.replace('&gt;', '>')
+        content = content.replace('&quot;', '"')
+        content = content.replace('&#8217;', "'")
+        content = content.replace('&#8220;', '"')
+        content = content.replace('&#8221;', '"')
+        content = content.replace('&#8211;', '-')
+        content = content.replace('&#8212;', '--')
+        
+        # Clean whitespace
+        content = re.sub(r'\s+', ' ', content)
+        content = content.strip()
+        
+        # Truncate to max length
+        if len(content) > max_length:
+            content = content[:max_length] + "..."
+        
+        return content
+        
+    except Exception as e:
+        # Silently fail - we'll just have empty summary
+        return ""
+
+
 # ─── Preseason detection ───────────────────────────────────────────────────────
 
-def is_preseason():
+def is_preseason() -> bool:
     """
     True during the AFL preseason period (November through early March).
     Triggers wider search windows and looser keyword filtering.
@@ -197,26 +267,23 @@ def is_preseason():
 
 # ─── Relevance filter ─────────────────────────────────────────────────────────
 
-# Short keywords that need word-boundary protection to avoid substring false-positives.
-# e.g. "out" would match "throughout", "test" would match "latest", etc.
+# Short keywords that need word-boundary protection
 _SHORT_KW_PATTERNS = [
     re.compile(r"\b" + kw + r"\b")
     for kw in ("out", "back", "test", "hip", "rib", "shin", "neck", "miss", "rested")
 ]
 
-# All other keywords are long enough that substring matching is safe.
+# All other keywords are long enough that substring matching is safe
 _LONG_KEYWORDS = [
     kw for kw in INJURY_KEYWORDS
     if kw not in {"out", "back", "test", "hip", "rib", "shin", "neck", "miss", "rested"}
 ]
 
 
-def is_relevant_article(title, summary, strict=True):
+def is_relevant_article(title: str, summary: str, strict: bool = True) -> bool:
     """
     Returns True if article is relevant to team news/injuries/selections.
-    Uses word-boundary matching for short ambiguous keywords to avoid false
-    positives (e.g. 'out' in 'throughout', 'test' in 'latest').
-    strict=False includes broader terms (used in preseason).
+    Uses word-boundary matching for short ambiguous keywords.
     """
     text = (title + " " + summary).lower()
 
@@ -234,10 +301,9 @@ def is_relevant_article(title, summary, strict=True):
     return False
 
 
-def article_mentions_team(title, summary, team_name):
+def article_mentions_team(title: str, summary: str, team_name: str) -> bool:
     """
     Check whether an article mentions a specific team by name or nickname.
-    Uses TEAM_ALIASES for fuzzy matching.
     """
     text = (title + " " + summary).lower()
 
@@ -253,19 +319,12 @@ def article_mentions_team(title, summary, team_name):
     return False
 
 
-# ─── Supplementary: Zero Hanger injuries/suspensions page ────────────────────
+# ─── Zero Hanger injuries/suspensions page ────────────────────────────────────
 
-def get_zerohanger_injuries_page(days_back=None):
+def get_zerohanger_injuries_page(days_back: Optional[int] = None) -> List[Dict]:
     """
     Scrape Zero Hanger's dedicated Injuries & Suspensions page.
-
-    This is a supplement to the RSS feed — it covers injury and suspension news
-    across all 18 clubs and is not subject to the 20-article global RSS cap.
-    Useful for catching MRO decisions, tribunal outcomes, and training injuries
-    announced earlier in the week that may have been pushed off the RSS feed
-    by newer articles.
-
-    Returns articles in the same format as get_zerohanger_news().
+    NOW FETCHES FULL ARTICLE CONTENT.
     """
     import re as _re
 
@@ -281,10 +340,7 @@ def get_zerohanger_injuries_page(days_back=None):
         response = requests.get(ZEROHANGER_INJURIES_URL, timeout=15, headers=headers)
         html     = response.text
 
-        # Extract article titles and URLs from the HTML.
-        # Zero Hanger article links follow a consistent pattern:
-        # <a href="/some-article-slug-123456/"> or absolute URLs
-        # We look for links whose text looks like an article headline.
+        # Extract article links
         link_pattern = _re.compile(
             r'href="(https?://www\.zerohanger\.com/[^"]+?-\d{4,}/?)"[^>]*>([^<]{20,200})</a>',
             _re.IGNORECASE
@@ -295,11 +351,15 @@ def get_zerohanger_injuries_page(days_back=None):
             if url in seen_urls:
                 continue
             seen_urls.add(url)
+            
             # Filter to only injury/suspension/selection relevant headlines
             if is_relevant_article(title, title, strict=not preseason):
+                # NEW: Fetch full article content
+                content = fetch_article_content(url, max_length=600)
+                
                 articles.append({
                     "title":     title,
-                    "summary":   "",
+                    "summary":   content if content else title,  # Fallback to title if fetch fails
                     "url":       url,
                     "published": datetime.now().strftime("%Y-%m-%d"),
                     "source":    "Zero Hanger (Injuries Hub)",
@@ -313,16 +373,10 @@ def get_zerohanger_injuries_page(days_back=None):
     return articles
 
 
-def get_zerohanger_team_page(team_name, days_back=None):
+def get_zerohanger_team_page(team_name: str, days_back: Optional[int] = None) -> List[Dict]:
     """
     Scrape Zero Hanger's per-team latest news page.
-
-    Each team has a dedicated page at zerohanger.com/afl/{team}-latest-news/
-    which contains team-specific articles going back much further than the
-    20-article global RSS feed allows.
-
-    Called for the two specific teams playing each week, rather than all 18.
-    Returns articles in the same format as get_zerohanger_news().
+    NOW FETCHES FULL ARTICLE CONTENT.
     """
     import re as _re
 
@@ -351,10 +405,14 @@ def get_zerohanger_team_page(team_name, days_back=None):
             if article_url in seen_urls:
                 continue
             seen_urls.add(article_url)
+            
             if is_relevant_article(title, title, strict=not preseason):
+                # NEW: Fetch full article content
+                content = fetch_article_content(article_url, max_length=600)
+                
                 articles.append({
                     "title":     title,
-                    "summary":   "",
+                    "summary":   content if content else title,  # Fallback to title
                     "url":       article_url,
                     "published": datetime.now().strftime("%Y-%m-%d"),
                     "source":    f"Zero Hanger ({team_name})",
@@ -371,11 +429,10 @@ def get_zerohanger_team_page(team_name, days_back=None):
 
 # ─── Primary source: Zero Hanger RSS ─────────────────────────────────────────
 
-def get_zerohanger_news(days_back=None):
+def get_zerohanger_news(days_back: Optional[int] = None) -> List[Dict]:
     """
     Fetch Zero Hanger's AFL RSS feed — the primary source for team news.
-    Zero Hanger covers injuries, suspensions, MRO decisions, and selections
-    for all 18 clubs. Their feed is live and updated daily.
+    RSS feed already has summaries, but we can enhance them if needed.
     """
     preseason = is_preseason()
     if days_back is None:
@@ -395,8 +452,9 @@ def get_zerohanger_news(days_back=None):
 
         for entry in feed.entries:
             title   = entry.get("title", "")
-            summary = entry.get("summary", "")[:400]
+            summary = entry.get("summary", "")[:800]  # Increased from 400 to 800
             pub_str = entry.get("published", "")
+            url     = entry.get("link", "")
 
             try:
                 published = datetime(*entry.published_parsed[:6])
@@ -406,10 +464,16 @@ def get_zerohanger_news(days_back=None):
                 pass
 
             if is_relevant_article(title, summary, strict=not preseason):
+                # If summary is too short, try to fetch full content
+                if len(summary) < 100 and url:
+                    full_content = fetch_article_content(url, max_length=600)
+                    if full_content:
+                        summary = full_content
+                
                 articles.append({
-                    "team":      "General",   # will be tagged per-team when filtering
+                    "team":      "General",
                     "title":     title,
-                    "summary":   summary,
+                    "summary":   summary if summary else title,
                     "published": pub_str,
                     "source":    "Zero Hanger",
                 })
@@ -424,11 +488,10 @@ def get_zerohanger_news(days_back=None):
 
 # ─── Supplementary source: individual club RSS ────────────────────────────────
 
-def get_club_rss_news(team_name, days_back=None):
+def get_club_rss_news(team_name: str, days_back: Optional[int] = None) -> List[Dict]:
     """
     Try to fetch the individual club's own RSS/feed endpoint.
-    Used as a supplementary source — some club sites work, some don't.
-    Fails silently if unavailable.
+    Used as a supplementary source.
     """
     url = TEAM_URLS.get(team_name)
     if not url:
@@ -448,7 +511,7 @@ def get_club_rss_news(team_name, days_back=None):
 
         for entry in feed.entries:
             title   = entry.get("title", "")
-            summary = entry.get("summary", "")[:400]
+            summary = entry.get("summary", "")[:800]  # Increased from 400
             pub_str = entry.get("published", "")
 
             try:
@@ -462,7 +525,7 @@ def get_club_rss_news(team_name, days_back=None):
                 articles.append({
                     "team":      team_name,
                     "title":     title,
-                    "summary":   summary,
+                    "summary":   summary if summary else title,
                     "published": pub_str,
                     "source":    f"{team_name} Official Site",
                 })
@@ -475,14 +538,10 @@ def get_club_rss_news(team_name, days_back=None):
 
 # ─── Per-team news (used by Streamlit Team News tab) ─────────────────────────
 
-def get_team_news(team_name, days_back=None):
+def get_team_news(team_name: str, days_back: Optional[int] = None) -> List[Dict]:
     """
     Get all relevant news for a single team.
-    Combines all four sources:
-      1. Zero Hanger RSS (filtered to this team)
-      2. Zero Hanger Injuries & Suspensions hub
-      3. Zero Hanger per-team latest news page
-      4. Club RSS (supplementary)
+    Combines all four sources with full article content.
     """
     preseason = is_preseason()
     if days_back is None:
@@ -496,7 +555,7 @@ def get_team_news(team_name, days_back=None):
         if article_mentions_team(a["title"], a["summary"], team_name)
     ]
 
-    # 2. Injuries & Suspensions hub
+    # 2. Injuries & Suspensions hub (now with full content)
     injuries_all     = get_zerohanger_injuries_page(days_back=days_back)
     injuries_articles = [
         {**a, "team": team_name}
@@ -504,7 +563,7 @@ def get_team_news(team_name, days_back=None):
         if article_mentions_team(a["title"], a["summary"], team_name)
     ]
 
-    # 3. Per-team news page
+    # 3. Per-team news page (now with full content)
     team_page_articles = [
         {**a, "team": team_name}
         for a in get_zerohanger_team_page(team_name, days_back=days_back)
@@ -527,32 +586,22 @@ def get_team_news(team_name, days_back=None):
     return merged
 
 
-# ─── General AFL news (injuries & suspensions across all teams) ───────────────
+# ─── General AFL news ──────────────────────────────────────────────────────────
 
-def get_afl_wide_selection_news(days_back=None):
+def get_afl_wide_selection_news(days_back: Optional[int] = None) -> List[Dict]:
     """
     Get broad AFL injury/suspension/selection news across all teams.
-    Returns all relevant Zero Hanger articles, not filtered to specific teams.
     """
     return get_zerohanger_news(days_back=days_back)
 
 
 # ─── Format for AI prompt ─────────────────────────────────────────────────────
 
-def format_team_news_for_ai(home_team, away_team):
+def format_team_news_for_ai(home_team: str, away_team: str) -> str:
     """
     Fetch and format all relevant team news for both teams.
     Returns a structured string ready to inject into the AI prompt.
-
-    Sources (in priority order):
-      1. Zero Hanger RSS feed (latest ~20 articles, all teams)
-      2. Zero Hanger Injuries & Suspensions hub (not subject to RSS cap)
-      3. Zero Hanger per-team latest news pages (team-specific archive)
-      4. Individual club RSS feeds (supplementary, where available)
-
-    Sources 2 and 3 are critical for catching suspensions, MRO decisions,
-    and training injuries that may have been pushed off the 20-article
-    global RSS feed by more recent general news articles.
+    NOW WITH FULL ARTICLE CONTENT.
     """
     preseason = is_preseason()
     print(f"  📰 Fetching team news for {home_team} and {away_team}...")
@@ -572,21 +621,18 @@ def format_team_news_for_ai(home_team, away_team):
                     result.append(a)
         return result
 
-    # 1. Zero Hanger global RSS — fetch once, filter per team
+    # Fetch from all sources (now with full content)
     all_zh = get_zerohanger_news(days_back=days_back)
     home_rss = [a for a in all_zh if article_mentions_team(a["title"], a["summary"], home_team)]
     away_rss = [a for a in all_zh if article_mentions_team(a["title"], a["summary"], away_team)]
 
-    # 2. Injuries & Suspensions hub — catches MRO/tribunal news off the main feed
     injuries_articles = get_zerohanger_injuries_page(days_back=days_back)
     home_injuries = [a for a in injuries_articles if article_mentions_team(a["title"], a["summary"], home_team)]
     away_injuries = [a for a in injuries_articles if article_mentions_team(a["title"], a["summary"], away_team)]
 
-    # 3. Per-team news pages — team-specific archive not capped at 20 globally
     home_team_page = get_zerohanger_team_page(home_team, days_back=days_back)
     away_team_page = get_zerohanger_team_page(away_team, days_back=days_back)
 
-    # 4. Club RSS (supplementary — many are dead but worth trying)
     home_club = get_club_rss_news(home_team, days_back=days_back)
     away_club = get_club_rss_news(away_team, days_back=days_back)
 
@@ -606,8 +652,11 @@ def format_team_news_for_ai(home_team, away_team):
 
     if home_news:
         sections.append(f"📋 {home_team.upper()} TEAM NEWS:")
-        for a in home_news[:6]:
-            sections.append(f"  • [{a.get('source','Zero Hanger')}] {a['title']}: {a['summary'][:200]}")
+        for a in home_news[:6]:  # Top 6 articles
+            # Now includes full content, not just title
+            sections.append(f"  • [{a.get('source','Zero Hanger')}] {a['title']}")
+            if a.get('summary') and len(a['summary']) > 10:
+                sections.append(f"    {a['summary'][:500]}")  # Show summary content
     else:
         sections.append(
             f"📋 {home_team.upper()} TEAM NEWS: No relevant news found in last "
@@ -617,7 +666,9 @@ def format_team_news_for_ai(home_team, away_team):
     if away_news:
         sections.append(f"\n📋 {away_team.upper()} TEAM NEWS:")
         for a in away_news[:6]:
-            sections.append(f"  • [{a.get('source','Zero Hanger')}] {a['title']}: {a['summary'][:200]}")
+            sections.append(f"  • [{a.get('source','Zero Hanger')}] {a['title']}")
+            if a.get('summary') and len(a['summary']) > 10:
+                sections.append(f"    {a['summary'][:500]}")
     else:
         sections.append(
             f"\n📋 {away_team.upper()} TEAM NEWS: No relevant news found in last "
@@ -629,18 +680,10 @@ def format_team_news_for_ai(home_team, away_team):
 
 # ─── All-teams news (used by Streamlit Team News tab) ─────────────────────────
 
-def get_all_teams_news_summary():
+def get_all_teams_news_summary() -> List[Dict]:
     """
     Get relevant news for all 18 teams for the Team News tab.
-
-    Fetches Zero Hanger RSS once (efficient — single request for all teams),
-    then supplements with the Injuries & Suspensions hub to catch mid-week
-    MRO decisions and tribunal outcomes that may have been pushed off the
-    20-article RSS cap by newer general news articles.
-
-    Per-team page scraping is intentionally skipped here (18 HTTP requests
-    would be too slow for the UI). It is used in format_team_news_for_ai
-    where only the two playing teams are fetched.
+    NOW WITH FULL ARTICLE CONTENT.
     """
     preseason = is_preseason()
     days_back = 21 if preseason else 7
