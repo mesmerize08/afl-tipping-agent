@@ -24,10 +24,10 @@ from data_fetcher import (
     get_betting_odds, get_afl_news, compile_match_data,
     get_squiggle_tips
 )
-from predict import run_weekly_predictions
-from tracker import check_and_update_results, get_accuracy_display_data, load_history
-from team_news import get_all_teams_news_summary, TEAM_URLS
-from pdf_export import generate_pdf
+from predict      import run_weekly_predictions
+from tracker      import check_and_update_results, get_accuracy_display_data, load_history
+from team_news    import get_all_teams_news_summary, TEAM_URLS
+from pdf_export   import generate_pdf
 
 # ─── Page config ──────────────────────────────────────────────────────────────
 st.set_page_config(
@@ -260,8 +260,23 @@ def render_prediction_card(pred, idx):
         if "declining"  in atk: return "<span style='color:#f85149;font-size:0.78rem;'>📉 ATK ↓</span>"
         return ""
 
-    hb = " ".join(filter(None, [travel_badge(h_travel), rest_badge(h_rest), trend_badge(h_score)]))
-    ab = " ".join(filter(None, [travel_badge(a_travel), rest_badge(a_rest), trend_badge(a_score)]))
+    def ha_badge(split, side):
+        """Show a home ground advantage badge if the split is significant (>=20pp)."""
+        if not split: return ""
+        h = split.get("home", {})
+        a = split.get("away", {})
+        if h.get("pct") is None or a.get("pct") is None: return ""
+        diff = h["pct"] - a["pct"]
+        if side == "home" and diff >= 20:
+            return f"<span style='color:#3fb950;font-size:0.78rem;'>🏠 HGA +{diff}pp</span>"
+        if side == "away" and diff <= -20:
+            return f"<span style='color:#3fb950;font-size:0.78rem;'>✈️ STRONG AWAY</span>"
+        return ""
+
+    h_ha = pred.get("home_ha_split", {})
+    a_ha = pred.get("away_ha_split", {})
+    hb = " ".join(filter(None, [travel_badge(h_travel), rest_badge(h_rest), trend_badge(h_score), ha_badge(h_ha, "home")]))
+    ab = " ".join(filter(None, [travel_badge(a_travel), rest_badge(a_rest), trend_badge(a_score), ha_badge(a_ha, "away")]))
     prob_d   = f"{prob:.0f}%" if prob else ""
     margin_d = f"~{margin} pts" if margin else ""
 
@@ -357,24 +372,11 @@ with tab1:
         st.markdown("<div style='font-family:Outfit,sans-serif;font-size:0.75rem;color:#484f58;line-height:1.6;'>For entertainment only.<br>Please gamble responsibly.</div>", unsafe_allow_html=True)
 
     with col_main:
-        # ── Button row: generate + PDF export side by side ────────────────────
-        btn_col, pdf_col = st.columns([3, 1])
-        with btn_col:
-            run_btn = st.button("⚡ GENERATE THIS WEEK'S TIPS", type="primary", use_container_width=True)
-        with pdf_col:
-            if st.session_state.get("predictions"):
-                _round = st.session_state["predictions"][0].get("round", "")
-                try:
-                    pdf_bytes = generate_pdf(st.session_state["predictions"])
-                    st.download_button(
-                        label="📄 EXPORT PDF",
-                        data=pdf_bytes,
-                        file_name=f"AFL_Tips_Round{_round}.pdf",
-                        mime="application/pdf",
-                        use_container_width=True,
-                    )
-                except Exception as _pdf_err:
-                    st.caption(f"PDF unavailable: {_pdf_err}")
+        run_btn = st.button("⚡ GENERATE THIS WEEK'S TIPS", type="primary")
+
+        # Persist predictions across reruns (clicking buttons re-runs the whole script)
+        if "predictions" not in st.session_state:
+            st.session_state.predictions = []
 
         if run_btn:
             with st.spinner("Fetching fixtures and market data..."):
@@ -391,28 +393,54 @@ with tab1:
                 match_data_list = []
                 bar = st.progress(0, text="Gathering match data...")
                 for i, game in enumerate(fixtures):
-                    bar.progress(
-                        (i + 1) / len(fixtures),
-                        text=f"Loading: {game.get('hteam')} vs {game.get('ateam')}"
-                    )
+                    bar.progress((i+1)/len(fixtures), text=f"Loading: {game.get('hteam')} vs {game.get('ateam')}")
                     match_data_list.append(compile_match_data(game, ladder, odds))
                 bar.empty()
 
                 with st.spinner("🤖 AI analysing all matches..."):
                     predictions = run_weekly_predictions(match_data_list, news)
 
-                # Persist to session_state so the PDF button works without regenerating
-                st.session_state["predictions"] = predictions
-                st.rerun()
+                if predictions:
+                    st.session_state.predictions = predictions
+                    round_num = predictions[0]["round"]
+                    high   = sum(1 for p in predictions if extract_confidence(p["prediction"]) == "High")
+                    medium = sum(1 for p in predictions if extract_confidence(p["prediction"]) == "Medium")
+                    low    = sum(1 for p in predictions if extract_confidence(p["prediction"]) == "Low")
 
-        # ── Render predictions from session_state ─────────────────────────────
-        predictions = st.session_state.get("predictions", [])
-        if predictions:
-            round_num = predictions[0]["round"]
+                    st.markdown(f"""
+                    <div style="font-family:Barlow Condensed,sans-serif;font-size:2.2rem;font-weight:800;color:#e8b44b;letter-spacing:0.03em;margin-bottom:0.5rem;">ROUND {round_num} PREDICTIONS</div>
+                    <div style="display:flex;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;">
+                        <span style="background:rgba(63,185,80,0.1);border:1px solid rgba(63,185,80,0.3);color:#3fb950;padding:0.3rem 0.75rem;border-radius:4px;font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:0.85rem;letter-spacing:0.05em;">🟢 HIGH: {high}</span>
+                        <span style="background:rgba(210,153,34,0.1);border:1px solid rgba(210,153,34,0.3);color:#d29922;padding:0.3rem 0.75rem;border-radius:4px;font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:0.85rem;letter-spacing:0.05em;">🟡 MEDIUM: {medium}</span>
+                        <span style="background:rgba(248,81,73,0.1);border:1px solid rgba(248,81,73,0.3);color:#f85149;padding:0.3rem 0.75rem;border-radius:4px;font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:0.85rem;letter-spacing:0.05em;">🔴 LOW: {low}</span>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+                    render_summary_table(predictions)
+
+                    # PDF export
+                    try:
+                        pdf_bytes = generate_pdf(predictions)
+                        st.download_button(
+                            label="📄 Download PDF Report",
+                            data=pdf_bytes,
+                            file_name=f"AFL_Tips_Round{round_num}.pdf",
+                            mime="application/pdf",
+                        )
+                    except Exception as pdf_err:
+                        st.caption(f"PDF unavailable: {pdf_err}")
+
+                    st.markdown("<div style='font-family:Barlow Condensed,sans-serif;font-size:0.8rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8b949e;margin-bottom:1rem;'>── Detailed Match Analysis ──</div>", unsafe_allow_html=True)
+                    for i, pred in enumerate(predictions):
+                        render_prediction_card(pred, i)
+
+        # Show previously-generated predictions if the user hasn't re-run yet
+        elif st.session_state.predictions:
+            predictions = st.session_state.predictions
+            round_num   = predictions[0]["round"]
             high   = sum(1 for p in predictions if extract_confidence(p["prediction"]) == "High")
             medium = sum(1 for p in predictions if extract_confidence(p["prediction"]) == "Medium")
             low    = sum(1 for p in predictions if extract_confidence(p["prediction"]) == "Low")
-
             st.markdown(f"""
             <div style="font-family:Barlow Condensed,sans-serif;font-size:2.2rem;font-weight:800;color:#e8b44b;letter-spacing:0.03em;margin-bottom:0.5rem;">ROUND {round_num} PREDICTIONS</div>
             <div style="display:flex;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;">
@@ -421,9 +449,7 @@ with tab1:
                 <span style="background:rgba(248,81,73,0.1);border:1px solid rgba(248,81,73,0.3);color:#f85149;padding:0.3rem 0.75rem;border-radius:4px;font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:0.85rem;letter-spacing:0.05em;">🔴 LOW: {low}</span>
             </div>
             """, unsafe_allow_html=True)
-
             render_summary_table(predictions)
-
             st.markdown("<div style='font-family:Barlow Condensed,sans-serif;font-size:0.8rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8b949e;margin-bottom:1rem;'>── Detailed Match Analysis ──</div>", unsafe_allow_html=True)
             for i, pred in enumerate(predictions):
                 render_prediction_card(pred, i)

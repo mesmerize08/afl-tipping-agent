@@ -57,8 +57,10 @@ VENUE_ALIASES = {
     "Carrara":            "People First Stadium",
     "Stadium Australia":  "Engie Stadium",
     "Spotless Stadium":   "Engie Stadium",
+    "Carrara":            "People First Stadium",
     "GIANTS Stadium":     "Giants Stadium",
     "Sydney Showground":  "Giants Stadium",
+    "ENGIE Stadium":      "Engie Stadium",
     "Traeger Park":       "TIO Stadium",
     "Aurora Stadium":     "University of Tasmania Stadium",
 }

@@ -157,21 +157,24 @@ def check_and_update_results(year=None):
     Run this after each round finishes (Monday/Tuesday).
     Returns a summary of how we went this round.
     """
-    if year is None:
-        year = datetime.now().year
     history = load_history()
     updated_count = 0
 
     # Find predictions that don't have results yet
+    if year is None:
+        year = datetime.now().year
     pending = [p for p in history["predictions"] if p["correct"] is None and p["year"] == year]
 
     if not pending:
         print("No pending predictions to check.")
         return None
 
+    _UA = {"User-Agent": "AFL-Tipping-Agent/1.0 (github.com/mesmerize08/afl-tipping-agent)"}
     # Fetch all completed games from Squiggle
     try:
-        response = requests.get(f"{SQUIGGLE_BASE}?q=games;year={year}", timeout=10, headers={"User-Agent": "AFL-Tipping-Agent/1.0 (github.com/mesmerize08/afl-tipping-agent)"})
+        response = requests.get(f"{SQUIGGLE_BASE}?q=games;year={year}",
+                                timeout=10, headers=_UA)
+        response.raise_for_status()
         all_games = response.json().get("games", [])
         completed_games = [g for g in all_games if g.get("complete") == 100]
     except Exception as e:
@@ -336,7 +339,7 @@ def format_history_for_ai(home_team, away_team, max_season_records=15):
             sections.append(
                 f"  Rd {p['round']}: {p['home_team']} vs {p['away_team']} — "
                 f"tipped {p['predicted_winner']} "
-                f"({'%.0f' % p['predicted_probability'] if p.get('predicted_probability') else '?'}% confidence) — "
+                f"({('%.0f' % p['predicted_probability']) if p.get('predicted_probability') else '?'}% confidence) -- "
                 f"{result} (actual winner: {p['actual_winner']})"
             )
 
