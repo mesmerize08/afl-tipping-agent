@@ -66,8 +66,6 @@ VENUE_CITIES = {
     "Giants Stadium":                   "Sydney",
     "GIANTS Stadium":                   "Sydney",
     "Engie Stadium":                    "Sydney",
-    "ENGIE Stadium":                    "Sydney",
-    "Sydney Showground":                "Sydney",
     "Spotless Stadium":                 "Sydney",
     "TIO Stadium":                      "Darwin",
     "Traeger Park":                     "Alice Springs",
@@ -106,96 +104,49 @@ MEDIUM_TRAVEL_PAIRS = {
 
 # ─── Fixtures ──────────────────────────────────────────────────────────────────
 
-# Squiggle uses full team names that differ from our canonical names.
-# Applied at fetch time so all downstream code is consistent.
-SQUIGGLE_TEAM_NAME_MAP = {
-    "Greater Western Sydney": "GWS Giants",
-}
-
-# Shared User-Agent for all Squiggle requests — required by API docs.
-SQUIGGLE_HEADERS = {
-    "User-Agent": "AFL-Tipping-Agent/1.0 (github.com/mesmerize08/afl-tipping-agent)"
-}
-
-
-def normalise_squiggle_game(game):
-    """
-    Normalise a raw Squiggle game dict:
-      - Maps team names to canonical form (e.g. 'Greater Western Sydney' → 'GWS Giants')
-      - Strips dots from venue abbreviations ('S.C.G.' → 'SCG', 'M.C.G.' → 'MCG')
-    """
-    g = dict(game)
-    g["hteam"] = SQUIGGLE_TEAM_NAME_MAP.get(g.get("hteam", ""), g.get("hteam", ""))
-    g["ateam"] = SQUIGGLE_TEAM_NAME_MAP.get(g.get("ateam", ""), g.get("ateam", ""))
-    g["venue"] = g.get("venue", "").replace(".", "").replace("  ", " ").strip()
-    return g
-
-
 def get_upcoming_fixtures():
     """
     Get this week's upcoming AFL games from Squiggle.
-
-    Query strategy — three complementary URLs:
-      1. complete=!100  : all incomplete games this year (the bare year= query
-                          only returns completed games — zero at season start)
-      2. round=0        : explicit Opening Round / pre-season fallback
-      3. round=1        : Round 1 fallback
-
-    After collection, returns only the EARLIEST round found so a wide date
-    window never simultaneously returns two rounds.
-
-    Squiggle asks bots to set a User-Agent; cloud IPs without one get
-    silently rate-limited.  HTTP errors are raised so they surface clearly.
+    Explicitly fetches Round 0 (Opening Round) as well as the full year query
+    since Round 0 is not always returned in a general year query.
+    Uses a 10-day window to catch Opening Round games listed early.
     """
-    today        = datetime.now()
-    week_ahead   = today + timedelta(days=14)
-    current_year = today.year
-    upcoming     = []
-    seen_ids     = set()
+    today      = datetime.now()
+    week_ahead = today + timedelta(days=10)
+    upcoming   = []
+    seen_ids   = set()
 
     urls = [
-        f"{SQUIGGLE_BASE}?q=games;year={current_year};complete=!100",
-        f"{SQUIGGLE_BASE}?q=games;year={current_year};round=0",
-        f"{SQUIGGLE_BASE}?q=games;year={current_year};round=1",
+        f"{SQUIGGLE_BASE}?q=games;year=2026",
+        f"{SQUIGGLE_BASE}?q=games;year=2026;round=0",
     ]
 
     for url in urls:
         try:
-            response = requests.get(url, timeout=15, headers=SQUIGGLE_HEADERS)
-            response.raise_for_status()
-            games = response.json().get("games", [])
-            for raw_game in games:
-                game_id = raw_game.get("id")
+            response = requests.get(url, timeout=15)
+            games    = response.json().get("games", [])
+            for game in games:
+                game_id = game.get("id")
                 if game_id in seen_ids:
                     continue
                 seen_ids.add(game_id)
 
-                try:
-                    complete_int = int(raw_game.get("complete") or 0)
-                except (ValueError, TypeError):
-                    complete_int = 0
-                if complete_int >= 100:
+                # Accept games not yet complete (complete == 0, None, or missing)
+                complete = game.get("complete")
+                if complete not in (0, None, ""):
                     continue
 
-                date_str = raw_game.get("date", "")
-                if date_str:
+                if game.get("date"):
                     try:
-                        game_date = datetime.strptime(date_str[:10], "%Y-%m-%d")
+                        game_date = datetime.strptime(game["date"][:10], "%Y-%m-%d")
                         if today <= game_date <= week_ahead:
-                            upcoming.append(normalise_squiggle_game(raw_game))
+                            upcoming.append(game)
                     except Exception:
                         pass
         except Exception as e:
             print(f"  Warning: Could not fetch fixtures from {url}: {e}")
 
     upcoming.sort(key=lambda x: x.get("date", ""))
-
-    # Filter to the earliest round only — prevents two rounds appearing at once.
-    if upcoming:
-        earliest_round = min(g.get("round", 99) for g in upcoming)
-        upcoming = [g for g in upcoming if g.get("round") == earliest_round]
-        print(f"  Filtered to round {earliest_round}: {len(upcoming)} fixtures")
-
     print(f"  Found {len(upcoming)} upcoming fixtures")
     return upcoming
 
@@ -204,13 +155,8 @@ def get_upcoming_fixtures():
 
 def get_ladder():
     """Get current AFL ladder standings."""
-    current_year = datetime.now().year
     try:
-        response = requests.get(
-            f"{SQUIGGLE_BASE}?q=standings;year={current_year}",
-            timeout=15, headers=SQUIGGLE_HEADERS
-        )
-        response.raise_for_status()
+        response = requests.get(f"{SQUIGGLE_BASE}?q=standings;year=2026", timeout=15)
         return response.json().get("standings", [])
     except Exception as e:
         print(f"  Warning: Could not fetch ladder: {e}")
@@ -219,23 +165,16 @@ def get_ladder():
 
 # ─── Core: Single API call per team, reused across all helpers ────────────────
 
-def get_team_season_data(team_name, year=None):
+def get_team_season_data(team_name, year=2026):
     """
     Fetch ALL completed games for a team in a given year in one API call.
     Returns completed games sorted by date descending.
     If no completed games found for the current year (start of season),
     automatically falls back to the previous year for form calculations.
     """
-    if year is None:
-        year = datetime.now().year
-    url = f"{SQUIGGLE_BASE}?q=games;year={year};team={requests.utils.quote(team_name)}"
-    try:
-        response  = requests.get(url, timeout=15, headers=SQUIGGLE_HEADERS)
-        response.raise_for_status()
-        games     = response.json().get("games", [])
-    except Exception as e:
-        print(f"  Warning: Could not fetch season data for {team_name}: {e}")
-        games = []
+    url      = f"{SQUIGGLE_BASE}?q=games;year={year};team={requests.utils.quote(team_name)}"
+    response = requests.get(url, timeout=15)
+    games    = response.json().get("games", [])
 
     completed = [g for g in games if g.get("complete") == 100]
     completed.sort(key=lambda x: x.get("date", ""), reverse=True)
@@ -243,14 +182,9 @@ def get_team_season_data(team_name, year=None):
     # Fall back to previous year if no completed games yet this season
     if not completed:
         print(f"  No {year} data for {team_name} — falling back to {year - 1}")
-        fallback_url = f"{SQUIGGLE_BASE}?q=games;year={year - 1};team={requests.utils.quote(team_name)}"
-        try:
-            fallback_response = requests.get(fallback_url, timeout=15, headers=SQUIGGLE_HEADERS)
-            fallback_response.raise_for_status()
-            fallback_games = fallback_response.json().get("games", [])
-        except Exception as e:
-            print(f"  Warning: Fallback also failed for {team_name}: {e}")
-            fallback_games = []
+        fallback_url      = f"{SQUIGGLE_BASE}?q=games;year={year - 1};team={requests.utils.quote(team_name)}"
+        fallback_response = requests.get(fallback_url, timeout=15)
+        fallback_games    = fallback_response.json().get("games", [])
         completed = [g for g in fallback_games if g.get("complete") == 100]
         completed.sort(key=lambda x: x.get("date", ""), reverse=True)
 
@@ -588,21 +522,18 @@ def get_betting_odds():
 
 # ─── Squiggle Model Tips ───────────────────────────────────────────────────────
 
-def get_squiggle_tips(round_number=None, year=None):
+def get_squiggle_tips(round_number=None, year=2026):
     """
     Fetch Squiggle's aggregated model predictions.
     Uses 'is not None' check so round 0 (Opening Round) is passed correctly —
     round_number=0 is falsy in Python so a simple 'if round_number' would skip it.
-    Year defaults to the current calendar year if not specified.
     """
-    if year is None:
-        year = datetime.now().year
     url = f"{SQUIGGLE_BASE}?q=tips;year={year}"
     if round_number is not None:
         url += f";round={round_number}"
 
     try:
-        response = requests.get(url, timeout=15, headers=SQUIGGLE_HEADERS)
+        response = requests.get(url, timeout=15)
         tips     = response.json().get("tips", [])
         result   = {}
         for tip in tips:
@@ -644,8 +575,12 @@ def format_squiggle_tips_for_prompt(squiggle_data, home_team, away_team):
         return "Squiggle model prediction not found for this match."
 
     lines = [f"Squiggle statistical model tips: {tip.get('squiggle_tip', '?')} to win"]
-    if tip.get("squiggle_margin"):
-        lines.append(f"  Expected margin: {tip['squiggle_margin']:.1f} pts")
+    margin = tip.get("squiggle_margin")
+    if margin is not None:
+        try:
+            lines.append(f"  Expected margin: {float(margin):.1f} pts")
+        except (TypeError, ValueError):
+            pass
     if tip.get("home_win_prob") is not None:
         away_prob = round(100 - tip["home_win_prob"], 1)
         lines.append(
