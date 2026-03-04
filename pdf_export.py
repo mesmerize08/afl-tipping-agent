@@ -69,11 +69,59 @@ def _extract_confidence(text: str):
 
 
 def _clean_text(text: str) -> str:
-    """Strip markdown bold/italic markers and normalise whitespace."""
+    """
+    Strip markdown, map unicode punctuation to ASCII, drop anything still
+    outside Latin-1. fpdf2's built-in Helvetica is Latin-1 only — any
+    character outside that range raises a font error.
+    """
+    # Strip markdown bold / italic markers
     text = re.sub(r'\*{1,2}([^*]+)\*{1,2}', r'\1', text)
-    text = text.replace("━", "-").replace("═", "=").replace("─", "-")
+
+    # Common unicode → ASCII (covers everything the AI typically outputs)
+    UNICODE_MAP = [
+        ("\u2014", "--"),    # em dash —
+        ("\u2013", "-"),     # en dash \u2013
+        ("\u2012", "-"),     # figure dash
+        ("\u2010", "-"),     # hyphen \u2010
+        ("\u2018", "'"),     # left single quote \u2018
+        ("\u2019", "'"),     # right single quote / apostrophe
+        ("\u201c", '"'),     # left double quote
+        ("\u201d", '"'),     # right double quote
+        ("\u2022", "*"),     # bullet •
+        ("\u2026", "..."),   # ellipsis …
+        ("\u2192", "->"),    # right arrow →
+        ("\u2190", "<-"),    # left arrow ←
+        ("\u2191", "^"),     # up arrow ↑
+        ("\u2193", "v"),     # down arrow ↓
+        ("\u25b2", "^"),     # up triangle ▲
+        ("\u25bc", "v"),     # down triangle ▼
+        ("\u2713", "OK"),    # check mark ✓
+        ("\u2715", "X"),     # cross mark ✕
+        ("\u00b0", " deg"),  # degree °  (already latin-1 but mapping for safety)
+        ("\u00bd", "1/2"),   # ½
+        ("\u2248", "~"),     # almost equal ≈
+        ("\u2260", "!="),    # not equal ≠
+        ("\u2265", ">="),    # ≥
+        ("\u2264", "<="),    # ≤
+        ("━", "-"), ("═", "="), ("─", "-"), ("│", "|"),
+        ("⚡", "!"), ("✅", "[OK]"), ("❌", "[X]"), ("⚠", "[!]"),
+        ("🏠", ""), ("✈", ""), ("📊", ""), ("🤖", ""),
+    ]
+    for uni, asc in UNICODE_MAP:
+        text = text.replace(uni, asc)
+
+    # Nuclear option: silently drop anything still outside Latin-1
+    # (catches emojis, rare symbols, anything else the AI sneaks in)
+    text = text.encode("latin-1", errors="ignore").decode("latin-1")
+
+    # Collapse excessive blank lines
     text = re.sub(r'\n{3,}', '\n\n', text)
     return text.strip()
+
+
+def _s(text: str) -> str:
+    """Sanitise a short string for Latin-1 Helvetica (table cells, headers)."""
+    return _clean_text(str(text)) if text else ""
 
 
 # ─── PDF class ────────────────────────────────────────────────────────────────
@@ -161,16 +209,16 @@ class TipsPDF(FPDF):
 
             self.set_font("Helvetica", "B", 8)
             self.set_text_color(*TEXT)
-            self.cell(col_w[0], 8, f"{home} vs {away}"[:32], border=0)
+            self.cell(col_w[0], 8, _s(f"{home} vs {away}")[:32], border=0)
 
             self.set_font("Helvetica", "", 8)
             self.set_text_color(*MUTED)
-            self.cell(col_w[1], 8, pred.get("venue", "")[:18], align="C", border=0)
+            self.cell(col_w[1], 8, _s(pred.get("venue", ""))[:18], align="C", border=0)
             self.cell(col_w[2], 8, pred.get("date", ""), align="C", border=0)
 
             self.set_font("Helvetica", "B", 8)
             self.set_text_color(*cc)
-            self.cell(col_w[3], 8, winner[:14] if winner else "—", align="C", border=0)
+            self.cell(col_w[3], 8, _s(winner[:14]) if winner else "-", align="C", border=0)
 
             self.set_font("Helvetica", "", 8)
             self.set_text_color(*TEXT)
@@ -210,13 +258,13 @@ class TipsPDF(FPDF):
         self.set_font("Helvetica", "", 7.5)
         self.set_text_color(*MUTED)
         self.set_x(12)
-        self.cell(0, 5, f"Round {pred.get('round', '')}  ·  {pred.get('venue', '')}  ·  {pred.get('date', '')}", ln=True)
+        self.cell(0, 5, _s(f"Round {pred.get('round', '')}  .  {pred.get('venue', '')}  .  {pred.get('date', '')}"), ln=True)
 
         # Team names
         self.set_font("Helvetica", "B", 13)
         self.set_text_color(*TEXT)
         self.set_x(12)
-        self.cell(120, 9, f"{home}  vs  {away}", ln=False)
+        self.cell(120, 9, _s(f"{home}  vs  {away}"), ln=False)
 
         # Confidence badge (right side)
         self.set_font("Helvetica", "B", 8)
@@ -231,11 +279,11 @@ class TipsPDF(FPDF):
             self.set_font("Helvetica", "B", 11)
             self.set_text_color(*cc)
             self.set_x(12)
-            tip_line = f"⚡  TIP: {winner}"
+            tip_line = f">> TIP: {_s(winner)}"
             if prob:
                 tip_line += f"   ({prob:.0f}% win probability)"
             if margin:
-                tip_line += f"   ·   ~{margin} pt margin"
+                tip_line += f"   .   ~{margin} pt margin"
             self.cell(0, 8, tip_line, ln=True)
             self.set_x(12)
             self.set_font("Helvetica", "", 8)
@@ -244,11 +292,11 @@ class TipsPDF(FPDF):
             # Odds line
             parts = []
             if odds.get("home_odds"):
-                parts.append(f"{home} ${odds['home_odds']} ({odds.get('home_implied_prob', '?')}% implied)")
+                parts.append(f"{_s(home)} ${odds['home_odds']} ({odds.get('home_implied_prob', '?')}% implied)")
             if odds.get("away_odds"):
-                parts.append(f"{away} ${odds['away_odds']} ({odds.get('away_implied_prob', '?')}% implied)")
+                parts.append(f"{_s(away)} ${odds['away_odds']} ({odds.get('away_implied_prob', '?')}% implied)")
             if odds.get("line_summary"):
-                parts.append(f"Line: {odds['line_summary']}")
+                parts.append(f"Line: {_s(str(odds['line_summary']))}")
             if parts:
                 self.cell(0, 6, "  |  ".join(parts), ln=True)
             self.ln(3)
