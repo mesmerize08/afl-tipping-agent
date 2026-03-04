@@ -1,228 +1,208 @@
-# 🏉 AFL AI Tipping Agent
+# 🏉 AFL Tipping Agent
 
-> A fully automated, data-driven AFL tipping agent that analyses betting markets, team form, scoring trends, weather, travel fatigue and more — then uses AI to generate weekly match predictions with win probabilities and explanations.
+**Data-driven · Unbiased · AI-powered**
 
-**Live app:** [afl-tipping-agent.streamlit.app](https://afl-tipping-agent.streamlit.app)
+A fully automated AFL tipping agent built with Streamlit. Every week it fetches live fixture, odds, weather, form, and team news data, runs it through an AI model with a strict analytical prompt, and produces structured predictions with confidence ratings and full reasoning — then tracks its own accuracy across the season.
+
+🚀 **[Live App →](https://afl-tipping-agent.streamlit.app)**
 
 ---
 
 ## What It Does
 
-Every week during the AFL season, this agent:
-
-1. Fetches fixtures, ladder standings, form, and head-to-head records from the Squiggle API
-2. Pulls live betting odds across three markets (win/loss, line, totals) from The Odds API
-3. Cross-checks against Squiggle's aggregated statistical model predictions
-4. Fetches weather forecasts for each venue from Open-Meteo
-5. Scrapes Zero Hanger for injury, suspension and team selection news across all 18 clubs
-6. Calculates travel fatigue and days rest for each team
-7. Analyses scoring trends (last 3 vs last 5 games)
-8. Reviews its own past prediction accuracy to self-calibrate
-9. Feeds everything into Google Gemini AI to generate predictions
-10. Saves predictions and tracks accuracy across the season
-
----
-
-## Features
-
-### 🏉 Weekly Predictions
-- Predicted winner with win probability %
-- Expected winning margin
-- High / Medium / Low confidence rating (colour coded)
-- Full analysis covering all data sources
-
-### ⚡ Quick-Glance Summary Table
-Scan every game in the round at a glance — tip, probability, margin and confidence in one compact table before reading the detail.
-
-### ⏱️ Match Countdown Timers
-Live countdown to lockout on every match card so you never miss submitting your tips.
-
-### 🔥 Last Round Performance Banner
-Instant accuracy context at the top of the page — see how the agent went last round and for the season.
-
-### 📊 Accuracy Tracker
-Full season accuracy dashboard tracking every prediction against real results. The agent uses this history to improve future predictions — underperforming on underdog picks? It knows, and adjusts.
-
-### 📰 Team News & Injuries
-Sourced from [Zero Hanger](https://zerohanger.com) — Australia's leading independent AFL news site. Covers all 18 clubs with daily updates on injuries, MRO decisions, tribunal outcomes, and team selections. Filtered using an expanded AFL vernacular keyword set (including Australian terms like "rubbed out", "in doubt", "casualty ward", and "concussion protocols"). Best fetched Thursday–Friday after squads are named.
-
-### ✈️ Travel & Fatigue Analysis
-Detects long-haul travel (e.g. Perth teams heading east), short turnarounds, and rest day disadvantages. Flags these as factors in the AI prompt.
-
-### 📈 Scoring Trends
-Compares each team's last-3 vs last-5 scoring averages to identify attack and defence trends. Injected into the AI prompt alongside form data.
-
-### 🔄 Automated Weekly Pipeline
-GitHub Actions runs every Thursday morning automatically — updates last round's results, generates new predictions, and commits everything back to the repo.
+- Fetches this week's fixtures from the Squiggle API (handles Opening Round / Round 0)
+- Pulls betting odds from The Odds API (h2h win/loss, line/spread, totals)
+- Gets weather forecasts for every AFL venue via Open-Meteo (free, no key needed)
+- Scrapes injury, suspension and team selection news from Zero Hanger
+- Calculates form, scoring trends, rest days and travel fatigue for every team
+- Cross-checks Squiggle's aggregated statistical model predictions
+- Sends all data to an AI model (Groq / Anthropic) with a strict, no-hype analytical prompt
+- Tracks its own correct/incorrect record and feeds that back into future prompts
+- Exports predictions to a clean, print-ready PDF
 
 ---
 
 ## Data Sources
 
-| Source | What it provides | Cost |
-|---|---|---|
-| [Squiggle API](https://api.squiggle.com.au) | Fixtures, ladder, form, H2H, results, model tips | Free |
-| [The Odds API](https://the-odds-api.com) | Win/loss, line and totals betting markets | Free tier |
-| [Open-Meteo](https://open-meteo.com) | Venue weather forecasts | Free, no key needed |
-| [Zero Hanger](https://zerohanger.com) | Team news, injuries, MRO decisions, selections | Free (RSS) |
-| [Google Gemini](https://aistudio.google.com) | AI analysis and prediction generation | Free tier |
+| Source | Data | Cost |
+|--------|------|------|
+| [Squiggle API](https://api.squiggle.com.au/) | Fixtures, ladder, results, model tips | Free |
+| [The Odds API](https://the-odds-api.com/) | H2H odds, line market, totals | Free tier (500 req/mo) |
+| [Open-Meteo](https://open-meteo.com/) | Venue weather forecasts | Free, no key |
+| [Zero Hanger](https://www.zerohanger.com/) | Injuries, suspensions, team news | Free (scraped) |
+| [Groq API](https://console.groq.com/) | AI predictions (Llama 3.3 70B) | Free tier (6 000 req/day) |
 
 ---
 
-## Tech Stack
-
-```
-Python 3.11
-├── streamlit            — Web interface
-├── google-generativeai  — Gemini AI (gemini-1.5-flash)
-├── requests             — API calls
-├── feedparser           — RSS scraping (Zero Hanger)
-├── pandas               — Data display
-└── python-dotenv        — Environment variables
-
-GitHub Actions           — Weekly automation (Thursday 10am AEDT)
-Streamlit Cloud          — Free hosting
-```
-
----
-
-## Project Structure
+## File Structure
 
 ```
 afl-tipping-agent/
-├── app.py                      # Streamlit web app (4 tabs)
-├── data_fetcher.py             # All API data fetching
-├── predict.py                  # AI prediction engine
-├── team_news.py                # Zero Hanger injury & selection scraper
-├── tracker.py                  # Accuracy tracking & history
-├── weather.py                  # Venue weather forecasts
-├── run_weekly.py               # Weekly automation script
-├── predictions_history.json    # Auto-generated prediction history
-├── predictions.json            # Latest round predictions (auto-generated)
+├── app.py                  # Streamlit UI — all four tabs
+├── data_fetcher.py         # All data retrieval (Squiggle, odds, news)
+├── predict.py              # AI prompt + Groq/Anthropic call
+├── pdf_export.py           # PDF generation (fpdf2)
+├── team_news.py            # Zero Hanger scraping (injuries + team pages)
+├── tracker.py              # Prediction history + accuracy tracking
+├── weather.py              # Open-Meteo venue forecasts
+├── run_weekly.py           # CLI runner (optional, for automation)
+├── weekly_tips.yml         # GitHub Actions schedule (optional)
 ├── requirements.txt
-└── .github/
-    └── workflows/
-        └── weekly_tips.yml     # Automated Thursday pipeline
+├── predictions_history.json  # Auto-generated, committed each round
+└── README.md
 ```
 
 ---
 
-## How the AI Prediction Works
+## Setup
 
-Every match prediction is built from a structured prompt containing:
+### 1. Clone and install
 
-```
-LADDER STANDINGS
-RECENT FORM (W/L with actual margins)
-SCORING STATISTICS & TRENDS (last 3 vs last 5)
-REST DAYS & TRAVEL FATIGUE
-HEAD TO HEAD (last 10 meetings)
-VENUE RECORD
-BETTING MARKETS (h2h + line + totals)
-SQUIGGLE MODEL CROSS-CHECK
-WEATHER FORECAST
-TEAM NEWS (injuries, suspensions, selections)
-AGENT'S OWN ACCURACY HISTORY
+```bash
+git clone https://github.com/mesmerize08/afl-tipping-agent
+cd afl-tipping-agent
+pip install -r requirements.txt
 ```
 
-The AI is instructed to compare all sources, explain disagreements between the betting market and statistical models, and rate its own confidence. It also reviews its past mistakes and adjusts accordingly.
+### 2. API keys
 
----
+Create a `.env` file (local) or add to Streamlit Cloud Secrets:
 
-## Self-Learning Accuracy System
+```toml
+# Required for AI predictions — get free key at console.groq.com
+GROQ_API_KEY = "gsk_..."
 
-The agent tracks every prediction it makes:
+# Optional — betting odds (free tier at the-odds-api.com)
+ODDS_API_KEY = "your_key_here"
 
-- After each round, run **Update Results** to compare predictions vs real results
-- The accuracy data is injected into future prompts
-- The agent sees which teams it gets wrong and adjusts its confidence
-- By mid-season it has a meaningful track record to calibrate against
-
-Example history injected into future prompts:
-```
-Season accuracy: 38/54 (70.4%)
-Favourite picks: 32/40 (80%)
-Underdog picks: 6/14 (42.8%)
-
-Past predictions involving these teams:
-Rd 4: Collingwood vs Essendon — tipped Collingwood (72%) — ✅ CORRECT
-Rd 1: Essendon vs Carlton — tipped Essendon (58%) — ❌ WRONG
+# Optional — Anthropic fallback if Groq is unavailable
+ANTHROPIC_API_KEY = "sk-ant-..."
 ```
 
----
+> **Note:** The Groq free tier gives 6,000 requests/day — more than enough for a full round of tips. No credit card required.
+>
+> **Claude Pro** ($17/mo at claude.ai) does **not** include API access. The Anthropic API is billed separately at console.anthropic.com. Groq is the recommended free option.
 
-## Round 0 / Opening Round
+### 3. Run locally
 
-The agent fully supports Opening Round (Round 0), which sits outside the regular season calendar:
+```bash
+streamlit run app.py
+```
 
-- Fixtures are fetched via a dedicated `round=0` Squiggle API call in addition to the year query
-- Since no 2026 games are completed at Round 0, form and scoring stats automatically fall back to 2025 season data
-- Team news uses a wider 21-day window during preseason (November–early March) to capture trial matches, MRO decisions, and preseason injuries
+### 4. Deploy to Streamlit Cloud
+
+1. Push to GitHub
+2. Go to share.streamlit.io → New app → select repo
+3. Add secrets under **Settings → Secrets** (same key=value format as above)
 
 ---
 
 ## Weekly Workflow
 
 | Day | Action |
-|---|---|
-| **Thursday 10am (auto)** | GitHub Actions runs — results updated, new tips generated |
-| **Thursday ~2pm** | AFL releases official squad selections |
-| **Thursday afternoon** | Open app → Team News tab → check injuries and ins/outs |
-| **Thursday evening** | Hit Generate Tips again if squad news changes the picture |
-| **Before lockout** | Submit your picks! |
-| **Monday/Tuesday** | Open app → Update Results tab → record last round's results |
+|-----|--------|
+| **Monday/Tuesday** | Click **Update Results** tab → records last round's outcomes |
+| **Thursday night** | Click **Team News** → Fetch Latest News (squads named) |
+| **Friday** | Click **Generate This Week's Tips** |
+| **Before lockout** | Review tips, click **Export PDF**, submit your picks |
 
 ---
 
-## Setup
+## Tabs
 
-### Requirements
-- Python 3.11+
-- Google Gemini API key (free at [aistudio.google.com](https://aistudio.google.com))
-- The Odds API key (free tier at [the-odds-api.com](https://the-odds-api.com))
+### 🏉 This Week's Tips
+- Click **Generate This Week's Tips** to run the full pipeline
+- Round summary table: winner, probability, margin, confidence for all games at a glance
+- Detailed match cards with odds, scoring trends, travel/rest badges
+- Full AI analysis (expandable) with structured reasoning for each game
+- **Export PDF** button — available immediately after generating tips, persists on page
 
-### Local Development
-```bash
-git clone https://github.com/mesmerize08/afl-tipping-agent.git
-cd afl-tipping-agent
-pip install -r requirements.txt
-```
+### 📊 Accuracy Tracker
+- Season accuracy: overall %, per-round breakdown, favourite vs underdog splits
+- Round-by-round bar chart
+- Full history table with correct/incorrect flags
 
-Create a `.env` file:
-```
-ODDS_API_KEY=your_key_here
-GEMINI_API_KEY=your_key_here
-```
+### 📰 Team News
+- Sourced from Zero Hanger (injuries hub + per-team pages + global RSS)
+- Filter by team or view all 18 clubs
+- Covers MRO decisions, tribunal outcomes, long-term injuries, selection news
 
-Run locally:
-```bash
-streamlit run app.py
-```
-
-### Deployment
-The app is deployed on [Streamlit Community Cloud](https://share.streamlit.io) — free tier.
-API keys are stored as secrets in the Streamlit app settings and as GitHub Actions secrets.
-
-GitHub Actions secrets required:
-- `ODDS_API_KEY`
-- `GEMINI_API_KEY`
+### 🔄 Update Results
+- Fetches completed game scores from Squiggle
+- Updates prediction history with actual winners and margins
+- Recalculates season accuracy summary
+- Download full predictions_history.json
 
 ---
 
-## Confidence Guide
+## PDF Export
 
-| Rating | Meaning |
-|---|---|
-| 🟢 High | All data sources agree — betting market, Squiggle model, and form align |
-| 🟡 Medium | Most indicators agree but some uncertainty (injury news, mixed form) |
-| 🔴 Low | Data sources conflict, significant injury uncertainty, or coin-flip match |
+After generating tips, click **Export PDF** (top-right of the tips section) to download a print-ready PDF containing:
+
+- Cover summary table: all games with tip, probability, margin, and confidence
+- Full per-match AI analysis with structured reasoning sections
+- Betting odds and market data
+- Round number and generation timestamp in header/footer
+
+The PDF button appears automatically once tips are generated and remains available until you navigate away or regenerate.
+
+---
+
+## AI Prompt Design
+
+The AI receives a structured prompt that enforces strict analytical rules:
+
+- Prohibits vague language ("dominant", "powerhouse") without citing actual numbers
+- Requires every conclusion to reference a specific data point from the provided data
+- Cross-checks betting market vs Squiggle model vs recent form
+- Explicitly flags data conflicts where sources disagree
+- Forces structured output: predicted winner, win probability, margin, key factors, scoring trends, market analysis, fatigue, weather, team news, confidence level, upset risk, data conflicts
+
+The agent also receives its own season accuracy history each week, allowing it to recalibrate based on previous mistakes.
+
+---
+
+## Technical Notes
+
+### Round 0 / Opening Round
+
+The AFL introduced a competitive Opening Round (Round 0) in 2024. The app handles this correctly:
+
+- Uses `complete=!100` query to find all upcoming games (the bare `year=` query returns only completed games)
+- Queries `round=0` and `round=1` as fallbacks
+- Filters to the earliest round — prevents Round 1 leaking into Opening Round week
+- Normalises `Greater Western Sydney` → `GWS Giants` at fetch time
+- Strips dotted venue abbreviations (`S.C.G.` → `SCG`, `M.C.G.` → `MCG`)
+
+### Squiggle API
+
+All Squiggle requests include a `User-Agent` header as required by API docs. Cloud IPs without this header can be silently rate-limited.
+
+### Team news coverage
+
+Zero Hanger's global RSS feed has a 20-article cap. To avoid missing mid-week suspensions and injuries, the app also scrapes:
+- The Zero Hanger injuries/suspensions hub page
+- Per-team latest-news pages for the two teams in each match
+
+---
+
+## Extending
+
+**Add a new venue:**
+Edit `VENUE_CITIES` in `data_fetcher.py` and `VENUE_DATA`/`VENUE_ALIASES` in `weather.py`.
+
+**Change the AI model:**
+Edit `_call_ai()` in `predict.py`. The Groq block is OpenAI-compatible — swap the model string for any Groq-supported model (e.g. `mixtral-8x7b-32768`, `llama-3.1-8b-instant`).
+
+**Automate weekly runs:**
+`weekly_tips.yml` contains a GitHub Actions workflow that runs the CLI (`run_weekly.py`) on a schedule and commits the updated `predictions_history.json`.
 
 ---
 
 ## Disclaimer
 
-This tool is built for entertainment purposes and friendly tipping competitions. It is not financial advice. Please gamble responsibly.
+For entertainment only. This app does not constitute financial or gambling advice. Please gamble responsibly.
 
 ---
 
-*Built with Python, Streamlit, Google Gemini, and a lot of AFL love. 🏉*
+*Built with [Streamlit](https://streamlit.io) · [Squiggle API](https://api.squiggle.com.au) · [Groq](https://console.groq.com) · [Open-Meteo](https://open-meteo.com) · [Zero Hanger](https://zerohanger.com)*

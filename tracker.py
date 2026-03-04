@@ -43,11 +43,13 @@ def save_history(history):
 
 # ─── Save New Predictions ──────────────────────────────────────────────────────
 
-def save_predictions(predictions_list, round_number, year=2026):
+def save_predictions(predictions_list, round_number, year=None):
     """
     Save this week's predictions to history.
     Call this right after generating predictions each week.
     """
+    if year is None:
+        year = datetime.now().year
     history = load_history()
 
     for pred in predictions_list:
@@ -101,35 +103,29 @@ def extract_predicted_winner(prediction_text, home_team, away_team):
     """
     Parse the AI's prediction text to extract the predicted winner.
     Looks for 'PREDICTED WINNER:' header in the AI response.
-
-    Uses full team name matching (not last-word) to avoid collisions between
-    teams that share a last word:
-      Melbourne / North Melbourne  → both end in 'MELBOURNE'
-      Adelaide  / Port Adelaide    → both end in 'ADELAIDE'
-      Gold Coast / West Coast      → both end in 'COAST'
     """
-    text       = prediction_text.upper()
+    text = prediction_text.upper()
     home_upper = home_team.upper()
     away_upper = away_team.upper()
 
     # Look for the predicted winner section
     if "PREDICTED WINNER" in text:
-        idx     = text.index("PREDICTED WINNER")
-        snippet = text[idx:idx + 200]
+        idx = text.index("PREDICTED WINNER")
+        snippet = text[idx:idx+200]
 
-        # Search for full team names in the snippet (not just last word)
-        home_pos = snippet.find(home_upper)
-        away_pos = snippet.find(away_upper)
+        # Check which team name appears first after the header
+        home_pos = snippet.find(home_upper.split()[-1])  # Use last word (e.g. "LIONS")
+        away_pos = snippet.find(away_upper.split()[-1])
 
         if home_pos != -1 and (away_pos == -1 or home_pos < away_pos):
             return home_team
         elif away_pos != -1:
             return away_team
 
-    # Fallback: count full team name mentions in first 300 chars
-    snippet     = prediction_text[:300].upper()
-    home_count  = snippet.count(home_upper)
-    away_count  = snippet.count(away_upper)
+    # Fallback: count mentions in first 300 chars
+    snippet = prediction_text[:300].upper()
+    home_count = snippet.count(home_upper.split()[-1])
+    away_count = snippet.count(away_upper.split()[-1])
 
     if home_count > away_count:
         return home_team
@@ -155,12 +151,14 @@ def extract_predicted_probability(prediction_text, predicted_winner):
 
 # ─── Check Results After Round Completes ──────────────────────────────────────
 
-def check_and_update_results(year=2026):
+def check_and_update_results(year=None):
     """
     Fetch completed game results from Squiggle and update our history.
     Run this after each round finishes (Monday/Tuesday).
     Returns a summary of how we went this round.
     """
+    if year is None:
+        year = datetime.now().year
     history = load_history()
     updated_count = 0
 
@@ -173,7 +171,7 @@ def check_and_update_results(year=2026):
 
     # Fetch all completed games from Squiggle
     try:
-        response = requests.get(f"{SQUIGGLE_BASE}?q=games;year={year}", timeout=10)
+        response = requests.get(f"{SQUIGGLE_BASE}?q=games;year={year}", timeout=10, headers={"User-Agent": "AFL-Tipping-Agent/1.0 (github.com/mesmerize08/afl-tipping-agent)"})
         all_games = response.json().get("games", [])
         completed_games = [g for g in all_games if g.get("complete") == 100]
     except Exception as e:
@@ -338,7 +336,7 @@ def format_history_for_ai(home_team, away_team, max_season_records=15):
             sections.append(
                 f"  Rd {p['round']}: {p['home_team']} vs {p['away_team']} — "
                 f"tipped {p['predicted_winner']} "
-                f"({'%.0f' % p['predicted_probability']}% confidence) — "
+                f"({'%.0f' % p['predicted_probability'] if p.get('predicted_probability') else '?'}% confidence) — "
                 f"{result} (actual winner: {p['actual_winner']})"
             )
 

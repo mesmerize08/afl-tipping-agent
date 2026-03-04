@@ -12,27 +12,24 @@ from tracker   import format_history_for_ai, save_predictions
 from weather   import format_weather_for_ai
 from data_fetcher import get_squiggle_tips, format_squiggle_tips_for_prompt
 
-# ─── AI backend: Groq (free tier) with Anthropic API as optional fallback ──────
-#
-# PRIMARY — Groq free tier (6000 req/day, no credit card needed):
+# ─── AI backend ────────────────────────────────────────────────────────────────
+# PRIMARY: Groq free tier (6 000 req/day — no credit card)
 #   1. Sign up at console.groq.com
 #   2. Create an API key (starts with gsk_...)
-#   3. In Streamlit Cloud: Settings → Secrets → add:
+#   3. Streamlit Cloud → Settings → Secrets:
 #        GROQ_API_KEY = "gsk_..."
 #
-# FALLBACK — Anthropic API (requires paid credits at console.anthropic.com,
+# FALLBACK: Anthropic API (paid credits at console.anthropic.com,
 #   separate from Claude Pro subscription):
 #        ANTHROPIC_API_KEY = "sk-ant-..."
-#
+# ───────────────────────────────────────────────────────────────────────────────
 _GROQ_API_KEY      = os.getenv("GROQ_API_KEY", "")
 _ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 
 
 def _call_ai(prompt: str) -> str:
-    """
-    Call the best available AI backend.
-    Tries Groq first (free), falls back to Anthropic API if ANTHROPIC_API_KEY is set.
-    """
+    """Route to the best available AI backend (Groq first, Anthropic fallback)."""
+
     # ── Groq ───────────────────────────────────────────────────────────────────
     if _GROQ_API_KEY:
         try:
@@ -66,9 +63,9 @@ def _call_ai(prompt: str) -> str:
                     "Content-Type":      "application/json",
                 },
                 json={
-                    "model":       "claude-haiku-4-5-20251001",
-                    "max_tokens":  2048,
-                    "messages":    [{"role": "user", "content": prompt}],
+                    "model":      "claude-haiku-4-5-20251001",
+                    "max_tokens": 2048,
+                    "messages":   [{"role": "user", "content": prompt}],
                 },
                 timeout=60,
             )
@@ -78,8 +75,8 @@ def _call_ai(prompt: str) -> str:
             raise RuntimeError(f"Anthropic API error: {e}")
 
     raise RuntimeError(
-        "No AI API key configured. Add GROQ_API_KEY (free) or ANTHROPIC_API_KEY "
-        "to Streamlit Cloud secrets. See predict.py header for instructions."
+        "No AI API key configured. Add GROQ_API_KEY (free at console.groq.com) "
+        "or ANTHROPIC_API_KEY to Streamlit Cloud secrets. See predict.py header."
     )
 
 
@@ -369,7 +366,7 @@ def run_weekly_predictions(match_data_list, news_headlines):
             "prediction":   prediction_text
         })
 
-    if all_predictions and round_number:
+    if all_predictions and round_number is not None:
         print(f"\n💾 Saving Round {round_number} predictions to history...")
         save_predictions(all_predictions, round_number)
 
