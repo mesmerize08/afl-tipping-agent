@@ -435,10 +435,12 @@ def get_travel_info(team_name, game_venue):
 def get_head_to_head(team1, team2, num_games=10):
     """Get recent H2H results between two teams across all years."""
     try:
-        response = requests.get(
-            f"{SQUIGGLE_BASE}?q=games;team={requests.utils.quote(team1)}", timeout=15
+        r = requests.get(
+            f"{SQUIGGLE_BASE}?q=games;team={requests.utils.quote(team1)}",
+            timeout=15, headers=_UA
         )
-        games = response.json().get("games", [])
+        r.raise_for_status()
+        games = r.json().get("games", [])
     except Exception as e:
         print(f"  Warning: Could not fetch H2H: {e}")
         return []
@@ -702,19 +704,30 @@ def format_squiggle_tips_for_prompt(squiggle_data, home_team, away_team):
 # ─── AFL News ─────────────────────────────────────────────────────────────────
 
 def get_afl_news():
-    """Get recent AFL news from AFL.com.au RSS."""
+    """
+    Get recent AFL news headlines for the general context section of the AI prompt.
+    Uses Zero Hanger RSS (AFL.com.au RSS feeds are dead as of early 2026).
+    Returns up to 15 items, filtered for injury/selection relevance.
+    """
     import feedparser
     try:
-        feed = feedparser.parse("https://www.afl.com.au/rss/news")
-        return [
-            {
-                "title":     e.get("title", ""),
-                "summary":   e.get("summary", "")[:200],
-                "published": e.get("published", "")
-            }
-            for e in feed.entries[:15]
-        ]
-    except Exception:
+        feed = feedparser.parse("https://www.zerohanger.com/feed")
+        items = []
+        for e in feed.entries[:30]:
+            title   = e.get("title", "")
+            summary = e.get("summary", "")[:200]
+            if title:
+                items.append({
+                    "title":     title,
+                    "summary":   summary,
+                    "published": e.get("published", "")
+                })
+            if len(items) >= 15:
+                break
+        print(f"  AFL news: {len(items)} articles from Zero Hanger")
+        return items
+    except Exception as ex:
+        print(f"  Warning: Could not fetch AFL news: {ex}")
         return []
 
 
