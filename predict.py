@@ -153,6 +153,58 @@ def format_odds_section(odds, home, away):
     return "\n".join(lines)
 
 
+def format_home_advantage(match_data, home, away):
+    """
+    Format home/away win splits and venue record into a clear prompt block.
+    Combines the season split (broad picture) with the specific venue record.
+    """
+    lines = []
+    venue = match_data.get("venue", "this venue")
+
+    # Season home vs away win rate
+    for team, key in [(home, "home_ha_split"), (away, "away_ha_split")]:
+        split = match_data.get(key, {})
+        h = split.get("home", {})
+        a = split.get("away", {})
+        h_str = (f"{h['wins']}/{h['games']} ({h['pct']}%)" if h.get("games") else "no data")
+        a_str = (f"{a['wins']}/{a['games']} ({a['pct']}%)" if a.get("games") else "no data")
+        if h.get("games") or a.get("games"):
+            lines.append(f"{team} this season -- Home: {h_str} | Away: {a_str}")
+            if h.get("pct") is not None and a.get("pct") is not None:
+                diff = h["pct"] - a["pct"]
+                if diff >= 20:
+                    lines.append(
+                        f"  >> {team} win rate is {diff}pp higher at home "
+                        f"-- HOME GROUND ADVANTAGE IS SIGNIFICANT"
+                    )
+                elif diff <= -20:
+                    lines.append(
+                        f"  >> {team} win rate is {abs(diff)}pp higher away "
+                        f"-- performs better as visitor"
+                    )
+
+    # Specific venue record
+    for team, record_key in [(home, "home_venue_record"), (away, "away_venue_record")]:
+        rec = match_data.get(record_key, [])
+        if rec:
+            wins       = sum(1 for g in rec if g["result"] == "W")
+            n          = len(rec)
+            avg_margin = sum(g["margin"] for g in rec) / n
+            lines.append(
+                f"{team} at {venue} (last {n} games): {wins}W-{n - wins}L "
+                f"| avg margin {avg_margin:+.1f} pts"
+            )
+        else:
+            lines.append(f"{team} at {venue}: no venue history available")
+
+    lines.append(
+        "Context: AFL home ground advantage is typically worth 5-10 pts. "
+        "Key factors: crowd noise, ground familiarity, umpire bias (minor), "
+        "reduced travel for home side."
+    )
+    return "\n".join(lines) if lines else "Home/away data unavailable."
+
+
 def format_h2h(h2h_list):
     if not h2h_list:
         return "No H2H data"
@@ -243,9 +295,8 @@ Round {match_data['round']} | {date} | {venue}
 ━━━ HEAD TO HEAD (last 10 meetings) ━━━
 {format_h2h(match_data['head_to_head'])}
 
-━━━ VENUE RECORD at {venue} ━━━
-{home}: {format_form(match_data.get('home_venue_record', []))}
-{away}: {format_form(match_data.get('away_venue_record', []))}
+━━━ HOME GROUND ADVANTAGE & VENUE RECORD ━━━
+{format_home_advantage(match_data, home, away)}
 
 ━━━ BETTING MARKETS ━━━
 {odds_text}
@@ -293,6 +344,14 @@ State which team's scoring profile gives them an advantage and why.
 State what the h2h market implies. State what the line market implies.
 State what the Squiggle model predicts. Do they agree or disagree?
 If they disagree, state which you weighted more heavily and why, using data to justify.
+
+**HOME GROUND ADVANTAGE:**
+State each team's home win % and away win % from the season data above.
+State each team's record at this specific venue (W-L record, average margin).
+State whether home ground advantage is a meaningful factor in this match — quantify it
+as an estimated point value (typically 5-10 pts in AFL, higher if the split is large).
+If season data is unavailable (start of season), note it and estimate from venue history only.
+Do not omit this section.
 
 **FATIGUE & TRAVEL IMPACT:**
 State exact days rest for each team. Flag any travel.
