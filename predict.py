@@ -1,22 +1,16 @@
 """
-predict.py  (OPTIMIZED — Added retry logic, better error handling, type hints)
-===============================================================================
+predict.py  (OPTIMIZED — Anthropic primary, Groq backup)
+============================================================
 AI prediction engine for the AFL Tipping Agent.
 
-IMPROVEMENTS IN THIS VERSION:
-  - Exponential backoff retry logic for API failures
-  - Better error messages with actionable guidance
-  - Type hints for better code quality
-  - Prompt length validation
-  - Request timeout constants
-
-AI backend: Groq (free tier, llama-3.3-70b-versatile, 6000 req/day)
-  Primary:  https://api.groq.com/openai/v1/chat/completions
-  Fallback: Anthropic API (claude-haiku-4-5-20251001)
+AI backend: 
+  Primary:  Anthropic Claude Haiku 4.5 (paid credits, reliable)
+  Fallback: Groq llama-3.3-70b (free tier backup)
 
 Environment variables required:
-  GROQ_API_KEY      — primary AI engine
-  ANTHROPIC_API_KEY — fallback (optional but recommended)
+  ANTHROPIC_API_KEY — primary AI engine (https://console.anthropic.com)
+  GROQ_API_KEY      — fallback (optional but recommended)
+  ODDS_API_KEY      — betting odds data
 """
 
 import os
@@ -42,13 +36,14 @@ MAX_PROMPT_LENGTH = 12000  # characters (approx 3000 tokens)
 
 # ── AI backend with retry logic ───────────────────────────────────────────────
 
-def _call_ai_with_retry(prompt: str, max_retries: int = 2) -> str:  # Changed from 3 to 2
+def _call_ai_with_retry(prompt: str, max_retries: int = 2) -> str:
     """
-    Call AI backend with exponential backoff retry logic.
-    REDUCED retries to avoid hitting rate limits during batch predictions.
+    Call AI backend with retry logic.
+    PRIMARY: Anthropic (Claude) - reliable, paid credits
+    FALLBACK: Groq - free tier backup
     """
-    groq_key = os.getenv("GROQ_API_KEY")
     anthropic_key = os.getenv("ANTHROPIC_API_KEY")
+    groq_key = os.getenv("GROQ_API_KEY")
     
     # Validate prompt length
     if len(prompt) > MAX_PROMPT_LENGTH:
@@ -57,84 +52,90 @@ def _call_ai_with_retry(prompt: str, max_retries: int = 2) -> str:  # Changed fr
     
     last_error = None
     
-    # Try Groq with retries
-    if groq_key:
+    # ── PRIMARY: Try Anthropic (Claude) first ────────────────────────────────
+    if anthropic_key:
         for attempt in range(max_retries):
             try:
-                # Add small delay before each request to avoid rate limits
                 if attempt > 0:
-                    time.sleep(2 ** attempt)  # 2s, 4s
+                    time.sleep(2)  # Small delay on retry
                 
                 response = requests.post(
-                    "https://api.groq.com/openai/v1/chat/completions",
+                    "https://api.anthropic.com/v1/messages",
                     headers={
-                        "Authorization": f"Bearer {groq_key}",
-                        "Content-Type":  "application/json",
+                        "x-api-key":         anthropic_key,
+                        "anthropic-version": "2023-06-01",
+                        "Content-Type":      "application/json",
                     },
                     json={
-                        "model":       "llama-3.3-70b-versatile",
-                        "max_tokens":  2000,
-                        "temperature": 0.3,
-                        "messages":    [{"role": "user", "content": prompt}],
+                        "model":      "claude-haiku-4-5-20251001",
+                        "max_tokens": 2000,
+                        "messages":   [{"role": "user", "content": prompt}],
                     },
                     timeout=60,
                 )
                 response.raise_for_status()
-                return response.json()["choices"][0]["message"]["content"]
+                return response.json()["content"][0]["text"]
                 
             except requests.exceptions.Timeout:
-                last_error = f"Timeout on attempt {attempt + 1}/{max_retries}"
+                last_error = f"Anthropic timeout on attempt {attempt + 1}/{max_retries}"
                 print(f"  ⏱️  {last_error}")
                     
             except requests.exceptions.HTTPError as e:
                 status_code = e.response.status_code
-                last_error = f"HTTP {status_code} on attempt {attempt + 1}/{max_retries}"
+                last_error = f"Anthropic HTTP {status_code}"
                 print(f"  ⚠️  {last_error}")
                 
-                # For rate limit errors, wait longer
                 if status_code == 429 and attempt < max_retries - 1:
-                    wait_time = 5  # Wait 5 seconds for rate limit
-                    print(f"  🔄 Rate limit hit. Waiting {wait_time}s...")
-                    time.sleep(wait_time)
+                    print(f"  🔄 Rate limit. Waiting 3s...")
+                    time.sleep(3)
                     
             except Exception as e:
-                last_error = f"Error: {str(e)}"
+                last_error = f"Anthropic error: {str(e)}"
                 print(f"  ❌ {last_error}")
                 break
         
-        print(f"  ⚠️  Groq failed. Trying Anthropic...")
+        print(f"  ⚠️  Anthropic failed after {max_retries} attempts. Trying Groq fallback...")
     
-    # Try Anthropic fallback
-    if anthropic_key:
+    # ── FALLBACK: Try Groq ────────────────────────────────────────────────────
+    if groq_key:
         try:
             response = requests.post(
-                "https://api.anthropic.com/v1/messages",
+                "https://api.groq.com/openai/v1/chat/completions",
                 headers={
-                    "x-api-key":         anthropic_key,
-                    "anthropic-version": "2023-06-01",
-                    "Content-Type":      "application/json",
+                    "Authorization": f"Bearer {groq_key}",
+                    "Content-Type":  "application/json",
                 },
                 json={
-                    "model":      "claude-haiku-4-5-20251001",
-                    "max_tokens": 2000,
-                    "messages":   [{"role": "user", "content": prompt}],
+                    "model":       "llama-3.3-70b-versatile",
+                    "max_tokens":  2000,
+                    "temperature": 0.3,
+                    "messages":    [{"role": "user", "content": prompt}],
                 },
                 timeout=60,
             )
             response.raise_for_status()
-            return response.json()["content"][0]["text"]
+            return response.json()["choices"][0]["message"]["content"]
             
         except Exception as e:
-            print(f"  ❌ Anthropic failed: {str(e)}")
+            print(f"  ❌ Groq fallback also failed: {str(e)}")
     
-    # Both failed - return minimal error
-    return "ERROR: AI prediction unavailable. Check API keys and rate limits."
+    # Both failed
+    error_msg = f"""ERROR: Unable to generate prediction.
 
+Last error: {last_error}
 
-# Backward compatibility - keep old function name
-def _call_ai(prompt: str) -> str:
-    """Legacy function name - redirects to retry version"""
-    return _call_ai_with_retry(prompt)
+CHECK YOUR API KEYS:
+- ANTHROPIC_API_KEY: {'✓ Set' if anthropic_key else '✗ Missing'}
+- GROQ_API_KEY: {'✓ Set' if groq_key else '✗ Missing (backup)'}
+
+TROUBLESHOOTING:
+1. Verify keys at https://console.anthropic.com/settings/keys
+2. Check credit balance at https://console.anthropic.com/settings/billing
+3. Verify API limits haven't been exceeded
+
+If issues persist: github.com/mesmerize08/afl-tipping-agent/issues
+"""
+    return error_msg
 
 
 # ── Formatting helpers ─────────────────────────────────────────────────────────
