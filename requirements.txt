@@ -1,5 +1,4 @@
 requests
-anthropic
 streamlit
 pandas
 python-dotenv

@@ -4,18 +4,83 @@ predict.py  (UPGRADED — uses scoring stats, travel, rest days, scoring trends)
 All new data fields from data_fetcher.py are now injected into the AI prompt.
 """
 
-import anthropic
 import os
+import requests as _requests
 
 from team_news import format_team_news_for_ai
 from tracker   import format_history_for_ai, save_predictions
 from weather   import format_weather_for_ai
 from data_fetcher import get_squiggle_tips, format_squiggle_tips_for_prompt
 
-# Anthropic client — reads ANTHROPIC_API_KEY from environment automatically.
-# In Streamlit Cloud, set this under Settings → Secrets as:
-#   ANTHROPIC_API_KEY = "sk-ant-..."
-_anthropic_client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+# ─── AI backend: Groq (free tier) with Anthropic API as optional fallback ──────
+#
+# PRIMARY — Groq free tier (6000 req/day, no credit card needed):
+#   1. Sign up at console.groq.com
+#   2. Create an API key (starts with gsk_...)
+#   3. In Streamlit Cloud: Settings → Secrets → add:
+#        GROQ_API_KEY = "gsk_..."
+#
+# FALLBACK — Anthropic API (requires paid credits at console.anthropic.com,
+#   separate from Claude Pro subscription):
+#        ANTHROPIC_API_KEY = "sk-ant-..."
+#
+_GROQ_API_KEY      = os.getenv("GROQ_API_KEY", "")
+_ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
+
+
+def _call_ai(prompt: str) -> str:
+    """
+    Call the best available AI backend.
+    Tries Groq first (free), falls back to Anthropic API if ANTHROPIC_API_KEY is set.
+    """
+    # ── Groq ───────────────────────────────────────────────────────────────────
+    if _GROQ_API_KEY:
+        try:
+            resp = _requests.post(
+                "https://api.groq.com/openai/v1/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {_GROQ_API_KEY}",
+                    "Content-Type":  "application/json",
+                },
+                json={
+                    "model":       "llama-3.3-70b-versatile",
+                    "messages":    [{"role": "user", "content": prompt}],
+                    "max_tokens":  2048,
+                    "temperature": 0.3,
+                },
+                timeout=60,
+            )
+            resp.raise_for_status()
+            return resp.json()["choices"][0]["message"]["content"]
+        except Exception as e:
+            print(f"  Groq error: {e} — trying Anthropic fallback...")
+
+    # ── Anthropic fallback ─────────────────────────────────────────────────────
+    if _ANTHROPIC_API_KEY:
+        try:
+            resp = _requests.post(
+                "https://api.anthropic.com/v1/messages",
+                headers={
+                    "x-api-key":         _ANTHROPIC_API_KEY,
+                    "anthropic-version": "2023-06-01",
+                    "Content-Type":      "application/json",
+                },
+                json={
+                    "model":       "claude-haiku-4-5-20251001",
+                    "max_tokens":  2048,
+                    "messages":    [{"role": "user", "content": prompt}],
+                },
+                timeout=60,
+            )
+            resp.raise_for_status()
+            return resp.json()["content"][0]["text"]
+        except Exception as e:
+            raise RuntimeError(f"Anthropic API error: {e}")
+
+    raise RuntimeError(
+        "No AI API key configured. Add GROQ_API_KEY (free) or ANTHROPIC_API_KEY "
+        "to Streamlit Cloud secrets. See predict.py header for instructions."
+    )
 
 
 # ─── Formatting helpers ────────────────────────────────────────────────────────
@@ -259,12 +324,7 @@ If no conflicts exist, write "None identified."
 """
 
     try:
-        message = _anthropic_client.messages.create(
-            model      = "claude-haiku-4-5-20251001",
-            max_tokens = 2048,
-            messages   = [{"role": "user", "content": prompt}],
-        )
-        return message.content[0].text
+        return _call_ai(prompt)
     except Exception as e:
         return f"⚠️ Error generating prediction: {e}"
 
