@@ -1,24 +1,18 @@
 """
-predict.py
-==========
+predict.py  (OPTIMIZED — Added retry logic, better error handling, type hints)
+===============================================================================
 AI prediction engine for the AFL Tipping Agent.
+
+IMPROVEMENTS IN THIS VERSION:
+  - Exponential backoff retry logic for API failures
+  - Better error messages with actionable guidance
+  - Type hints for better code quality
+  - Prompt length validation
+  - Request timeout constants
 
 AI backend: Groq (free tier, llama-3.3-70b-versatile, 6000 req/day)
   Primary:  https://api.groq.com/openai/v1/chat/completions
   Fallback: Anthropic API (claude-haiku-4-5-20251001)
-
-Data injected into each prompt:
-  - Ladder standings
-  - Recent form (W/L + margins, last 5)
-  - Scoring stats & trends (attack/defence, last 3 and 5)
-  - Rest days & travel fatigue
-  - Head-to-head history
-  - Home ground advantage (season split + venue-specific record)
-  - Betting markets (h2h + line + totals)
-  - Squiggle statistical model predictions
-  - Weather forecast
-  - Team news (Zero Hanger RSS)
-  - Agent's own accuracy history (self-learning)
 
 Environment variables required:
   GROQ_API_KEY      — primary AI engine
@@ -27,8 +21,10 @@ Environment variables required:
 
 import os
 import re
+import time
 import requests
 from datetime import datetime
+from typing import List, Dict, Optional
 
 from team_news  import format_team_news_for_ai
 from tracker    import format_history_for_ai, save_predictions
@@ -36,42 +32,95 @@ from weather    import format_weather_for_ai
 from data_fetcher import get_squiggle_tips, format_squiggle_tips_for_prompt
 
 
-# ── AI backend ────────────────────────────────────────────────────────────────
+# ── Configuration Constants ───────────────────────────────────────────────────
 
-def _call_ai(prompt: str) -> str:
+API_TIMEOUT = 60  # seconds
+MAX_RETRIES = 3
+RETRY_DELAY_BASE = 2  # exponential backoff base (2^attempt seconds)
+MAX_PROMPT_LENGTH = 12000  # characters (approx 3000 tokens)
+
+
+# ── AI backend with retry logic ───────────────────────────────────────────────
+
+def _call_ai_with_retry(prompt: str, max_retries: int = MAX_RETRIES) -> str:
     """
-    Call the AI backend. Tries Groq first, falls back to Anthropic.
-    Returns the response text, or an error string on total failure.
+    Call AI backend with exponential backoff retry logic.
+    Handles transient failures like timeouts and rate limits gracefully.
+    
+    Args:
+        prompt: The full prediction prompt
+        max_retries: Maximum number of retry attempts (default: 3)
+    
+    Returns:
+        AI response text, or detailed error message
     """
-    groq_key      = os.getenv("GROQ_API_KEY")
+    groq_key = os.getenv("GROQ_API_KEY")
     anthropic_key = os.getenv("ANTHROPIC_API_KEY")
-
-    # ── Primary: Groq ────────────────────────────────────────────────────────
+    
+    # Validate prompt length
+    if len(prompt) > MAX_PROMPT_LENGTH:
+        print(f"  ⚠️  Warning: Prompt is {len(prompt)} chars (limit: {MAX_PROMPT_LENGTH}). Truncating...")
+        prompt = prompt[:MAX_PROMPT_LENGTH] + "\n\n[Prompt truncated due to length]"
+    
+    last_error = None
+    
+    # Try Groq first with retries
     if groq_key:
-        try:
-            r = requests.post(
-                "https://api.groq.com/openai/v1/chat/completions",
-                headers={
-                    "Authorization": f"Bearer {groq_key}",
-                    "Content-Type":  "application/json",
-                },
-                json={
-                    "model":       "llama-3.3-70b-versatile",
-                    "max_tokens":  2000,
-                    "temperature": 0.3,
-                    "messages":    [{"role": "user", "content": prompt}],
-                },
-                timeout=60,
-            )
-            r.raise_for_status()
-            return r.json()["choices"][0]["message"]["content"]
-        except Exception as e:
-            print(f"  Groq failed: {e} — trying Anthropic fallback...")
-
-    # ── Fallback: Anthropic ──────────────────────────────────────────────────
+        for attempt in range(max_retries):
+            try:
+                response = requests.post(
+                    "https://api.groq.com/openai/v1/chat/completions",
+                    headers={
+                        "Authorization": f"Bearer {groq_key}",
+                        "Content-Type":  "application/json",
+                    },
+                    json={
+                        "model":       "llama-3.3-70b-versatile",
+                        "max_tokens":  2000,
+                        "temperature": 0.3,
+                        "messages":    [{"role": "user", "content": prompt}],
+                    },
+                    timeout=API_TIMEOUT,
+                )
+                response.raise_for_status()
+                return response.json()["choices"][0]["message"]["content"]
+                
+            except requests.exceptions.Timeout:
+                last_error = f"Groq timeout on attempt {attempt + 1}/{max_retries}"
+                print(f"  ⏱️  {last_error}")
+                if attempt < max_retries - 1:
+                    delay = RETRY_DELAY_BASE ** attempt
+                    print(f"  🔄 Retrying in {delay}s...")
+                    time.sleep(delay)
+                    
+            except requests.exceptions.HTTPError as e:
+                status_code = e.response.status_code
+                
+                # Rate limit (429) or service unavailable (503) - retry with backoff
+                if status_code in [429, 503]:
+                    last_error = f"Groq {status_code} (rate limit/unavailable) on attempt {attempt + 1}/{max_retries}"
+                    print(f"  ⚠️  {last_error}")
+                    if attempt < max_retries - 1:
+                        delay = RETRY_DELAY_BASE ** attempt
+                        print(f"  🔄 Retrying in {delay}s...")
+                        time.sleep(delay)
+                else:
+                    # Other HTTP errors - don't retry, fall through to Anthropic
+                    last_error = f"Groq HTTP {status_code}: {str(e)}"
+                    print(f"  ❌ {last_error}")
+                    break
+                    
+            except Exception as e:
+                last_error = f"Groq unexpected error: {str(e)}"
+                print(f"  ❌ {last_error}")
+                break
+        
+        print(f"  ⚠️  Groq failed after {max_retries} attempts. Trying Anthropic fallback...")
+    
+    # Try Anthropic fallback
     if anthropic_key:
         try:
-            r = requests.post(
+            response = requests.post(
                 "https://api.anthropic.com/v1/messages",
                 headers={
                     "x-api-key":         anthropic_key,
@@ -83,19 +132,48 @@ def _call_ai(prompt: str) -> str:
                     "max_tokens": 2000,
                     "messages":   [{"role": "user", "content": prompt}],
                 },
-                timeout=60,
+                timeout=API_TIMEOUT,
             )
-            r.raise_for_status()
-            return r.json()["content"][0]["text"]
+            response.raise_for_status()
+            return response.json()["content"][0]["text"]
+            
         except Exception as e:
-            print(f"  Anthropic fallback failed: {e}")
+            last_error = f"Anthropic fallback also failed: {str(e)}"
+            print(f"  ❌ {last_error}")
+    
+    # Both backends failed - return helpful error message
+    error_msg = f"""
+ERROR: Unable to generate AI prediction after {max_retries} retries.
 
-    return "Error: No AI backend available. Check GROQ_API_KEY in your environment."
+Last error: {last_error}
+
+TROUBLESHOOTING:
+1. Check your API keys are set correctly in environment variables:
+   - GROQ_API_KEY: {'✓ Set' if groq_key else '✗ Missing'}
+   - ANTHROPIC_API_KEY: {'✓ Set' if anthropic_key else '✗ Missing (fallback)'}
+
+2. Check your API rate limits:
+   - Groq: 6,000 requests/day
+   - Check current usage at https://console.groq.com
+
+3. Check your internet connection
+
+4. Try again in a few minutes (may be temporary service issue)
+
+If this persists, please report at: github.com/mesmerize08/afl-tipping-agent/issues
+"""
+    return error_msg
+
+
+# Backward compatibility - keep old function name
+def _call_ai(prompt: str) -> str:
+    """Legacy function name - redirects to retry version"""
+    return _call_ai_with_retry(prompt)
 
 
 # ── Formatting helpers ─────────────────────────────────────────────────────────
 
-def format_form(form_list):
+def format_form(form_list: List[Dict]) -> str:
     """Format form list with margins."""
     if not form_list:
         return "No recent data"
@@ -107,7 +185,7 @@ def format_form(form_list):
     return f"{wins}/{len(form_list)} wins. " + " | ".join(parts)
 
 
-def format_scoring_stats(scoring, team_name):
+def format_scoring_stats(scoring: Dict, team_name: str) -> str:
     """Format scoring stats and trends into readable prompt text."""
     if not scoring:
         return "Scoring data unavailable"
@@ -130,7 +208,7 @@ def format_scoring_stats(scoring, team_name):
     return "\n".join(lines) if lines else "Scoring data unavailable"
 
 
-def format_rest_and_travel(rest, travel, team_name):
+def format_rest_and_travel(rest: Optional[Dict], travel: Optional[Dict], team_name: str) -> str:
     """Format rest days and travel fatigue."""
     parts = []
     if rest:
@@ -142,7 +220,7 @@ def format_rest_and_travel(rest, travel, team_name):
     return "\n  ".join(parts) if parts else "No rest/travel data"
 
 
-def format_odds_section(odds, home, away):
+def format_odds_section(odds: Dict, home: str, away: str) -> str:
     """Format all three betting markets."""
     if not odds:
         return "Betting odds not available this week."
@@ -162,7 +240,7 @@ def format_odds_section(odds, home, away):
     return "\n".join(lines)
 
 
-def format_h2h(h2h_list):
+def format_h2h(h2h_list: List[Dict]) -> str:
     if not h2h_list:
         return "No H2H data"
     return " | ".join(
@@ -171,7 +249,7 @@ def format_h2h(h2h_list):
     )
 
 
-def format_ladder(ld):
+def format_ladder(ld: Dict) -> str:
     if not ld:
         return "Unavailable"
     return (
@@ -181,7 +259,7 @@ def format_ladder(ld):
     )
 
 
-def format_home_advantage(match_data, home, away):
+def format_home_advantage(match_data: Dict, home: str, away: str) -> str:
     """
     Format home/away win splits and venue record into a clear prompt block.
     Combines the season split (broad) with the specific venue record (narrow).
@@ -229,12 +307,13 @@ def format_home_advantage(match_data, home, away):
         "Context: AFL home ground advantage is typically worth 5-10 pts. "
         "Key factors: crowd noise, ground familiarity, reduced travel for home side."
     )
+
     return "\n".join(lines) if lines else "Home/away data unavailable."
 
 
 # ── Single match prediction ────────────────────────────────────────────────────
 
-def generate_prediction(match_data, general_news_context=""):
+def generate_prediction(match_data: Dict, general_news_context: str = "") -> str:
     """Generate a full AI prediction for one match."""
     home  = match_data["home_team"]
     away  = match_data["away_team"]
@@ -384,12 +463,12 @@ List any cases where two data sources gave contradictory signals.
 If no conflicts exist, write "None identified."
 """
 
-    return _call_ai(prompt)
+    return _call_ai_with_retry(prompt)
 
 
 # ── Run all predictions ────────────────────────────────────────────────────────
 
-def run_weekly_predictions(match_data_list, news_headlines):
+def run_weekly_predictions(match_data_list: List[Dict], news_headlines: List[Dict]) -> List[Dict]:
     """Run predictions for all this week's matches and save to history."""
     if not match_data_list:
         return []
@@ -400,7 +479,7 @@ def run_weekly_predictions(match_data_list, news_headlines):
     )
 
     round_number = match_data_list[0].get("round")
-    print(f"\n Fetching Squiggle model predictions for Round {round_number}...")
+    print(f"\n⚽ Fetching Squiggle model predictions for Round {round_number}...")
     squiggle_tips = get_squiggle_tips(round_number=round_number)
 
     all_predictions = []
@@ -408,7 +487,7 @@ def run_weekly_predictions(match_data_list, news_headlines):
     for match in match_data_list:
         home = match["home_team"]
         away = match["away_team"]
-        print(f"\n Predicting: {home} vs {away}...")
+        print(f"\n🤖 Predicting: {home} vs {away}...")
 
         match["squiggle_model"] = format_squiggle_tips_for_prompt(squiggle_tips, home, away)
         prediction_text         = generate_prediction(match, general_news)
@@ -434,7 +513,7 @@ def run_weekly_predictions(match_data_list, news_headlines):
 
     # Fix: use 'is not None' so Round 0 (falsy) is saved correctly
     if all_predictions and round_number is not None:
-        print(f"\n Saving Round {round_number} predictions to history...")
+        print(f"\n💾 Saving Round {round_number} predictions to history...")
         save_predictions(all_predictions, round_number)
 
     return all_predictions
