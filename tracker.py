@@ -1,22 +1,7 @@
 """
-tracker.py  (OPTIMIZED — Added backup protection, validation, better error handling)
-=====================================================================================
-Manages the agent's prediction history and accuracy tracking.
-
-IMPROVEMENTS IN THIS VERSION:
-  - Automatic backup before overwriting predictions_history.json
-  - JSON validation on load
-  - Better error messages
-  - Type hints for code quality
-  - Rollback on save failure
-
-How it works:
-  1. Every time we make predictions, they're saved to predictions_history.json
-  2. After each round completes, run check_results() to compare predictions vs actuals
-  3. The accuracy data is fed back into future AI prompts so the agent learns
-     which factors it's been good/bad at predicting
-
-File stored: predictions_history.json (lives in your project folder, committed to GitHub)
+tracker.py (OPTIMIZED — Uses extraction_utils, backup protection)
+===================================================================
+Manages prediction history and accuracy tracking with automatic backup.
 """
 
 import json
@@ -24,11 +9,13 @@ import os
 import shutil
 import requests
 from datetime import datetime
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Any, Optional
 
+# Import shared extraction utilities
+from extraction_utils import extract_winner, extract_probability
 
 HISTORY_FILE = "predictions_history.json"
-BACKUP_FILE = f"{HISTORY_FILE}.backup"
+BACKUP_FILE = "predictions_history.json.backup"
 SQUIGGLE_BASE = "https://api.squiggle.com.au/"
 
 
@@ -36,118 +23,95 @@ SQUIGGLE_BASE = "https://api.squiggle.com.au/"
 
 def load_history() -> Dict[str, Any]:
     """
-    Load the full prediction history from disk with validation.
-    Returns default structure if file doesn't exist or is corrupted.
+    Load prediction history with JSON validation and backup recovery.
     """
     if not os.path.exists(HISTORY_FILE):
         return {"predictions": [], "accuracy_summary": {}}
     
     try:
         with open(HISTORY_FILE, "r") as f:
-            data = json.load(f)
+            history = json.load(f)
         
         # Validate structure
-        if not isinstance(data, dict):
-            print(f"  ⚠️  Warning: {HISTORY_FILE} is not a dict. Using default structure.")
-            return {"predictions": [], "accuracy_summary": {}}
+        if not isinstance(history, dict):
+            raise ValueError("History is not a dict")
+        if "predictions" not in history:
+            history["predictions"] = []
+        if "accuracy_summary" not in history:
+            history["accuracy_summary"] = {}
         
-        # Ensure required keys exist
-        if "predictions" not in data:
-            data["predictions"] = []
-        if "accuracy_summary" not in data:
-            data["accuracy_summary"] = {}
+        return history
         
-        # Validate predictions is a list
-        if not isinstance(data["predictions"], list):
-            print(f"  ⚠️  Warning: predictions is not a list. Resetting to empty list.")
-            data["predictions"] = []
+    except (json.JSONDecodeError, ValueError) as e:
+        print(f"  ⚠️  History file corrupted: {e}")
         
-        return data
-        
-    except json.JSONDecodeError as e:
-        print(f"  ❌ Error: {HISTORY_FILE} contains invalid JSON: {e}")
-        print(f"  🔄 Attempting to load from backup...")
-        
-        # Try to load from backup
+        # Try to recover from backup
         if os.path.exists(BACKUP_FILE):
+            print(f"  🔄 Attempting recovery from backup...")
             try:
                 with open(BACKUP_FILE, "r") as f:
-                    data = json.load(f)
-                print(f"  ✅ Successfully loaded from backup!")
-                return data
+                    history = json.load(f)
+                print(f"  ✅ Recovered from backup!")
+                return history
             except Exception:
                 pass
         
-        print(f"  ⚠️  Backup also failed. Starting with empty history.")
-        return {"predictions": [], "accuracy_summary": {}}
-        
-    except Exception as e:
-        print(f"  ❌ Unexpected error loading history: {e}")
+        print(f"  ⚠️  Starting with empty history")
         return {"predictions": [], "accuracy_summary": {}}
 
 
 def save_history(history: Dict[str, Any]) -> None:
     """
-    Save the full prediction history to disk with backup protection.
-    Creates a backup before overwriting, and rolls back on failure.
+    Save history with automatic backup and atomic write.
     """
-    # Create backup if file exists
+    # Create backup of existing file
     if os.path.exists(HISTORY_FILE):
         try:
             shutil.copy2(HISTORY_FILE, BACKUP_FILE)
-            # print(f"  💾 Created backup: {BACKUP_FILE}")
         except Exception as e:
-            print(f"  ⚠️  Warning: Could not create backup: {e}")
+            print(f"  ⚠️  Could not create backup: {e}")
     
-    # Attempt to save
+    # Write to temporary file first
+    temp_file = f"{HISTORY_FILE}.tmp"
     try:
-        # Write to temporary file first
-        temp_file = f"{HISTORY_FILE}.tmp"
         with open(temp_file, "w") as f:
             json.dump(history, f, indent=2)
         
-        # Verify the temp file is valid JSON
+        # Validate temp file
         with open(temp_file, "r") as f:
-            json.load(f)  # This will raise JSONDecodeError if invalid
+            json.load(f)
         
-        # If we get here, temp file is valid - move it to replace main file
+        # Move temp to actual file (atomic on Unix)
         shutil.move(temp_file, HISTORY_FILE)
-        # print(f"  ✅ History saved successfully")
         
     except Exception as e:
-        print(f"  ❌ Error saving history: {e}")
+        print(f"  ❌ Save failed: {e}")
         
-        # Clean up temp file if it exists
+        # Clean up temp file
         if os.path.exists(temp_file):
-            try:
-                os.remove(temp_file)
-            except Exception:
-                pass
+            os.remove(temp_file)
         
-        # Attempt to restore from backup
+        # Restore from backup if save failed
         if os.path.exists(BACKUP_FILE):
-            try:
-                shutil.copy2(BACKUP_FILE, HISTORY_FILE)
-                print(f"  🔄 Restored from backup after save failure")
-            except Exception as restore_error:
-                print(f"  ❌ Could not restore from backup: {restore_error}")
+            print(f"  🔄 Restoring from backup...")
+            shutil.copy2(BACKUP_FILE, HISTORY_FILE)
         
-        raise Exception(f"Failed to save history: {e}")
+        raise
 
 
 # ─── Save New Predictions ──────────────────────────────────────────────────────
 
 def save_predictions(predictions_list: List[Dict], round_number: int, year: Optional[int] = None) -> Dict:
     """
-    Save this week's predictions to history.
-    Call this right after generating predictions each week.
+    Save predictions to history with proper extraction.
     """
     if year is None:
         year = datetime.now().year
+    
     history = load_history()
-
+    
     for pred in predictions_list:
-        # Check if we already have this game saved
+        # Check if already saved
         existing = next((
             p for p in history["predictions"]
             if p["home_team"] == pred["home_team"]
@@ -155,19 +119,23 @@ def save_predictions(predictions_list: List[Dict], round_number: int, year: Opti
             and p["round"] == round_number
             and p["year"] == year
         ), None)
-
+        
         if existing:
-            print(f"  ℹ️  Prediction already saved for {pred['home_team']} vs {pred['away_team']}")
+            print(f"  ℹ️  Already saved: {pred['home_team']} vs {pred['away_team']}")
             continue
-
-        # Extract predicted winner from AI text
-        predicted_winner = extract_predicted_winner(
-            pred["prediction"], pred["home_team"], pred["away_team"]
+        
+        # Extract predicted winner and probability using extraction_utils
+        prediction_text = pred.get("prediction", "")
+        predicted_winner = extract_winner(
+            prediction_text,
+            pred["home_team"],
+            pred["away_team"]
         )
-        predicted_probability = extract_predicted_probability(
-            pred["prediction"], predicted_winner
+        predicted_probability = extract_probability(
+            prediction_text,
+            predicted_winner
         )
-
+        
         record = {
             "year": year,
             "round": round_number,
@@ -177,105 +145,55 @@ def save_predictions(predictions_list: List[Dict], round_number: int, year: Opti
             "away_team": pred["away_team"],
             "predicted_winner": predicted_winner,
             "predicted_probability": predicted_probability,
-            "prediction_text": pred["prediction"],
-            "actual_winner": None,       # Filled in after the game
-            "actual_margin": None,       # Filled in after the game
-            "correct": None,             # True/False after result
+            "prediction_text": prediction_text,
+            "actual_winner": None,
+            "actual_margin": None,
+            "correct": None,
             "saved_at": datetime.now().isoformat()
         }
-
+        
         history["predictions"].append(record)
-        print(f"  ✅ Saved prediction: {pred['home_team']} vs {pred['away_team']} — tipped: {predicted_winner}")
-
+        
+        prob_str = f"{predicted_probability:.0f}%" if predicted_probability else "?"
+        print(f"  ✅ Saved: {pred['home_team']} vs {pred['away_team']} → {predicted_winner} ({prob_str})")
+    
     save_history(history)
     return history
-
-
-# ─── Extract Predicted Winner from AI Text ────────────────────────────────────
-
-def extract_predicted_winner(prediction_text: str, home_team: str, away_team: str) -> str:
-    """
-    Parse the AI's prediction text to extract the predicted winner.
-    Looks for 'PREDICTED WINNER:' header in the AI response.
-    """
-    text = prediction_text.upper()
-    home_upper = home_team.upper()
-    away_upper = away_team.upper()
-
-    # Look for the predicted winner section
-    if "PREDICTED WINNER" in text:
-        idx = text.index("PREDICTED WINNER")
-        snippet = text[idx:idx+200]
-
-        # Check which team name appears first after the header
-        home_pos = snippet.find(home_upper.split()[-1])  # Use last word (e.g. "LIONS")
-        away_pos = snippet.find(away_upper.split()[-1])
-
-        if home_pos != -1 and (away_pos == -1 or home_pos < away_pos):
-            return home_team
-        elif away_pos != -1:
-            return away_team
-
-    # Fallback: count mentions in first 300 chars
-    snippet = prediction_text[:300].upper()
-    home_count = snippet.count(home_upper.split()[-1])
-    away_count = snippet.count(away_upper.split()[-1])
-
-    if home_count > away_count:
-        return home_team
-    elif away_count > home_count:
-        return away_team
-
-    return "Unknown"
-
-
-def extract_predicted_probability(prediction_text: str, predicted_winner: str) -> Optional[float]:
-    """Extract the predicted win probability % from AI text."""
-    import re
-    # Look for patterns like "65%" or "65.0%"
-    matches = re.findall(r'(\d{2,3}(?:\.\d)?)\s*%', prediction_text)
-    if matches:
-        # Return the first probability that's plausibly a win prob (50-99%)
-        for m in matches:
-            val = float(m)
-            if 50 <= val <= 99:
-                return val
-    return None
 
 
 # ─── Check Results After Round Completes ──────────────────────────────────────
 
 def check_and_update_results(year: Optional[int] = None) -> Optional[Dict]:
     """
-    Fetch completed game results from Squiggle and update our history.
-    Run this after each round finishes (Monday/Tuesday).
-    Returns a summary of how we went this round.
+    Fetch results and update history. Run after each round completes.
     """
     history = load_history()
     updated_count = 0
-
-    # Find predictions that don't have results yet
+    
     if year is None:
         year = datetime.now().year
-    pending = [p for p in history["predictions"] if p["correct"] is None and p["year"] == year]
-
-    if not pending:
-        print("  ℹ️  No pending predictions to check.")
-        return None
-
-    _UA = {"User-Agent": "AFL-Tipping-Agent/1.0 (github.com/mesmerize08/afl-tipping-agent)"}
     
-    # Fetch all completed games from Squiggle
+    pending = [p for p in history["predictions"] if p["correct"] is None and p["year"] == year]
+    
+    if not pending:
+        print("No pending predictions to check.")
+        return None
+    
+    # Fetch completed games from Squiggle
+    _UA = {"User-Agent": "AFL-Tipping-Agent/1.0 (github.com/mesmerize08/afl-tipping-agent)"}
     try:
-        response = requests.get(f"{SQUIGGLE_BASE}?q=games;year={year}",
-                                timeout=10, headers=_UA)
+        response = requests.get(
+            f"{SQUIGGLE_BASE}?q=games;year={year}",
+            timeout=10,
+            headers=_UA
+        )
         response.raise_for_status()
         all_games = response.json().get("games", [])
         completed_games = [g for g in all_games if g.get("complete") == 100]
     except Exception as e:
-        print(f"  ❌ Error fetching results: {e}")
+        print(f"Error fetching results: {e}")
         return None
-
+    
     for pred in pending:
         # Find matching completed game
         match = next((
@@ -284,56 +202,61 @@ def check_and_update_results(year: Optional[int] = None) -> Optional[Dict]:
             and g.get("ateam") == pred["away_team"]
             and str(g.get("round")) == str(pred["round"])
         ), None)
-
+        
         if not match:
-            continue  # Game hasn't been played yet
-
+            continue
+        
         # Determine actual winner
         home_score = match.get("hscore", 0)
         away_score = match.get("ascore", 0)
-
+        
         if home_score > away_score:
             actual_winner = pred["home_team"]
-        elif away_score > home_score:
-            actual_winner = pred["away_team"]
+            actual_margin = home_score - away_score
         else:
-            actual_winner = "Draw"
-
-        actual_margin = abs(home_score - away_score)
-        correct = (pred["predicted_winner"] == actual_winner)
-
-        # Update the record
+            actual_winner = pred["away_team"]
+            actual_margin = away_score - home_score
+        
+        # Update prediction
         pred["actual_winner"] = actual_winner
         pred["actual_margin"] = actual_margin
-        pred["correct"] = correct
-        pred["result_checked_at"] = datetime.now().isoformat()
-
+        pred["correct"] = (pred["predicted_winner"] == actual_winner)
+        pred["checked_at"] = datetime.now().isoformat()
+        
+        result_emoji = "✅" if pred["correct"] else "❌"
+        print(f"{result_emoji} {pred['home_team']} vs {pred['away_team']}: "
+              f"Tipped {pred['predicted_winner']}, actual {actual_winner}")
+        
         updated_count += 1
-        result_emoji = "✅" if correct else "❌"
-        print(f"  {result_emoji} {pred['home_team']} vs {pred['away_team']}: "
-              f"tipped {pred['predicted_winner']}, actual {actual_winner}")
+    
+    if updated_count > 0:
+        # Recalculate accuracy summary
+        accuracy_summary = calculate_accuracy_summary(history["predictions"])
+        history["accuracy_summary"] = accuracy_summary
+        
+        save_history(history)
+        print(f"\n✅ Updated {updated_count} predictions")
+        
+        return accuracy_summary
+    
+    return None
 
-    # Recalculate overall accuracy summary
-    history["accuracy_summary"] = calculate_accuracy_summary(history["predictions"])
 
-    save_history(history)
-    print(f"\n✅ Updated {updated_count} results.")
-    return history["accuracy_summary"]
-
-
-# ─── Accuracy Calculations ─────────────────────────────────────────────────────
+# ─── Calculate Accuracy Summary ───────────────────────────────────────────────
 
 def calculate_accuracy_summary(predictions: List[Dict]) -> Dict:
-    """Calculate overall and per-round accuracy stats."""
+    """
+    Calculate overall and round-by-round accuracy.
+    """
     completed = [p for p in predictions if p["correct"] is not None]
-
+    
     if not completed:
         return {}
-
-    total = len(completed)
+    
     correct = sum(1 for p in completed if p["correct"])
-
-    # Per-round breakdown
+    total = len(completed)
+    
+    # By round
     rounds = {}
     for p in completed:
         r = str(p["round"])
@@ -342,12 +265,11 @@ def calculate_accuracy_summary(predictions: List[Dict]) -> Dict:
         rounds[r]["total"] += 1
         if p["correct"]:
             rounds[r]["correct"] += 1
-
-    # Favourite vs underdog accuracy
-    # (where we picked the lower-probability team = underdog pick)
+    
+    # Favourite vs underdog
     upset_picks = [p for p in completed if p.get("predicted_probability") and p["predicted_probability"] < 55]
     favourite_picks = [p for p in completed if p.get("predicted_probability") and p["predicted_probability"] >= 55]
-
+    
     return {
         "overall_correct": correct,
         "overall_total": total,
@@ -376,40 +298,35 @@ def calculate_accuracy_summary(predictions: List[Dict]) -> Dict:
 
 def format_history_for_ai(home_team: str, away_team: str, max_season_records: int = 15) -> str:
     """
-    Format the agent's own prediction history into a context block
-    that gets injected into the AI prompt. This lets the AI:
-      1. Know its own accuracy so far this season
-      2. Review its past predictions for these two specific teams
-      3. Learn from rounds where it was wrong
+    Format prediction history for AI prompt.
     """
     history = load_history()
     predictions = history.get("predictions", [])
     accuracy = history.get("accuracy_summary", {})
-
+    
     if not predictions:
         return "No prediction history yet — this is the first round of the season."
-
+    
     sections = []
-
-    # ── Overall accuracy this season ──
+    
+    # Overall accuracy
     if accuracy:
         sections.append("📊 AGENT'S OWN ACCURACY THIS SEASON:")
         sections.append(
             f"  Overall: {accuracy.get('overall_correct', 0)}/{accuracy.get('overall_total', 0)} "
             f"({accuracy.get('overall_accuracy_pct', 0)}% correct)"
         )
-
+        
         fav = accuracy.get("favourite_picks", {})
         if fav.get("total", 0) > 0:
             fav_pct = round((fav["correct"] / fav["total"]) * 100, 1)
             sections.append(f"  Favourite picks: {fav['correct']}/{fav['total']} ({fav_pct}%)")
-
+        
         upset = accuracy.get("upset_picks", {})
         if upset.get("total", 0) > 0:
             upset_pct = round((upset["correct"] / upset["total"]) * 100, 1)
             sections.append(f"  Underdog picks: {upset['correct']}/{upset['total']} ({upset_pct}%)")
-
-        # Recent round-by-round
+        
         by_round = accuracy.get("by_round", {})
         if by_round:
             recent_rounds = sorted(by_round.keys(), key=lambda x: int(x))[-3:]
@@ -418,33 +335,30 @@ def format_history_for_ai(home_team: str, away_team: str, max_season_records: in
                 for r in recent_rounds
             )
             sections.append(f"  Recent rounds: {round_summary}")
-
-    # ── Past predictions involving these two teams ──
+    
+    # Past predictions for these teams
     team_history = [
         p for p in predictions
         if (p["home_team"] in [home_team, away_team] or p["away_team"] in [home_team, away_team])
         and p["correct"] is not None
     ]
     team_history.sort(key=lambda x: (x.get("year", 0), int(x.get("round", 0))), reverse=True)
-
+    
     if team_history:
         sections.append(f"\n🔍 AGENT'S PAST PREDICTIONS INVOLVING {home_team.upper()} OR {away_team.upper()}:")
         for p in team_history[:6]:
             result = "✅ CORRECT" if p["correct"] else "❌ WRONG"
+            prob_str = f"{p['predicted_probability']:.0f}" if p.get("predicted_probability") else "?"
             sections.append(
                 f"  Rd {p['round']}: {p['home_team']} vs {p['away_team']} — "
-                f"tipped {p['predicted_winner']} "
-                f"({('%.0f' % p['predicted_probability']) if p.get('predicted_probability') else '?'}% confidence) -- "
+                f"tipped {p['predicted_winner']} ({prob_str}% confidence) -- "
                 f"{result} (actual winner: {p['actual_winner']})"
             )
-
-    # ── Recent wrong predictions (for calibration) ──
-    wrong_recent = [
-        p for p in predictions
-        if p["correct"] is False
-    ]
+    
+    # Recent wrong predictions
+    wrong_recent = [p for p in predictions if p["correct"] is False]
     wrong_recent.sort(key=lambda x: (x.get("year", 0), int(x.get("round", 0))), reverse=True)
-
+    
     if wrong_recent[:4]:
         sections.append(f"\n⚠️  RECENT INCORRECT PREDICTIONS (use these to recalibrate):")
         for p in wrong_recent[:4]:
@@ -452,7 +366,7 @@ def format_history_for_ai(home_team: str, away_team: str, max_season_records: in
                 f"  Rd {p['round']}: Tipped {p['predicted_winner']} over "
                 f"{p['actual_winner']} — actual winner won by {p.get('actual_margin', '?')} pts"
             )
-
+    
     return "\n".join(sections)
 
 
@@ -460,15 +374,15 @@ def format_history_for_ai(home_team: str, away_team: str, max_season_records: in
 
 def get_accuracy_display_data() -> Dict:
     """
-    Returns structured data for the Streamlit accuracy dashboard.
+    Returns structured data for Streamlit accuracy dashboard.
     """
     history = load_history()
     predictions = history.get("predictions", [])
     accuracy = history.get("accuracy_summary", {})
-
+    
     completed = [p for p in predictions if p["correct"] is not None]
     pending = [p for p in predictions if p["correct"] is None]
-
+    
     return {
         "accuracy_summary": accuracy,
         "completed_predictions": completed,

@@ -144,6 +144,12 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+def format_round_label(round_num):
+    """Format round number for display."""
+    if round_num == 0 or round_num == "0":
+        return "Opening Round"
+    return f"Round {round_num}"
+
 
 # ─── Performance banner ────────────────────────────────────────────────────────
 
