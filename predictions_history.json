@@ -1,0 +1,80 @@
+{
+  "predictions": [
+    {
+      "year": 2026,
+      "round": 0,
+      "date": "2026-03-05",
+      "venue": "SCG",
+      "home_team": "Sydney",
+      "away_team": "Carlton",
+      "predicted_winner": "Unknown",
+      "predicted_probability": null,
+      "prediction_text": "\nERROR: Unable to generate AI prediction after 3 retries.\n\nLast error: None\n\nTROUBLESHOOTING:\n1. Check your API keys are set correctly in environment variables:\n   - GROQ_API_KEY: \u2717 Missing\n   - ANTHROPIC_API_KEY: \u2717 Missing (fallback)\n\n2. Check your API rate limits:\n   - Groq: 6,000 requests/day\n   - Check current usage at https://console.groq.com\n\n3. Check your internet connection\n\n4. Try again in a few minutes (may be temporary service issue)\n\nIf this persists, please report at: github.com/mesmerize08/afl-tipping-agent/issues\n",
+      "actual_winner": null,
+      "actual_margin": null,
+      "correct": null,
+      "saved_at": "2026-03-04T23:35:41.043235"
+    },
+    {
+      "year": 2026,
+      "round": 0,
+      "date": "2026-03-06",
+      "venue": "Carrara",
+      "home_team": "Gold Coast",
+      "away_team": "Geelong",
+      "predicted_winner": "Unknown",
+      "predicted_probability": null,
+      "prediction_text": "\nERROR: Unable to generate AI prediction after 3 retries.\n\nLast error: None\n\nTROUBLESHOOTING:\n1. Check your API keys are set correctly in environment variables:\n   - GROQ_API_KEY: \u2717 Missing\n   - ANTHROPIC_API_KEY: \u2717 Missing (fallback)\n\n2. Check your API rate limits:\n   - Groq: 6,000 requests/day\n   - Check current usage at https://console.groq.com\n\n3. Check your internet connection\n\n4. Try again in a few minutes (may be temporary service issue)\n\nIf this persists, please report at: github.com/mesmerize08/afl-tipping-agent/issues\n",
+      "actual_winner": null,
+      "actual_margin": null,
+      "correct": null,
+      "saved_at": "2026-03-04T23:35:41.043265"
+    },
+    {
+      "year": 2026,
+      "round": 0,
+      "date": "2026-03-07",
+      "venue": "Sydney Showground",
+      "home_team": "GWS Giants",
+      "away_team": "Hawthorn",
+      "predicted_winner": "Unknown",
+      "predicted_probability": null,
+      "prediction_text": "\nERROR: Unable to generate AI prediction after 3 retries.\n\nLast error: None\n\nTROUBLESHOOTING:\n1. Check your API keys are set correctly in environment variables:\n   - GROQ_API_KEY: \u2717 Missing\n   - ANTHROPIC_API_KEY: \u2717 Missing (fallback)\n\n2. Check your API rate limits:\n   - Groq: 6,000 requests/day\n   - Check current usage at https://console.groq.com\n\n3. Check your internet connection\n\n4. Try again in a few minutes (may be temporary service issue)\n\nIf this persists, please report at: github.com/mesmerize08/afl-tipping-agent/issues\n",
+      "actual_winner": null,
+      "actual_margin": null,
+      "correct": null,
+      "saved_at": "2026-03-04T23:35:41.043286"
+    },
+    {
+      "year": 2026,
+      "round": 0,
+      "date": "2026-03-07",
+      "venue": "Gabba",
+      "home_team": "Brisbane Lions",
+      "away_team": "Western Bulldogs",
+      "predicted_winner": "Unknown",
+      "predicted_probability": null,
+      "prediction_text": "\nERROR: Unable to generate AI prediction after 3 retries.\n\nLast error: None\n\nTROUBLESHOOTING:\n1. Check your API keys are set correctly in environment variables:\n   - GROQ_API_KEY: \u2717 Missing\n   - ANTHROPIC_API_KEY: \u2717 Missing (fallback)\n\n2. Check your API rate limits:\n   - Groq: 6,000 requests/day\n   - Check current usage at https://console.groq.com\n\n3. Check your internet connection\n\n4. Try again in a few minutes (may be temporary service issue)\n\nIf this persists, please report at: github.com/mesmerize08/afl-tipping-agent/issues\n",
+      "actual_winner": null,
+      "actual_margin": null,
+      "correct": null,
+      "saved_at": "2026-03-04T23:35:41.043306"
+    },
+    {
+      "year": 2026,
+      "round": 0,
+      "date": "2026-03-08",
+      "venue": "MCG",
+      "home_team": "St Kilda",
+      "away_team": "Collingwood",
+      "predicted_winner": "Unknown",
+      "predicted_probability": null,
+      "prediction_text": "\nERROR: Unable to generate AI prediction after 3 retries.\n\nLast error: None\n\nTROUBLESHOOTING:\n1. Check your API keys are set correctly in environment variables:\n   - GROQ_API_KEY: \u2717 Missing\n   - ANTHROPIC_API_KEY: \u2717 Missing (fallback)\n\n2. Check your API rate limits:\n   - Groq: 6,000 requests/day\n   - Check current usage at https://console.groq.com\n\n3. Check your internet connection\n\n4. Try again in a few minutes (may be temporary service issue)\n\nIf this persists, please report at: github.com/mesmerize08/afl-tipping-agent/issues\n",
+      "actual_winner": null,
+      "actual_margin": null,
+      "correct": null,
+      "saved_at": "2026-03-04T23:35:41.043324"
+    }
+  ],
+  "accuracy_summary": {}
+}
