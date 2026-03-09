@@ -666,6 +666,14 @@ with tab4:
     
     st.divider()
 
+    if not os.getenv("GITHUB_TOKEN"):
+        st.warning(
+            "**Persistence not configured.** Results are saved locally but will be lost when "
+            "Streamlit Cloud restarts the app.\n\n"
+            "To persist results permanently, add **GITHUB_TOKEN** to your Streamlit Cloud secrets "
+            "(Settings → Secrets). See the README for setup instructions."
+        )
+
     if st.button("🔄 CHECK RESULTS & UPDATE HISTORY", type="primary"):
         with st.spinner("Fetching results from Squiggle..."):
             summary = check_and_update_results()

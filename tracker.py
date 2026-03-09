@@ -4,6 +4,7 @@ tracker.py (COMPLETE FIX - Extraction + Team Name Normalization)
 Manages prediction history and accuracy tracking.
 """
 
+import base64
 import json
 import logging
 import os
@@ -226,23 +227,23 @@ def load_history() -> Dict[str, Any]:
 
 
 def save_history(history: Dict[str, Any]) -> None:
-    """Save history with automatic backup and atomic write."""
+    """Save history with automatic backup and atomic write, then sync to GitHub."""
     if os.path.exists(HISTORY_FILE):
         try:
             shutil.copy2(HISTORY_FILE, BACKUP_FILE)
         except Exception as e:
             logger.warning("Could not create backup: %s", e)
-    
+
     temp_file = f"{HISTORY_FILE}.tmp"
     try:
         with open(temp_file, "w") as f:
             json.dump(history, f, indent=2)
-        
+
         with open(temp_file, "r") as f:
             json.load(f)
-        
+
         shutil.move(temp_file, HISTORY_FILE)
-        
+
     except Exception as e:
         logger.error("Save failed: %s", e)
 
@@ -254,6 +255,62 @@ def save_history(history: Dict[str, Any]) -> None:
             shutil.copy2(BACKUP_FILE, HISTORY_FILE)
 
         raise
+
+    # Persist to GitHub so state survives Streamlit Cloud restarts
+    _push_history_to_github(history)
+
+
+def _push_history_to_github(history: Dict[str, Any]) -> bool:
+    """
+    Push predictions_history.json to the GitHub repo via the Contents API.
+
+    This is the only way to survive Streamlit Cloud's ephemeral filesystem —
+    on every restart the app reads from the repo, not local disk.
+
+    Requires:
+      GITHUB_TOKEN  — Personal Access Token with 'repo' (or 'contents:write') scope
+    Optional:
+      GITHUB_REPO   — defaults to mesmerize08/afl-tipping-agent
+      GITHUB_BRANCH — defaults to main
+    """
+    token = os.getenv("GITHUB_TOKEN")
+    if not token:
+        logger.debug("GITHUB_TOKEN not set — skipping GitHub sync")
+        return False
+
+    repo   = os.getenv("GITHUB_REPO",   "mesmerize08/afl-tipping-agent")
+    branch = os.getenv("GITHUB_BRANCH", "main")
+    path   = "predictions_history.json"
+    api_url = f"https://api.github.com/repos/{repo}/contents/{path}"
+    headers = {
+        "Authorization": f"token {token}",
+        "Accept":        "application/vnd.github.v3+json",
+    }
+
+    try:
+        # GitHub requires the current file SHA to update an existing file
+        r = requests.get(api_url, headers=headers, params={"ref": branch}, timeout=10)
+        r.raise_for_status()
+        sha = r.json().get("sha")
+
+        content_b64 = base64.b64encode(
+            json.dumps(history, indent=2).encode("utf-8")
+        ).decode("ascii")
+
+        payload = {
+            "message": f"chore: auto-update predictions history [{datetime.now().strftime('%Y-%m-%d')}]",
+            "content": content_b64,
+            "sha":     sha,
+            "branch":  branch,
+        }
+        r = requests.put(api_url, headers=headers, json=payload, timeout=15)
+        r.raise_for_status()
+        logger.info("predictions_history.json synced to GitHub")
+        return True
+
+    except Exception as e:
+        logger.warning("GitHub sync failed (data saved locally): %s", e)
+        return False
 
 
 # ─── Save New Predictions ──────────────────────────────────────────────────────
