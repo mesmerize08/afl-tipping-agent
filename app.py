@@ -632,11 +632,11 @@ from tracker import fix_existing_predictions
 # In TAB 4, add this section:
     st.divider()
     st.markdown("### 🔧 One-Time Fix for Opening Round")
-    st.markdown("""
-        If your Opening Round predictions show "Unknown" in the Accuracy Tracker,
-        click this button to re-extract the winners from your predictions.
-        **You only need to do this once.**
-    """)
+    st.markdown(
+        "If your Opening Round predictions show 'Unknown' in the Accuracy Tracker, "
+        "click this button to re-extract the winners from your predictions. "
+        "**You only need to do this once.**"
+    )
     
     if st.button("🔧 Fix Opening Round Predictions", type="secondary"):
         with st.spinner("Re-extracting winners from predictions..."):
