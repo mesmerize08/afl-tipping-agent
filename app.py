@@ -670,19 +670,31 @@ with tab4:
         with st.spinner("Fetching results from Squiggle..."):
             summary = check_and_update_results()
         if summary:
-            st.success("Results updated!")
-            c1, c2, c3 = st.columns(3)
-            c1.metric("Season Accuracy", f"{summary.get('overall_accuracy_pct',0)}%")
-            c2.metric("Total Correct",   f"{summary.get('overall_correct',0)}/{summary.get('overall_total',0)}")
-            by_round = summary.get("by_round", {})
-            if by_round:
-                latest = max(by_round.keys(), key=lambda x: int(x))
-                r = by_round[latest]
-                c3.metric(f"Round {latest}", f"{r['pct']}%", f"{r['correct']}/{r['total']}")
-            st.balloons()
-            st.info("✅ History updated. The agent will use this to improve next week's tips.")
+            # Store result and trigger a full rerun so Tab 2 (Accuracy Tracker)
+            # re-renders AFTER the history file has been updated.
+            # Without rerun, Tab 2 renders before this button handler fires
+            # and always shows the pre-update data.
+            st.session_state["last_update_summary"] = summary
+            st.session_state["show_update_balloons"] = True
+            st.rerun()
         else:
             st.info("No results to update yet — games may not have completed, or no predictions are saved.")
+
+    # Display the result from the last successful update (persists via session_state)
+    if st.session_state.get("last_update_summary"):
+        summary = st.session_state["last_update_summary"]
+        st.success("Results updated!")
+        c1, c2, c3 = st.columns(3)
+        c1.metric("Season Accuracy", f"{summary.get('overall_accuracy_pct',0)}%")
+        c2.metric("Total Correct",   f"{summary.get('overall_correct',0)}/{summary.get('overall_total',0)}")
+        by_round = summary.get("by_round", {})
+        if by_round:
+            latest = max(by_round.keys(), key=lambda x: int(x))
+            r = by_round[latest]
+            c3.metric(f"Round {latest}", f"{r['pct']}%", f"{r['correct']}/{r['total']}")
+        if st.session_state.pop("show_update_balloons", False):
+            st.balloons()
+        st.info("✅ History updated. The agent will use this to improve next week's tips.")
 
     st.divider()
     st.markdown("<h3>History File Status</h3>", unsafe_allow_html=True)
