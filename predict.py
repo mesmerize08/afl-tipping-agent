@@ -512,8 +512,22 @@ def run_weekly_predictions(match_data_list: List[Dict], news_headlines: List[Dic
         })
 
     # Fix: use 'is not None' so Round 0 (falsy) is saved correctly
+    print(f"DEBUG: all_predictions length: {len(all_predictions) if all_predictions else 0}")
+    print(f"DEBUG: round_number value: {round_number}")
+    print(f"DEBUG: round_number is not None: {round_number is not None}")
+    
     if all_predictions and round_number is not None:
         print(f"\n💾 Saving Round {round_number} predictions to history...")
-        save_predictions(all_predictions, round_number)
+        try:
+            save_predictions(all_predictions, round_number)
+            print(f"✅ Successfully saved {len(all_predictions)} predictions!")
+        except Exception as e:
+            print(f"❌ ERROR saving predictions: {e}")
+            import traceback
+            traceback.print_exc()
+    else:
+        print(f"⚠️ NOT SAVING - Condition failed!")
+        print(f"   all_predictions: {bool(all_predictions)}")
+        print(f"   round_number is not None: {round_number is not None}")
 
     return all_predictions
