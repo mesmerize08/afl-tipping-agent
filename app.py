@@ -626,6 +626,37 @@ with tab4:
         3️⃣ &nbsp; Before lockout — review and submit your picks
     </div>""", unsafe_allow_html=True)
 
+# Add import at top of file
+from tracker import fix_existing_predictions
+
+# In TAB 4, add this section:
+    st.divider()
+    st.markdown("### 🔧 One-Time Fix for Opening Round")
+    st.markdown("""
+        If your Opening Round predictions show "Unknown" in the Accuracy Tracker,
+        click this button to re-extract the winners from your predictions.
+        **You only need to do this once.**
+    """)
+    
+    if st.button("🔧 Fix Opening Round Predictions", type="secondary"):
+        with st.spinner("Re-extracting winners from predictions..."):
+            try:
+                result = fix_existing_predictions()
+                
+                if result["fixed"] > 0:
+                    st.success(f"✅ Fixed {result['fixed']} predictions!")
+                    st.info(f"Already correct: {result['already_good']} predictions")
+                    st.balloons()
+                    st.rerun()
+                elif result["already_good"] > 0:
+                    st.info(f"All {result['already_good']} predictions already have valid winners. No fix needed!")
+                else:
+                    st.warning("No predictions found to fix.")
+            except Exception as e:
+                st.error(f"Error fixing predictions: {e}")
+    
+    st.divider()
+
     if st.button("🔄 CHECK RESULTS & UPDATE HISTORY", type="primary"):
         with st.spinner("Fetching results from Squiggle..."):
             summary = check_and_update_results()

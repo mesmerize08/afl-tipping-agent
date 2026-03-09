@@ -1,7 +1,7 @@
 """
-tracker.py (OPTIMIZED — Uses extraction_utils, backup protection)
-===================================================================
-Manages prediction history and accuracy tracking with automatic backup.
+tracker.py (COMPLETE FIX - Extraction + Team Name Normalization)
+==================================================================
+Manages prediction history and accuracy tracking.
 """
 
 import json
@@ -19,12 +19,166 @@ BACKUP_FILE = "predictions_history.json.backup"
 SQUIGGLE_BASE = "https://api.squiggle.com.au/"
 
 
+# ─── Team Name Normalization ───────────────────────────────────────────────────
+
+def normalize_team_name(team_name: str) -> str:
+    """
+    Normalize team names to handle variations between data sources.
+    Squiggle API uses different names than what might be in predictions.
+    """
+    team_map = {
+        # Adelaide
+        "adelaide": "Adelaide",
+        "crows": "Adelaide",
+        "adelaide crows": "Adelaide",
+        
+        # Brisbane
+        "brisbane": "Brisbane Lions",
+        "brisbane lions": "Brisbane Lions",
+        "lions": "Brisbane Lions",
+        
+        # Carlton
+        "carlton": "Carlton",
+        "blues": "Carlton",
+        
+        # Collingwood
+        "collingwood": "Collingwood",
+        "magpies": "Collingwood",
+        "pies": "Collingwood",
+        
+        # Essendon
+        "essendon": "Essendon",
+        "bombers": "Essendon",
+        
+        # Fremantle
+        "fremantle": "Fremantle",
+        "dockers": "Fremantle",
+        
+        # Geelong
+        "geelong": "Geelong",
+        "cats": "Geelong",
+        "geelong cats": "Geelong",
+        
+        # Gold Coast
+        "gold coast": "Gold Coast",
+        "suns": "Gold Coast",
+        "gold coast suns": "Gold Coast",
+        
+        # GWS Giants
+        "gws": "GWS Giants",
+        "gws giants": "GWS Giants",
+        "greater western sydney": "GWS Giants",
+        "giants": "GWS Giants",
+        
+        # Hawthorn
+        "hawthorn": "Hawthorn",
+        "hawks": "Hawthorn",
+        
+        # Melbourne
+        "melbourne": "Melbourne",
+        "demons": "Melbourne",
+        
+        # North Melbourne
+        "north melbourne": "North Melbourne",
+        "kangaroos": "North Melbourne",
+        "roos": "North Melbourne",
+        "north": "North Melbourne",
+        
+        # Port Adelaide
+        "port adelaide": "Port Adelaide",
+        "power": "Port Adelaide",
+        "port": "Port Adelaide",
+        
+        # Richmond
+        "richmond": "Richmond",
+        "tigers": "Richmond",
+        
+        # St Kilda
+        "st kilda": "St Kilda",
+        "saints": "St Kilda",
+        
+        # Sydney
+        "sydney": "Sydney",
+        "swans": "Sydney",
+        "sydney swans": "Sydney",
+        
+        # West Coast
+        "west coast": "West Coast",
+        "eagles": "West Coast",
+        "west coast eagles": "West Coast",
+        
+        # Western Bulldogs
+        "western bulldogs": "Western Bulldogs",
+        "bulldogs": "Western Bulldogs",
+        "dogs": "Western Bulldogs",
+    }
+    
+    normalized = team_name.lower().strip()
+    return team_map.get(normalized, team_name)
+
+
+# ─── Fix Existing Predictions ──────────────────────────────────────────────────
+
+def fix_existing_predictions() -> Dict[str, Any]:
+    """
+    One-time fix for existing predictions with 'Unknown' winners.
+    Re-extracts winners and probabilities from prediction text.
+    Returns summary of what was fixed.
+    """
+    history = load_history()
+    predictions = history.get("predictions", [])
+    
+    fixed_count = 0
+    already_good = 0
+    no_text = 0
+    
+    for pred in predictions:
+        # Skip if already has a valid winner
+        if pred.get("predicted_winner") and pred.get("predicted_winner") != "Unknown":
+            already_good += 1
+            continue
+        
+        # Get prediction text
+        prediction_text = pred.get("prediction_text", "")
+        if not prediction_text:
+            no_text += 1
+            continue
+        
+        # Re-extract using extraction_utils
+        home = pred.get("home_team", "")
+        away = pred.get("away_team", "")
+        
+        if not home or not away:
+            continue
+        
+        new_winner = extract_winner(prediction_text, home, away)
+        new_prob = extract_probability(prediction_text, new_winner)
+        
+        # Update prediction
+        old_winner = pred.get("predicted_winner")
+        old_prob = pred.get("predicted_probability")
+        
+        if new_winner != old_winner or new_prob != old_prob:
+            pred["predicted_winner"] = new_winner
+            pred["predicted_probability"] = new_prob
+            fixed_count += 1
+    
+    # Save if we fixed anything
+    if fixed_count > 0:
+        save_history(history)
+    
+    return {
+        "fixed": fixed_count,
+        "already_good": already_good,
+        "no_text": no_text,
+        "total": len(predictions)
+    }
+
+
 # ─── Load / Save History with Backup Protection ───────────────────────────────
 
 def load_history() -> Dict[str, Any]:
-    """
-    Load prediction history with JSON validation and backup recovery.
-    """
+    """Load prediction history with JSON validation and backup recovery."""
     if not os.path.exists(HISTORY_FILE):
         return {"predictions": [], "accuracy_summary": {}}
     
@@ -32,7 +186,6 @@ def load_history() -> Dict[str, Any]:
         with open(HISTORY_FILE, "r") as f:
             history = json.load(f)
         
-        # Validate structure
         if not isinstance(history, dict):
             raise ValueError("History is not a dict")
         if "predictions" not in history:
@@ -45,7 +198,6 @@ def load_history() -> Dict[str, Any]:
     except (json.JSONDecodeError, ValueError) as e:
         print(f"  ⚠️  History file corrupted: {e}")
         
-        # Try to recover from backup
         if os.path.exists(BACKUP_FILE):
             print(f"  🔄 Attempting recovery from backup...")
             try:
@@ -61,37 +213,29 @@ def load_history() -> Dict[str, Any]:
 
 
 def save_history(history: Dict[str, Any]) -> None:
-    """
-    Save history with automatic backup and atomic write.
-    """
-    # Create backup of existing file
+    """Save history with automatic backup and atomic write."""
     if os.path.exists(HISTORY_FILE):
         try:
             shutil.copy2(HISTORY_FILE, BACKUP_FILE)
         except Exception as e:
             print(f"  ⚠️  Could not create backup: {e}")
     
-    # Write to temporary file first
     temp_file = f"{HISTORY_FILE}.tmp"
     try:
         with open(temp_file, "w") as f:
             json.dump(history, f, indent=2)
         
-        # Validate temp file
         with open(temp_file, "r") as f:
             json.load(f)
         
-        # Move temp to actual file (atomic on Unix)
         shutil.move(temp_file, HISTORY_FILE)
         
     except Exception as e:
         print(f"  ❌ Save failed: {e}")
         
-        # Clean up temp file
         if os.path.exists(temp_file):
             os.remove(temp_file)
         
-        # Restore from backup if save failed
         if os.path.exists(BACKUP_FILE):
             print(f"  🔄 Restoring from backup...")
             shutil.copy2(BACKUP_FILE, HISTORY_FILE)
@@ -102,16 +246,13 @@ def save_history(history: Dict[str, Any]) -> None:
 # ─── Save New Predictions ──────────────────────────────────────────────────────
 
 def save_predictions(predictions_list: List[Dict], round_number: int, year: Optional[int] = None) -> Dict:
-    """
-    Save predictions to history with proper extraction.
-    """
+    """Save predictions to history with proper extraction."""
     if year is None:
         year = datetime.now().year
     
     history = load_history()
     
     for pred in predictions_list:
-        # Check if already saved
         existing = next((
             p for p in history["predictions"]
             if p["home_team"] == pred["home_team"]
@@ -124,7 +265,6 @@ def save_predictions(predictions_list: List[Dict], round_number: int, year: Opti
             print(f"  ℹ️  Already saved: {pred['home_team']} vs {pred['away_team']}")
             continue
         
-        # Extract predicted winner and probability using extraction_utils
         prediction_text = pred.get("prediction", "")
         predicted_winner = extract_winner(
             prediction_text,
@@ -165,7 +305,8 @@ def save_predictions(predictions_list: List[Dict], round_number: int, year: Opti
 
 def check_and_update_results(year: Optional[int] = None) -> Optional[Dict]:
     """
-    Fetch results and update history. Run after each round completes.
+    Fetch results and update history with team name normalization.
+    Run after each round completes.
     """
     history = load_history()
     updated_count = 0
@@ -179,7 +320,6 @@ def check_and_update_results(year: Optional[int] = None) -> Optional[Dict]:
         print("No pending predictions to check.")
         return None
     
-    # Fetch completed games from Squiggle
     _UA = {"User-Agent": "AFL-Tipping-Agent/1.0 (github.com/mesmerize08/afl-tipping-agent)"}
     try:
         response = requests.get(
@@ -195,11 +335,15 @@ def check_and_update_results(year: Optional[int] = None) -> Optional[Dict]:
         return None
     
     for pred in pending:
+        # Normalize team names for matching
+        pred_home = normalize_team_name(pred["home_team"])
+        pred_away = normalize_team_name(pred["away_team"])
+        
         # Find matching completed game
         match = next((
             g for g in completed_games
-            if g.get("hteam") == pred["home_team"]
-            and g.get("ateam") == pred["away_team"]
+            if normalize_team_name(g.get("hteam", "")) == pred_home
+            and normalize_team_name(g.get("ateam", "")) == pred_away
             and str(g.get("round")) == str(pred["round"])
         ), None)
         
@@ -217,20 +361,24 @@ def check_and_update_results(year: Optional[int] = None) -> Optional[Dict]:
             actual_winner = pred["away_team"]
             actual_margin = away_score - home_score
         
+        # Check if prediction was correct (normalize for comparison)
+        predicted_winner_norm = normalize_team_name(pred.get("predicted_winner", ""))
+        actual_winner_norm = normalize_team_name(actual_winner)
+        is_correct = (predicted_winner_norm == actual_winner_norm)
+        
         # Update prediction
         pred["actual_winner"] = actual_winner
         pred["actual_margin"] = actual_margin
-        pred["correct"] = (pred["predicted_winner"] == actual_winner)
+        pred["correct"] = is_correct
         pred["checked_at"] = datetime.now().isoformat()
         
-        result_emoji = "✅" if pred["correct"] else "❌"
+        result_emoji = "✅" if is_correct else "❌"
         print(f"{result_emoji} {pred['home_team']} vs {pred['away_team']}: "
               f"Tipped {pred['predicted_winner']}, actual {actual_winner}")
         
         updated_count += 1
     
     if updated_count > 0:
-        # Recalculate accuracy summary
         accuracy_summary = calculate_accuracy_summary(history["predictions"])
         history["accuracy_summary"] = accuracy_summary
         
@@ -245,9 +393,7 @@ def check_and_update_results(year: Optional[int] = None) -> Optional[Dict]:
 # ─── Calculate Accuracy Summary ───────────────────────────────────────────────
 
 def calculate_accuracy_summary(predictions: List[Dict]) -> Dict:
-    """
-    Calculate overall and round-by-round accuracy.
-    """
+    """Calculate overall and round-by-round accuracy."""
     completed = [p for p in predictions if p["correct"] is not None]
     
     if not completed:
@@ -256,7 +402,6 @@ def calculate_accuracy_summary(predictions: List[Dict]) -> Dict:
     correct = sum(1 for p in completed if p["correct"])
     total = len(completed)
     
-    # By round
     rounds = {}
     for p in completed:
         r = str(p["round"])
@@ -266,7 +411,6 @@ def calculate_accuracy_summary(predictions: List[Dict]) -> Dict:
         if p["correct"]:
             rounds[r]["correct"] += 1
     
-    # Favourite vs underdog
     upset_picks = [p for p in completed if p.get("predicted_probability") and p["predicted_probability"] < 55]
     favourite_picks = [p for p in completed if p.get("predicted_probability") and p["predicted_probability"] >= 55]
     
@@ -297,9 +441,7 @@ def calculate_accuracy_summary(predictions: List[Dict]) -> Dict:
 # ─── Format History for AI Prompt ─────────────────────────────────────────────
 
 def format_history_for_ai(home_team: str, away_team: str, max_season_records: int = 15) -> str:
-    """
-    Format prediction history for AI prompt.
-    """
+    """Format prediction history for AI prompt."""
     history = load_history()
     predictions = history.get("predictions", [])
     accuracy = history.get("accuracy_summary", {})
@@ -309,7 +451,6 @@ def format_history_for_ai(home_team: str, away_team: str, max_season_records: in
     
     sections = []
     
-    # Overall accuracy
     if accuracy:
         sections.append("📊 AGENT'S OWN ACCURACY THIS SEASON:")
         sections.append(
@@ -336,7 +477,6 @@ def format_history_for_ai(home_team: str, away_team: str, max_season_records: in
             )
             sections.append(f"  Recent rounds: {round_summary}")
     
-    # Past predictions for these teams
     team_history = [
         p for p in predictions
         if (p["home_team"] in [home_team, away_team] or p["away_team"] in [home_team, away_team])
@@ -355,7 +495,6 @@ def format_history_for_ai(home_team: str, away_team: str, max_season_records: in
                 f"{result} (actual winner: {p['actual_winner']})"
             )
     
-    # Recent wrong predictions
     wrong_recent = [p for p in predictions if p["correct"] is False]
     wrong_recent.sort(key=lambda x: (x.get("year", 0), int(x.get("round", 0))), reverse=True)
     
@@ -373,9 +512,7 @@ def format_history_for_ai(home_team: str, away_team: str, max_season_records: in
 # ─── Display Summary (for app.py) ─────────────────────────────────────────────
 
 def get_accuracy_display_data() -> Dict:
-    """
-    Returns structured data for Streamlit accuracy dashboard.
-    """
+    """Returns structured data for Streamlit accuracy dashboard."""
     history = load_history()
     predictions = history.get("predictions", [])
     accuracy = history.get("accuracy_summary", {})
