@@ -113,6 +113,10 @@ def normalize_team_name(team_name: str) -> str:
         "dogs": "Western Bulldogs",
     }
     
+    # Handle None or non-string values
+    if not team_name:
+        return ""
+    
     normalized = team_name.lower().strip()
     return team_map.get(normalized, team_name)
 
