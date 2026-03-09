@@ -18,6 +18,7 @@ import os
 import sys
 from datetime import datetime
 from dotenv import load_dotenv
+from tracker import check_and_update_results, get_accuracy_display_data, fix_existing_predictions
 
 load_dotenv()
 
@@ -626,10 +627,6 @@ with tab4:
         3️⃣ &nbsp; Before lockout — review and submit your picks
     </div>""", unsafe_allow_html=True)
 
-# Add import at top of file
-from tracker import fix_existing_predictions
-
-# In TAB 4, add this section:
     st.divider()
     st.markdown("### 🔧 One-Time Fix for Opening Round")
     st.markdown(
