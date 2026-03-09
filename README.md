@@ -1,532 +1,236 @@
 # 🏉 AFL Tipping Agent
 
-**Data-driven, unbiased, AI-powered Australian Rules Football predictions**
+**Data-driven · Unbiased · AI-powered**
 
-[![Streamlit App](https://img.shields.io/badge/Streamlit-Live%20App-FF4B4B?style=for-the-badge&logo=streamlit)](https://afl-tipping-agent.streamlit.app)
+[![Live App](https://img.shields.io/badge/Streamlit-Live%20App-FF4B4B?style=for-the-badge&logo=streamlit)](https://afl-tipping-agent.streamlit.app)
 [![Python 3.9+](https://img.shields.io/badge/Python-3.9+-3776AB?style=for-the-badge&logo=python)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
-> An intelligent AFL tipping system that combines real-time data, betting markets, team news, and AI analysis to generate weekly match predictions with confidence ratings.
+An AI-powered AFL prediction system that combines live betting markets, team form, injury news, travel fatigue, and weather data to generate weekly match tips with confidence ratings and full reasoning.
 
-**🔗 Live App:** [afl-tipping-agent.streamlit.app](https://afl-tipping-agent.streamlit.app)
-
----
-
-## 📖 Table of Contents
-
-- [Features](#-features)
-- [How It Works](#-how-it-works)
-- [Data Sources](#-data-sources)
-- [Quick Start](#-quick-start)
-- [Setup Guide](#-setup-guide)
-- [Usage](#-usage)
-- [Architecture](#-architecture)
-- [Season 2026 Status](#-season-2026-status)
-- [Contributing](#-contributing)
-- [Disclaimer](#-disclaimer)
-- [License](#-license)
+**🔗 [afl-tipping-agent.streamlit.app](https://afl-tipping-agent.streamlit.app)**
 
 ---
 
-## ✨ Features
+## Contents
 
-### 🎯 Core Capabilities
-- **AI-Powered Analysis** - Uses Claude (Anthropic) for sophisticated match predictions
-- **Multi-Source Data** - Combines form, odds, team news, weather, travel, and venue data
-- **Confidence Ratings** - High/Medium/Low confidence for each prediction
-- **Live Tracking** - Countdown timers to match lockout for each game
-- **Season Accuracy** - Tracks performance across the entire season
-- **PDF Export** - Download professional prediction reports
-
-### 📊 Data Integration
-- **Real-time betting odds** (head-to-head, line, totals)
-- **Team news & injuries** from Zero Hanger
-- **Form analysis** (last 5 games with margins)
-- **Travel & fatigue** indicators (interstate games, short turnarounds)
-- **Weather data** for each venue
-- **Venue performance** (home/away splits)
-- **Head-to-head history** between teams
-
-### 🎨 User Experience
-- **Quick-glance summary table** - See all tips at once
-- **Detailed match cards** - Expand for full AI analysis
-- **Performance banner** - Last round accuracy displayed prominently
-- **Responsive design** - Works on desktop and mobile
-- **Dark theme** - Easy on the eyes during late-night tipping sessions
+- [How It Works](#how-it-works)
+- [Features](#features)
+- [Data Sources](#data-sources)
+- [Weekly Workflow](#weekly-workflow)
+- [Setup](#setup)
+- [Deployment (Streamlit Cloud)](#deployment-streamlit-cloud)
+- [Project Structure](#project-structure)
+- [Disclaimer](#disclaimer)
 
 ---
 
-## 🧠 How It Works
+## How It Works
 
-### The Prediction Pipeline
+Every prediction is built from six data layers, compiled into a single structured prompt and analysed by a large language model:
 
 ```
-1. DATA COLLECTION
-   ├── Squiggle API (fixtures, ladder, results)
-   ├── The Odds API (betting markets)
-   ├── Zero Hanger (team news & injuries)
-   ├── Open-Meteo (weather forecasts)
-   └── Historical data (form, H2H, venue)
-
-2. DATA COMPILATION
-   ├── Match context (date, venue, time)
-   ├── Team form (last 5 games with margins)
-   ├── Betting confidence (odds → probabilities)
-   ├── Team news (injuries, suspensions, selections)
-   ├── Fatigue factors (travel distance, rest days)
-   └── Venue performance (home/away splits)
-
-3. AI ANALYSIS (Claude Haiku 4.5)
-   ├── Analyzes all compiled data
-   ├── Identifies key factors
-   ├── Assesses confidence level
-   ├── Generates prediction with reasoning
-   └── Provides win probability & margin
-
-4. OUTPUT
-   ├── Structured predictions
-   ├── Confidence ratings
-   ├── PDF export option
-   └── Season tracking
+1. FIXTURES & LADDER    Squiggle API — round, venue, ladder positions
+2. BETTING MARKETS      The Odds API — head-to-head, line, total score
+3. FORM & STATS         Squiggle API — last 5 results, margins, scoring trends
+4. TEAM NEWS            Zero Hanger RSS — injuries, suspensions, selection changes
+5. TRAVEL & REST        Calculated — distance, days between games
+6. WEATHER              Open-Meteo — forecast for venue at game time
+                                  ↓
+                        AI ANALYSIS (Groq / Claude)
+                                  ↓
+              Predicted winner · Win probability · Margin
+              Confidence rating · Upset risk · Data conflicts
 ```
 
-### The AI Prompt Strategy
+The AI is explicitly instructed to weight betting markets heavily (they aggregate collective wisdom), flag any conflicting signals between data sources, and never fabricate information when data is absent.
 
-The AI receives:
-- **Quantitative data:** Ladder positions, odds, form, margins
-- **Qualitative data:** Team news, injury reports, selection changes
-- **Context:** Venue, weather, travel, rest days
-- **Instructions:** Predict winner, probability, margin, confidence level
-
-The AI is instructed to:
-- ✅ Weight all data appropriately
-- ✅ Identify conflicting signals
-- ✅ Flag uncertainty with confidence ratings
-- ✅ Provide clear reasoning
-- ❌ Never ignore betting markets (they aggregate wisdom)
-- ❌ Never pick upsets without strong evidence
+Predictions are saved to `predictions_history.json` and automatically pushed back to GitHub so accuracy tracking persists across app restarts on Streamlit Cloud.
 
 ---
 
-## 📡 Data Sources
+## Features
 
-| Source | Purpose | Frequency | Cost |
-|--------|---------|-----------|------|
-| **[Squiggle API](https://api.squiggle.com.au)** | Fixtures, results, ladder, tips | Real-time | Free |
-| **[The Odds API](https://the-odds-api.com)** | Betting odds (h2h, line, totals) | Daily | Free tier (500/month) |
-| **[Zero Hanger](https://www.zerohanger.com)** | Team news, injuries, suspensions | Daily | Free (RSS) |
-| **[Open-Meteo](https://open-meteo.com)** | Weather forecasts | Hourly | Free |
-| **[Anthropic Claude](https://www.anthropic.com)** | AI prediction engine | Per request | ~$0.013/round |
-| **[Groq](https://groq.com)** | Backup AI engine | Per request | Free tier |
-
-**Total Cost:** ~$0.30 for a full 24-round season
+| | |
+|---|---|
+| **AI predictions** | Groq Llama 3.3 70B (primary, free) with Anthropic Claude fallback |
+| **Confidence ratings** | High / Medium / Low with one-sentence justification |
+| **Summary table** | Scan the full round at a glance |
+| **Match cards** | Expand for the full AI analysis |
+| **Lockout countdowns** | Live JavaScript timer per game |
+| **Accuracy tracker** | Season-long correct/incorrect record by round |
+| **Team news tab** | Browse injury and selection news by team |
+| **PDF export** | Print-ready round report |
+| **Auto GitHub sync** | History file pushed to repo after every save — no data lost on restart |
+| **Performance banner** | Last round accuracy shown at the top of the app |
 
 ---
 
-## 🚀 Quick Start
+## Data Sources
 
-### Prerequisites
-- Python 3.9 or higher
-- API keys (see [Setup Guide](#-setup-guide))
+| Source | Data | Cost |
+|--------|------|------|
+| [Squiggle API](https://api.squiggle.com.au) | Fixtures, results, ladder, H2H history | Free |
+| [The Odds API](https://the-odds-api.com) | Betting odds — h2h, line, totals | Free (500 req/month) |
+| [Zero Hanger](https://www.zerohanger.com) | Team news, injuries, suspensions | Free (RSS) |
+| [Open-Meteo](https://open-meteo.com) | Venue weather forecasts | Free |
+| [Groq](https://groq.com) | Primary AI engine (Llama 3.3 70B) | Free tier |
+| [Anthropic Claude](https://www.anthropic.com) | Fallback AI engine | ~$0.013/round |
 
-### Installation
+**Estimated cost for a full 24-round season: ~$0.30** (Anthropic fallback only fires if Groq fails)
+
+---
+
+## Weekly Workflow
+
+```
+Thursday night   Generate tips — fetch news, then click "Generate This Week's Tips"
+Before lockout   Review predictions, submit your picks
+Monday/Tuesday   Click "Check Results & Update History" to record last round
+```
+
+Results are fetched from Squiggle and matched against your predictions automatically. The accuracy tracker updates in real time and the history file is synced back to GitHub.
+
+---
+
+## Setup
+
+### 1. Clone and install
 
 ```bash
-# Clone the repository
 git clone https://github.com/mesmerize08/afl-tipping-agent.git
 cd afl-tipping-agent
 
-# Create virtual environment (recommended)
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate        # Windows: venv\Scripts\activate
 
-# Install dependencies
 pip install -r requirements.txt
+```
 
-# Create .env file with your API keys
+### 2. Get API keys
+
+**Groq (primary AI — free)**
+1. Sign up at [console.groq.com](https://console.groq.com)
+2. Create an API key
+
+**The Odds API (betting data — required)**
+1. Sign up at [the-odds-api.com](https://the-odds-api.com)
+2. Copy your key — free tier (500 req/month) is sufficient for a full season
+
+**Anthropic (AI fallback — optional)**
+1. Sign up at [console.anthropic.com](https://console.anthropic.com)
+2. Add $5–10 credit — lasts the whole season as a fallback only
+
+### 3. Create `.env`
+
+```bash
 cp .env.example .env
-# Edit .env and add your API keys
+```
 
-# Run the app
+Edit `.env`:
+
+```bash
+GROQ_API_KEY=gsk_your_groq_key_here
+ODDS_API_KEY=your_odds_api_key_here
+ANTHROPIC_API_KEY=sk-ant-api03-your_key_here   # optional fallback
+```
+
+### 4. Run
+
+```bash
 streamlit run app.py
 ```
 
-The app will open in your browser at `http://localhost:8501`
+Opens at `http://localhost:8501`.
 
 ---
 
-## 🔧 Setup Guide
+## Deployment (Streamlit Cloud)
 
-### 1. Get API Keys
-
-#### Anthropic (Primary AI - Required)
-1. Go to [console.anthropic.com](https://console.anthropic.com)
-2. Sign up / Log in
-3. Navigate to Settings → API Keys
-4. Create a new key
-5. Add $5-10 credit (lasts the whole season)
-
-**Cost:** ~$0.013 per round (~$0.30 for 24 rounds)
-
-#### The Odds API (Betting Data - Required)
-1. Go to [the-odds-api.com](https://the-odds-api.com)
-2. Sign up for free account
-3. Copy your API key
-4. Free tier: 500 requests/month (sufficient for season)
-
-**Cost:** Free
-
-#### Groq (Backup AI - Optional but Recommended)
-1. Go to [console.groq.com](https://console.groq.com)
-2. Sign up / Log in
-3. Get your API key
-4. Free tier available
-
-**Cost:** Free
-
-### 2. Configure Environment Variables
-
-#### For Local Development
-Create a `.env` file in the project root:
-
-```bash
-# .env file
-
-# PRIMARY AI ENGINE (required)
-ANTHROPIC_API_KEY=sk-ant-api03-your-key-here
-
-# BETTING ODDS (required)
-ODDS_API_KEY=your-odds-api-key-here
-
-# BACKUP AI ENGINE (optional but recommended)
-GROQ_API_KEY=gsk_your-groq-key-here
-```
-
-#### For Streamlit Cloud
-1. Go to your app settings
-2. Click "Secrets"
-3. Add in TOML format:
-
-```toml
-ANTHROPIC_API_KEY = "sk-ant-api03-your-key-here"
-ODDS_API_KEY = "your-odds-api-key-here"
-GROQ_API_KEY = "gsk_your-groq-key-here"
-```
-
-### 3. Deploy to Streamlit Cloud (Optional)
+### Initial deploy
 
 1. Fork this repository
-2. Go to [share.streamlit.io](https://share.streamlit.io)
-3. Click "New app"
-4. Connect your GitHub repository
-5. Set main file: `app.py`
-6. Add secrets (see above)
-7. Deploy!
+2. Go to [share.streamlit.io](https://share.streamlit.io) → **New app**
+3. Connect your fork, set main file to `app.py`
+4. Add secrets (Settings → Secrets):
+
+```toml
+GROQ_API_KEY      = "gsk_your_groq_key_here"
+ODDS_API_KEY      = "your_odds_api_key_here"
+ANTHROPIC_API_KEY = "sk-ant-api03-your_key_here"
+GITHUB_TOKEN      = "ghp_your_token_here"
+```
+
+5. Deploy
+
+### Persisting history across restarts (important)
+
+Streamlit Cloud has an **ephemeral filesystem** — any file written at runtime is lost when the app sleeps or redeploys. To keep your prediction history intact, the app automatically pushes `predictions_history.json` back to GitHub after every save.
+
+**This requires a `GITHUB_TOKEN` secret:**
+
+1. GitHub → Settings → Developer settings → Personal access tokens → **Tokens (classic)**
+2. Generate new token — check the **`repo`** scope — no expiration
+3. Copy the token and add it as `GITHUB_TOKEN` in your Streamlit secrets
+
+Without this token the app still works, but all results will be lost on the next restart. A warning banner is shown in the Update Results tab when the token is not configured.
 
 ---
 
-## 📱 Usage
-
-### Generating Predictions
-
-1. **Navigate to "This Week's Tips" tab**
-2. **Click "Generate This Week's Tips"**
-3. **Wait 45-60 seconds** while the system:
-   - Fetches fixtures and ladder
-   - Retrieves betting odds
-   - Scrapes team news
-   - Compiles match data
-   - Runs AI analysis
-
-4. **Review predictions:**
-   - Quick summary table shows all tips at once
-   - Detailed cards provide full analysis
-   - Confidence levels guide your picks
-
-5. **Export to PDF** (optional):
-   - Click "Download PDF Report"
-   - Save for your records
-
-### Tracking Accuracy
-
-1. **Navigate to "Accuracy Tracker" tab**
-2. **View season performance:**
-   - Overall accuracy percentage
-   - Round-by-round breakdown
-   - Favourite vs underdog picks
-   - Chart of accuracy over time
-
-3. **Update results** (after each round):
-   - Go to "Update Results" tab
-   - Click "Check Results & Update History"
-   - System fetches results and calculates accuracy
-
-### Browsing Team News
-
-1. **Navigate to "Team News" tab**
-2. **Select a team** or choose "All Teams"
-3. **Click "Fetch Latest News"**
-4. **Review articles:**
-   - Injuries and suspensions
-   - Team selections
-   - MRO decisions
-   - Coach comments
-
-**Best times to fetch:**
-- **Thursday evening** - Initial squads named
-- **Friday** - Final teams confirmed
-- **Any time** - For injury updates, MRO charges, tribunal results
-
----
-
-## 🏗 Architecture
-
-### Project Structure
+## Project Structure
 
 ```
 afl-tipping-agent/
-├── app.py                    # Main Streamlit UI
-├── predict.py                # AI prediction engine
-├── data_fetcher.py           # Data collection & compilation
-├── tracker.py                # Accuracy tracking & history
-├── team_news.py              # Team news scraping
-├── pdf_export.py             # PDF generation
-├── extraction_utils.py       # Shared parsing functions
-├── weather.py                # Weather data fetching
-├── requirements.txt          # Python dependencies
-├── .env                      # Environment variables (local)
-├── .gitignore               # Git ignore rules
-└── README.md                # This file
+├── app.py                  # Streamlit UI — 4 tabs, session state, caching
+├── predict.py              # AI prediction engine, retry logic, parallel execution
+├── data_fetcher.py         # Squiggle + Odds API, match data compilation
+├── tracker.py              # Prediction history, accuracy, GitHub sync
+├── team_news.py            # Zero Hanger RSS scraping and filtering
+├── extraction_utils.py     # Shared parsing — winner, probability, confidence, margin
+├── weather.py              # Open-Meteo integration and venue impact
+├── pdf_export.py           # Round report PDF generation
+├── run_weekly.py           # CLI runner (alternative to the Streamlit UI)
+├── predictions_history.json # Season prediction log (auto-committed by app)
+├── requirements.txt
+└── .env.example
 ```
 
-### Key Files
+### Module responsibilities
 
-#### `app.py` - User Interface
-- Streamlit-based web interface
-- 4 tabs: Tips, Accuracy, Team News, Update Results
-- Countdown timers, performance banners, PDF export
-- Environment variable validation on startup
+**`data_fetcher.py`** — Collects all external data. Each match requires two Squiggle API calls (one per team); these are parallelised with `ThreadPoolExecutor`. Betting odds are fetched in three calls (h2h, spreads, totals). All `print()` output is replaced with structured `logging`.
 
-#### `predict.py` - AI Engine
-- Primary: Anthropic Claude Haiku 4.5
-- Backup: Groq Llama 3.3 70B
-- Retry logic with exponential backoff
-- Prompt engineering for structured predictions
+**`predict.py`** — Builds a structured prompt for each match and calls the AI. All nine match predictions for a round run in parallel (`max_workers=3`, respecting Groq rate limits). Falls back to Anthropic Claude if Groq fails after three retries with exponential backoff.
 
-#### `data_fetcher.py` - Data Collection
-- Squiggle API integration
-- Betting odds compilation
-- Match data assembly
-- Travel & fatigue calculations
+**`tracker.py`** — Loads, saves and syncs `predictions_history.json`. Round-specific Squiggle queries are used to fetch results (the general `?q=games;year=X` endpoint does not reliably return Opening Round games). After every save the file is pushed to GitHub via the Contents API.
 
-#### `tracker.py` - Season Tracking
-- Saves predictions to JSON
-- Fetches results from Squiggle
-- Calculates accuracy metrics
-- Automatic backup protection
+**`extraction_utils.py`** — Shared parsing functions used by both `predict.py` and `tracker.py`. `extract_winner()` matches the full team name first before falling back to the nickname, preventing false matches (e.g. "Port Adelaide" vs "Adelaide").
 
-#### `team_news.py` - News Scraping
-- Zero Hanger RSS parsing
-- Article content extraction
-- Keyword filtering for relevance
-- Data quality indicators
-
-#### `pdf_export.py` - Report Generation
-- Professional PDF layout
-- Unicode sanitization
-- Summary table + detailed analysis
-- Print-ready formatting
+**`app.py`** — Streamlit UI. Fixtures and ladder calls are cached with `@st.cache_data(ttl=3600)`. After checking results, `st.rerun()` is called so the Accuracy Tracker tab re-renders with the updated file rather than showing stale pre-update data.
 
 ---
 
-## 🎯 Season 2026 Status
+## Disclaimer
 
-### ✅ Production Ready
+This application is for entertainment and personal tipping competitions only.
 
-**Launch Date:** March 5, 2026 (Round 1)
+- This is **not** financial or gambling advice
+- Predictions carry inherent uncertainty — no system beats the market consistently
+- Never bet money you cannot afford to lose
 
-**Pre-Launch Testing:**
-- ✅ All systems tested with Round 0 (pre-season)
-- ✅ Team news extraction verified (player names working)
-- ✅ API integrations operational
-- ✅ Backup systems in place
-- ✅ Performance optimized
-
-**Known Status:**
-- All data sources confirmed working for Season 2026
-- Anthropic API tested and funded
-- Odds API within free tier limits
-- Team news scraping reliable
-
-### Monitoring Plan
-
-**During Season:**
-- Monitor API usage (especially Odds API - 500/month limit)
-- Track prediction accuracy
-- Collect user feedback
-- Fix issues as they arise
-
-**After Each Round:**
-- Update results (Monday/Tuesday)
-- Review accuracy
-- Check for any anomalies
-- Update documentation if needed
+**Gambling help (Australia):** 1800 858 858 · [gamblinghelponline.org.au](https://www.gamblinghelponline.org.au)
 
 ---
 
-## 🤝 Contributing
+## License
 
-Contributions are welcome! Here's how you can help:
-
-### Reporting Issues
-- Use GitHub Issues
-- Include error messages
-- Describe what you expected vs what happened
-- Include screenshots if relevant
-
-### Suggesting Enhancements
-- Open an issue with "Enhancement" label
-- Describe the feature
-- Explain the use case
-- Discuss implementation approach
-
-### Code Contributions
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Make your changes
-4. Test thoroughly
-5. Commit with clear messages (`git commit -m 'Add amazing feature'`)
-6. Push to branch (`git push origin feature/amazing-feature`)
-7. Open a Pull Request
-
-### Development Guidelines
-- Follow PEP 8 style guide
-- Add type hints to functions
-- Include docstrings
-- Test your changes
-- Update documentation
+MIT — see [LICENSE](LICENSE).
 
 ---
 
-## 📈 Future Enhancements
+## Acknowledgements
 
-### Potential Improvements
-- **Player statistics** - Individual player form and impact
-- **Machine learning** - Train models on historical prediction accuracy
-- **Request caching** - Reduce API calls by caching data
-- **Mobile app** - Native iOS/Android apps
-- **Social features** - Compare tips with friends
-- **Telegram bot** - Get tips via Telegram
-- **Historical analysis** - Compare to expert tipsters
-
-### Mid-Season Optimizations
-- Implement request caching for Squiggle data
-- Add more sophisticated travel fatigue models
-- Enhance UI with interactive charts
-- Add player injury impact quantification
+[Squiggle](https://api.squiggle.com.au) · [The Odds API](https://the-odds-api.com) · [Zero Hanger](https://www.zerohanger.com) · [Open-Meteo](https://open-meteo.com) · [Groq](https://groq.com) · [Anthropic](https://www.anthropic.com) · [Streamlit](https://streamlit.io)
 
 ---
 
-## ⚠️ Disclaimer
-
-**For Entertainment Purposes Only**
-
-This application is designed for entertainment and educational purposes only. While it uses real data and sophisticated analysis:
-
-- ❌ This is **NOT** professional gambling advice
-- ❌ Past performance does **NOT** guarantee future results
-- ❌ All predictions carry **uncertainty**
-- ✅ Use at your own risk
-- ✅ Gamble responsibly
-- ✅ Never bet more than you can afford to lose
-
-**The creators of this application:**
-- Do not encourage gambling
-- Are not responsible for any financial losses
-- Provide no guarantees of accuracy
-- Recommend using predictions for fun tipping competitions only
-
-**If you have a gambling problem:**
-- Call 1800 858 858 (Gambling Help Online - Australia)
-- Visit [gamblinghelponline.org.au](https://www.gamblinghelponline.org.au)
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-### MIT License Summary
-
-```
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software...
-```
-
-**In simple terms:**
-- ✅ Use commercially
-- ✅ Modify
-- ✅ Distribute
-- ✅ Private use
-- ⚠️ Include copyright notice
-- ⚠️ Include license text
-
----
-
-## 🙏 Acknowledgments
-
-### Data Providers
-- **Squiggle** - For their excellent free AFL API
-- **The Odds API** - For reliable betting odds data
-- **Zero Hanger** - For comprehensive AFL news coverage
-- **Open-Meteo** - For free weather data
-
-### Technology
-- **Anthropic** - For Claude AI API
-- **Streamlit** - For the amazing web framework
-- **Python** - For being awesome
-
-### Community
-- Thanks to all AFL fans who use and improve this tool
-- Special thanks to contributors and issue reporters
-- Shoutout to the AFL data science community
-
----
-
-## 📞 Contact & Support
-
-- **GitHub Issues:** [Report bugs or request features](https://github.com/mesmerize08/afl-tipping-agent/issues)
-- **Live App:** [afl-tipping-agent.streamlit.app](https://afl-tipping-agent.streamlit.app)
-- **Repository:** [github.com/mesmerize08/afl-tipping-agent](https://github.com/mesmerize08/afl-tipping-agent)
-
----
-
-## ⭐ Support This Project
-
-If you find this project useful:
-- ⭐ Star this repository
-- 🐛 Report bugs
-- 💡 Suggest features
-- 🤝 Contribute code
-- 📢 Share with friends
-- ☕ Buy me a coffee (optional)
-
----
-
-<p align="center">
-  <strong>Built with ❤️ for AFL fans</strong><br>
-  <em>Data-driven. Unbiased. AI-powered.</em>
-</p>
-
-<p align="center">
-  <a href="https://afl-tipping-agent.streamlit.app">
-    <img src="https://img.shields.io/badge/Try%20It%20Live-FF4B4B?style=for-the-badge&logo=streamlit" alt="Try It Live">
-  </a>
-</p>
-
----
-
-**Last Updated:** March 4, 2026 | **Season:** 2026 | **Status:** ✅ Production Ready
+*Season 2026 · Updated March 2026*
