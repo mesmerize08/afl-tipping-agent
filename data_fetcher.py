@@ -255,7 +255,7 @@ def get_team_season_data(team_name, year=None):
         logger.warning("Could not fetch season data for %s: %s", team_name, e)
         games = []
 
-    completed = [g for g in games if g.get("complete") == 100]
+    completed = [g for g in games if str(g.get("complete", "")).split(".")[0] == "100"]
     completed.sort(key=lambda x: x.get("date", ""), reverse=True)
 
     # Fall back to previous year if no completed games yet this season
@@ -270,7 +270,7 @@ def get_team_season_data(team_name, year=None):
         except Exception as e:
             logger.warning("Fallback fetch failed for %s: %s", team_name, e)
             fb_games = []
-        completed = [g for g in fb_games if g.get("complete") == 100]
+        completed = [g for g in fb_games if str(g.get("complete", "")).split(".")[0] == "100"]
         completed.sort(key=lambda x: x.get("date", ""), reverse=True)
 
     return completed
@@ -492,7 +492,7 @@ def get_venue_record(team_name, venue, num_games=5):
         logger.warning("Could not fetch venue record: %s", e)
         return []
 
-    completed = [g for g in games if g.get("complete") == 100]
+    completed = [g for g in games if str(g.get("complete", "")).split(".")[0] == "100"]
     completed.sort(key=lambda x: x.get("date", ""), reverse=True)
 
     venue_form = []

@@ -323,29 +323,52 @@ def check_and_update_results(year: Optional[int] = None) -> Optional[Dict]:
     """
     history = load_history()
     updated_count = 0
-    
+
     if year is None:
         year = datetime.now().year
-    
+
     pending = [p for p in history["predictions"] if p["correct"] is None and p["year"] == year]
-    
+
     if not pending:
         logger.info("No pending predictions to check")
         return None
-    
+
     _UA = {"User-Agent": "AFL-Tipping-Agent/1.0 (github.com/mesmerize08/afl-tipping-agent)"}
-    try:
-        response = requests.get(
-            f"{SQUIGGLE_BASE}?q=games;year={year}",
-            timeout=10,
-            headers=_UA
-        )
-        response.raise_for_status()
-        all_games = response.json().get("games", [])
-        completed_games = [g for g in all_games if g.get("complete") == 100]
-    except Exception as e:
-        logger.error("Error fetching results: %s", e)
-        return None
+
+    # Collect completed games from Squiggle.
+    # Strategy: query each pending round explicitly (round 0 / Opening Round is not
+    # reliably returned by ?q=games;year=X), then also try the general year query.
+    pending_rounds = sorted({p["round"] for p in pending})
+    seen_ids: set = set()
+    all_games: List[Dict] = []
+
+    def _fetch(url: str) -> List[Dict]:
+        try:
+            r = requests.get(url, timeout=10, headers=_UA)
+            r.raise_for_status()
+            return r.json().get("games", [])
+        except Exception as exc:
+            logger.warning("Squiggle fetch failed for %s: %s", url, exc)
+            return []
+
+    # Round-specific queries first (most reliable for round 0)
+    for rnd in pending_rounds:
+        for game in _fetch(f"{SQUIGGLE_BASE}?q=games;year={year};round={rnd}"):
+            gid = game.get("id")
+            if gid not in seen_ids:
+                seen_ids.add(gid)
+                all_games.append(game)
+
+    # General year query as a supplement
+    for game in _fetch(f"{SQUIGGLE_BASE}?q=games;year={year}"):
+        gid = game.get("id")
+        if gid not in seen_ids:
+            seen_ids.add(gid)
+            all_games.append(game)
+
+    # Accept complete == 100 as int, float, or string
+    completed_games = [g for g in all_games if str(g.get("complete", "")).split(".")[0] == "100"]
+    logger.info("Found %d completed games across rounds %s", len(completed_games), pending_rounds)
     
     for pred in pending:
         # Normalize team names for matching
