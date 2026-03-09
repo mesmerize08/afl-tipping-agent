@@ -5,17 +5,22 @@ Manages prediction history and accuracy tracking.
 """
 
 import json
+import logging
 import os
 import shutil
 import requests
 from datetime import datetime
+from pathlib import Path
 from typing import Dict, List, Any, Optional
 
 # Import shared extraction utilities
 from extraction_utils import extract_winner, extract_probability
 
-HISTORY_FILE = "predictions_history.json"
-BACKUP_FILE = "predictions_history.json.backup"
+logger = logging.getLogger(__name__)
+
+_HERE = Path(__file__).parent
+HISTORY_FILE = str(_HERE / "predictions_history.json")
+BACKUP_FILE  = str(_HERE / "predictions_history.json.backup")
 SQUIGGLE_BASE = "https://api.squiggle.com.au/"
 
 
@@ -118,7 +123,11 @@ def normalize_team_name(team_name: str) -> str:
         return ""
     
     normalized = team_name.lower().strip()
-    return team_map.get(normalized, team_name)
+    result = team_map.get(normalized)
+    if result is None:
+        logger.warning("normalize_team_name: unknown team name %r — returning as-is", team_name)
+        return team_name
+    return result
 
 
 # ─── Fix Existing Predictions ──────────────────────────────────────────────────
@@ -200,19 +209,19 @@ def load_history() -> Dict[str, Any]:
         return history
         
     except (json.JSONDecodeError, ValueError) as e:
-        print(f"  ⚠️  History file corrupted: {e}")
-        
+        logger.error("History file corrupted: %s", e)
+
         if os.path.exists(BACKUP_FILE):
-            print(f"  🔄 Attempting recovery from backup...")
+            logger.info("Attempting recovery from backup...")
             try:
                 with open(BACKUP_FILE, "r") as f:
                     history = json.load(f)
-                print(f"  ✅ Recovered from backup!")
+                logger.info("Recovered from backup successfully")
                 return history
             except Exception:
                 pass
-        
-        print(f"  ⚠️  Starting with empty history")
+
+        logger.warning("Starting with empty history")
         return {"predictions": [], "accuracy_summary": {}}
 
 
@@ -222,7 +231,7 @@ def save_history(history: Dict[str, Any]) -> None:
         try:
             shutil.copy2(HISTORY_FILE, BACKUP_FILE)
         except Exception as e:
-            print(f"  ⚠️  Could not create backup: {e}")
+            logger.warning("Could not create backup: %s", e)
     
     temp_file = f"{HISTORY_FILE}.tmp"
     try:
@@ -235,15 +244,15 @@ def save_history(history: Dict[str, Any]) -> None:
         shutil.move(temp_file, HISTORY_FILE)
         
     except Exception as e:
-        print(f"  ❌ Save failed: {e}")
-        
+        logger.error("Save failed: %s", e)
+
         if os.path.exists(temp_file):
             os.remove(temp_file)
-        
+
         if os.path.exists(BACKUP_FILE):
-            print(f"  🔄 Restoring from backup...")
+            logger.info("Restoring from backup...")
             shutil.copy2(BACKUP_FILE, HISTORY_FILE)
-        
+
         raise
 
 
@@ -266,7 +275,7 @@ def save_predictions(predictions_list: List[Dict], round_number: int, year: Opti
         ), None)
         
         if existing:
-            print(f"  ℹ️  Already saved: {pred['home_team']} vs {pred['away_team']}")
+            logger.info("Already saved: %s vs %s", pred["home_team"], pred["away_team"])
             continue
         
         prediction_text = pred.get("prediction", "")
@@ -299,7 +308,7 @@ def save_predictions(predictions_list: List[Dict], round_number: int, year: Opti
         history["predictions"].append(record)
         
         prob_str = f"{predicted_probability:.0f}%" if predicted_probability else "?"
-        print(f"  ✅ Saved: {pred['home_team']} vs {pred['away_team']} → {predicted_winner} ({prob_str})")
+        logger.info("Saved: %s vs %s → %s (%s)", pred["home_team"], pred["away_team"], predicted_winner, prob_str)
     
     save_history(history)
     return history
@@ -321,7 +330,7 @@ def check_and_update_results(year: Optional[int] = None) -> Optional[Dict]:
     pending = [p for p in history["predictions"] if p["correct"] is None and p["year"] == year]
     
     if not pending:
-        print("No pending predictions to check.")
+        logger.info("No pending predictions to check")
         return None
     
     _UA = {"User-Agent": "AFL-Tipping-Agent/1.0 (github.com/mesmerize08/afl-tipping-agent)"}
@@ -335,7 +344,7 @@ def check_and_update_results(year: Optional[int] = None) -> Optional[Dict]:
         all_games = response.json().get("games", [])
         completed_games = [g for g in all_games if g.get("complete") == 100]
     except Exception as e:
-        print(f"Error fetching results: {e}")
+        logger.error("Error fetching results: %s", e)
         return None
     
     for pred in pending:
@@ -376,9 +385,9 @@ def check_and_update_results(year: Optional[int] = None) -> Optional[Dict]:
         pred["correct"] = is_correct
         pred["checked_at"] = datetime.now().isoformat()
         
-        result_emoji = "✅" if is_correct else "❌"
-        print(f"{result_emoji} {pred['home_team']} vs {pred['away_team']}: "
-              f"Tipped {pred['predicted_winner']}, actual {actual_winner}")
+        status = "correct" if is_correct else "incorrect"
+        logger.info("%s vs %s: tipped %s, actual %s (%s)",
+                    pred["home_team"], pred["away_team"], pred["predicted_winner"], actual_winner, status)
         
         updated_count += 1
     
@@ -387,7 +396,7 @@ def check_and_update_results(year: Optional[int] = None) -> Optional[Dict]:
         history["accuracy_summary"] = accuracy_summary
         
         save_history(history)
-        print(f"\n✅ Updated {updated_count} predictions")
+        logger.info("Updated %d predictions", updated_count)
         
         return accuracy_summary
     

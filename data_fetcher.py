@@ -18,12 +18,22 @@ Functions:
   compile_match_data()             : assembles all data for one match
 """
 
-import requests
+import logging
 import os
+import requests
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
+from urllib.parse import urlsplit
 
 SQUIGGLE_BASE = "https://api.squiggle.com.au/"
 ODDS_API_KEY  = os.getenv("ODDS_API_KEY")
+
+logger = logging.getLogger(__name__)
+
+
+def _safe_url(url: str) -> str:
+    """Return URL with query string stripped (hides API keys in log messages)."""
+    return urlsplit(url)._replace(query="", fragment="").geturl()
 
 
 # ─── Team home cities (for travel detection) ──────────────────────────────────
@@ -131,10 +141,10 @@ def _sq_get(url):
         r = requests.get(url, timeout=15, headers=_UA)
         r.raise_for_status()
         games = r.json().get("games", [])
-        print(f"  [{url.split('?')[1]}] -> {len(games)} games")
+        logger.debug("Squiggle [%s] -> %d games", url.split("?", 1)[-1], len(games))
         return games
     except Exception as e:
-        print(f"  Warning: Squiggle fetch failed [{url.split('?')[1] if '?' in url else url}]: {e}")
+        logger.warning("Squiggle fetch failed [%s]: %s", _safe_url(url), e)
         return []
 
 
@@ -204,9 +214,9 @@ def get_upcoming_fixtures():
     if candidates:
         earliest = min(g.get("round", 99) for g in candidates)
         candidates = [g for g in candidates if g.get("round") == earliest]
-        print(f"  -> Keeping round {earliest}: {len(candidates)} fixture(s)")
+        logger.info("Keeping round %s: %d fixture(s)", earliest, len(candidates))
 
-    print(f"  Total upcoming: {len(candidates)}")
+    logger.info("Total upcoming fixtures: %d", len(candidates))
     return candidates
 
 
@@ -221,7 +231,7 @@ def get_ladder():
         r.raise_for_status()
         return r.json().get("standings", [])
     except Exception as e:
-        print(f"  Warning: Could not fetch ladder: {e}")
+        logger.warning("Could not fetch ladder: %s", e)
         return []
 
 
@@ -242,7 +252,7 @@ def get_team_season_data(team_name, year=None):
         r.raise_for_status()
         games = r.json().get("games", [])
     except Exception as e:
-        print(f"  Warning: Could not fetch season data for {team_name}: {e}")
+        logger.warning("Could not fetch season data for %s: %s", team_name, e)
         games = []
 
     completed = [g for g in games if g.get("complete") == 100]
@@ -250,7 +260,7 @@ def get_team_season_data(team_name, year=None):
 
     # Fall back to previous year if no completed games yet this season
     if not completed:
-        print(f"  No {year} data for {team_name} -- falling back to {year - 1}")
+        logger.info("No %s data for %s — falling back to %s", year, team_name, year - 1)
         try:
             r2 = requests.get(
                 f"{SQUIGGLE_BASE}?q=games;year={year-1};team={requests.utils.quote(team_name)}",
@@ -258,7 +268,7 @@ def get_team_season_data(team_name, year=None):
             r2.raise_for_status()
             fb_games = r2.json().get("games", [])
         except Exception as e:
-            print(f"  Warning: Fallback failed for {team_name}: {e}")
+            logger.warning("Fallback fetch failed for %s: %s", team_name, e)
             fb_games = []
         completed = [g for g in fb_games if g.get("complete") == 100]
         completed.sort(key=lambda x: x.get("date", ""), reverse=True)
@@ -442,7 +452,7 @@ def get_head_to_head(team1, team2, num_games=10):
         r.raise_for_status()
         games = r.json().get("games", [])
     except Exception as e:
-        print(f"  Warning: Could not fetch H2H: {e}")
+        logger.warning("Could not fetch H2H data: %s", e)
         return []
 
     h2h = []
@@ -462,6 +472,8 @@ def get_head_to_head(team1, team2, num_games=10):
             })
 
     h2h.sort(key=lambda x: x.get("date", ""), reverse=True)
+    if not h2h:
+        logger.info("No H2H history found between %s and %s", team1, team2)
     return h2h[:num_games]
 
 
@@ -477,7 +489,7 @@ def get_venue_record(team_name, venue, num_games=5):
         r.raise_for_status()
         games = r.json().get("games", [])
     except Exception as e:
-        print(f"  Warning: Could not fetch venue record: {e}")
+        logger.warning("Could not fetch venue record: %s", e)
         return []
 
     completed = [g for g in games if g.get("complete") == 100]
@@ -612,7 +624,7 @@ def get_betting_odds():
                         })
 
         except Exception as e:
-            print(f"  Warning: Could not fetch {market} odds: {e}")
+            logger.warning("Could not fetch %s odds: %s", market, e)
 
     return all_data
 
@@ -653,7 +665,7 @@ def get_squiggle_tips(round_number=None, year=None):
             }
         return result
     except Exception as e:
-        print(f"  Warning: Could not fetch Squiggle tips: {e}")
+        logger.warning("Could not fetch Squiggle tips: %s", e)
         return {}
 
 
@@ -724,10 +736,10 @@ def get_afl_news():
                 })
             if len(items) >= 15:
                 break
-        print(f"  AFL news: {len(items)} articles from Zero Hanger")
+        logger.info("AFL news: %d articles from Zero Hanger", len(items))
         return items
     except Exception as ex:
-        print(f"  Warning: Could not fetch AFL news: {ex}")
+        logger.warning("Could not fetch AFL news: %s", ex)
         return []
 
 
@@ -746,12 +758,14 @@ def compile_match_data(game, ladder, betting_odds, squiggle_tips=None):
     game_date  = game.get("date", "")[:10]
     round_num  = game.get("round")
 
-    # One API call per team — reused for all helpers below
+    # Fetch both teams' season data in parallel (2 independent API calls)
     current_year = datetime.now().year
-    print(f"  📡 Fetching season data for {home_team}...")
-    home_games = get_team_season_data(home_team, year=current_year)
-    print(f"  📡 Fetching season data for {away_team}...")
-    away_games = get_team_season_data(away_team, year=current_year)
+    logger.info("Fetching season data for %s and %s", home_team, away_team)
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        home_fut = pool.submit(get_team_season_data, home_team, current_year)
+        away_fut = pool.submit(get_team_season_data, away_team, current_year)
+        home_games = home_fut.result()
+        away_games = away_fut.result()
 
     # Form with margins
     home_form = get_form_from_games(home_team, home_games)

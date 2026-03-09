@@ -19,12 +19,17 @@ Environment variables required:
   ANTHROPIC_API_KEY — fallback (optional but recommended)
 """
 
+import logging
 import os
 import re
 import time
+import traceback
 import requests
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from typing import List, Dict, Optional
+
+logger = logging.getLogger(__name__)
 
 from team_news  import format_team_news_for_ai
 from tracker    import format_history_for_ai, save_predictions
@@ -59,7 +64,7 @@ def _call_ai_with_retry(prompt: str, max_retries: int = MAX_RETRIES) -> str:
     
     # Validate prompt length
     if len(prompt) > MAX_PROMPT_LENGTH:
-        print(f"  ⚠️  Warning: Prompt is {len(prompt)} chars (limit: {MAX_PROMPT_LENGTH}). Truncating...")
+        logger.warning("Prompt is %d chars (limit: %d) — truncating", len(prompt), MAX_PROMPT_LENGTH)
         prompt = prompt[:MAX_PROMPT_LENGTH] + "\n\n[Prompt truncated due to length]"
     
     last_error = None
@@ -87,35 +92,35 @@ def _call_ai_with_retry(prompt: str, max_retries: int = MAX_RETRIES) -> str:
                 
             except requests.exceptions.Timeout:
                 last_error = f"Groq timeout on attempt {attempt + 1}/{max_retries}"
-                print(f"  ⏱️  {last_error}")
+                logger.warning(last_error)
                 if attempt < max_retries - 1:
                     delay = RETRY_DELAY_BASE ** attempt
-                    print(f"  🔄 Retrying in {delay}s...")
+                    logger.info("Retrying in %ds...", delay)
                     time.sleep(delay)
-                    
+
             except requests.exceptions.HTTPError as e:
                 status_code = e.response.status_code
-                
+
                 # Rate limit (429) or service unavailable (503) - retry with backoff
                 if status_code in [429, 503]:
                     last_error = f"Groq {status_code} (rate limit/unavailable) on attempt {attempt + 1}/{max_retries}"
-                    print(f"  ⚠️  {last_error}")
+                    logger.warning(last_error)
                     if attempt < max_retries - 1:
                         delay = RETRY_DELAY_BASE ** attempt
-                        print(f"  🔄 Retrying in {delay}s...")
+                        logger.info("Retrying in %ds...", delay)
                         time.sleep(delay)
                 else:
                     # Other HTTP errors - don't retry, fall through to Anthropic
                     last_error = f"Groq HTTP {status_code}: {str(e)}"
-                    print(f"  ❌ {last_error}")
+                    logger.error(last_error)
                     break
-                    
+
             except Exception as e:
                 last_error = f"Groq unexpected error: {str(e)}"
-                print(f"  ❌ {last_error}")
+                logger.error(last_error)
                 break
-        
-        print(f"  ⚠️  Groq failed after {max_retries} attempts. Trying Anthropic fallback...")
+
+        logger.warning("Groq failed after %d attempts — trying Anthropic fallback", max_retries)
     
     # Try Anthropic fallback
     if anthropic_key:
@@ -139,7 +144,7 @@ def _call_ai_with_retry(prompt: str, max_retries: int = MAX_RETRIES) -> str:
             
         except Exception as e:
             last_error = f"Anthropic fallback also failed: {str(e)}"
-            print(f"  ❌ {last_error}")
+            logger.error(last_error)
     
     # Both backends failed - return helpful error message
     error_msg = f"""
@@ -479,20 +484,21 @@ def run_weekly_predictions(match_data_list: List[Dict], news_headlines: List[Dic
     )
 
     round_number = match_data_list[0].get("round")
-    print(f"\n⚽ Fetching Squiggle model predictions for Round {round_number}...")
+    logger.info("Fetching Squiggle model predictions for Round %s", round_number)
     squiggle_tips = get_squiggle_tips(round_number=round_number)
 
-    all_predictions = []
-
+    # Attach Squiggle tips to each match dict before spawning threads
     for match in match_data_list:
+        match["squiggle_model"] = format_squiggle_tips_for_prompt(
+            squiggle_tips, match["home_team"], match["away_team"]
+        )
+
+    def _predict_one(match: Dict) -> Dict:
         home = match["home_team"]
         away = match["away_team"]
-        print(f"\n🤖 Predicting: {home} vs {away}...")
-
-        match["squiggle_model"] = format_squiggle_tips_for_prompt(squiggle_tips, home, away)
-        prediction_text         = generate_prediction(match, general_news)
-
-        all_predictions.append({
+        logger.info("Predicting: %s vs %s", home, away)
+        prediction_text = generate_prediction(match, general_news)
+        return {
             "round":        match.get("round"),
             "date":         match.get("date", ""),
             "date_full":    match.get("date_full", ""),
@@ -509,25 +515,34 @@ def run_weekly_predictions(match_data_list: List[Dict], news_headlines: List[Dic
             "home_ha_split":match.get("home_ha_split",{}),
             "away_ha_split":match.get("away_ha_split",{}),
             "prediction":   prediction_text,
-        })
+        }
 
-    # Fix: use 'is not None' so Round 0 (falsy) is saved correctly
-    print(f"DEBUG: all_predictions length: {len(all_predictions) if all_predictions else 0}")
-    print(f"DEBUG: round_number value: {round_number}")
-    print(f"DEBUG: round_number is not None: {round_number is not None}")
-    
+    # Run predictions in parallel (max 3 workers — respects Groq rate limits)
+    all_predictions: List[Dict] = []
+    with ThreadPoolExecutor(max_workers=3) as pool:
+        futures = {pool.submit(_predict_one, m): m for m in match_data_list}
+        for future in as_completed(futures):
+            try:
+                all_predictions.append(future.result())
+            except Exception as exc:
+                match = futures[future]
+                logger.error("Prediction failed for %s vs %s: %s",
+                             match.get("home_team"), match.get("away_team"), exc)
+
+    # Restore original fixture order (as_completed returns in completion order)
+    order = {(m["home_team"], m["away_team"]): i for i, m in enumerate(match_data_list)}
+    all_predictions.sort(key=lambda p: order.get((p["home_team"], p["away_team"]), 999))
+
+    # Use 'is not None' so Round 0 (falsy) is saved correctly
     if all_predictions and round_number is not None:
-        print(f"\n💾 Saving Round {round_number} predictions to history...")
+        logger.info("Saving Round %s predictions to history (%d matches)", round_number, len(all_predictions))
         try:
             save_predictions(all_predictions, round_number)
-            print(f"✅ Successfully saved {len(all_predictions)} predictions!")
+            logger.info("Successfully saved %d predictions", len(all_predictions))
         except Exception as e:
-            print(f"❌ ERROR saving predictions: {e}")
-            import traceback
+            logger.error("Failed to save predictions: %s", e)
             traceback.print_exc()
     else:
-        print(f"⚠️ NOT SAVING - Condition failed!")
-        print(f"   all_predictions: {bool(all_predictions)}")
-        print(f"   round_number is not None: {round_number is not None}")
+        logger.warning("Predictions not saved — all_predictions=%s, round_number=%s", bool(all_predictions), round_number)
 
     return all_predictions

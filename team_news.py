@@ -12,11 +12,14 @@ KEY IMPROVEMENTS:
   - Tells AI when data is limited (so it can weight other factors more)
 """
 
+import logging
 import re
 import requests
 import feedparser
 from datetime import datetime, timedelta
 from typing import List, Dict, Optional
+
+logger = logging.getLogger(__name__)
 
 try:
     from bs4 import BeautifulSoup
@@ -281,10 +284,10 @@ def get_zerohanger_news(days_back: Optional[int] = None) -> List[Dict]:
                     "data_quality": "good" if len(summary) > 100 else "limited",
                 })
         
-        print(f"  📰 Zero Hanger RSS: {len(articles)} relevant articles")
-        
+        logger.info("Zero Hanger RSS: %d relevant articles", len(articles))
+
     except Exception as e:
-        print(f"  ⚠️  Zero Hanger RSS failed: {e}")
+        logger.warning("Zero Hanger RSS failed: %s", e)
     
     return articles
 
@@ -372,7 +375,7 @@ def format_team_news_for_ai(home_team: str, away_team: str) -> str:
     AI needs to know when data is limited so it can weight other factors more.
     """
     preseason = is_preseason()
-    print(f"  📰 Fetching team news: {home_team} vs {away_team}")
+    logger.info("Fetching team news: %s vs %s", home_team, away_team)
     
     days_back = 21 if preseason else 7
     

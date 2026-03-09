@@ -90,6 +90,18 @@ from extraction_utils import (  # NEW: Import from shared module
     confidence_style
 )
 
+
+# ─── Cached data-fetchers (1-hour TTL avoids redundant API calls on re-runs) ──
+@st.cache_data(ttl=3600)
+def _cached_fixtures():
+    return get_upcoming_fixtures()
+
+
+@st.cache_data(ttl=3600)
+def _cached_ladder():
+    return get_ladder()
+
+
 # ─── Page config ──────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="AFL Tipping Agent",
@@ -427,8 +439,8 @@ with tab1:
 
         if run_btn:
             with st.spinner("Fetching fixtures and market data..."):
-                fixtures = get_upcoming_fixtures()
-                ladder   = get_ladder()
+                fixtures = _cached_fixtures()
+                ladder   = _cached_ladder()
                 odds     = get_betting_odds()
                 news     = get_afl_news()
 
