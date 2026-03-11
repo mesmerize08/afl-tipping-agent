@@ -408,64 +408,58 @@ Round {match_data['round']} | {date} | {venue}
 {history_text}
 
 =====================================
-OUTPUT FORMAT -- follow this exactly, every week, every match, no exceptions:
+OUTPUT INSTRUCTIONS
 =====================================
 
-**PREDICTED WINNER:** [Team name only]
+Produce your output in the exact sections below. Each section heading is shown in bold.
+The text in (parentheses) after a heading describes what to write — do NOT copy that
+descriptive text into your output. Replace it with your actual analysis.
 
-**WIN PROBABILITY:** {home}: XX% | {away}: XX%
-Justify in one sentence referencing which specific data inputs drove it
-and how much weight you gave the betting market vs Squiggle model vs form data.
+---
 
-**PREDICTED MARGIN:** ~XX points
-Justify with reference to average scoring margins and line market data.
+**PREDICTED WINNER:** (team name only — one of {home} or {away})
 
-**KEY FACTORS:**
-1. [Data point + what it means for this match. No vague statements.]
-2. [Data point + what it means for this match.]
-3. [Data point + what it means for this match.]
-4. [Data point + what it means for this match. Omit if not supported by data.]
+**WIN PROBABILITY:** (write as "{home}: XX% | {away}: XX%" where the two values sum to 100%.
+Derive from a weighted blend of betting market, Squiggle model, and form data — do not simply
+copy the market's implied probabilities, which include the bookmaker's overround and will not
+sum to 100%. Then write one sentence stating which data inputs drove the probability and how
+much weight you gave each source.)
 
-**SCORING TRENDS ANALYSIS:**
-State the last-5 and last-3 averages for both teams explicitly.
-State whether each team's attack and defence is trending up, down, or stable.
-State which team's scoring profile gives them an advantage and why.
+**PREDICTED MARGIN:** (write as "~XX points". Anchor to the line market and scoring margin
+averages. Then write one sentence justifying with specific numbers.)
 
-**HOME GROUND ADVANTAGE:**
-State each team's home win % and away win % from the season data above.
-State each team's record at this specific venue (W-L record, average margin).
-State the estimated point value of home ground advantage for this specific match.
-If season data is unavailable (start of season), note it and estimate from venue history only.
-Do not omit this section.
+**KEY FACTORS:** (3–4 numbered points. Each must cite a specific statistic from the data above
+and explain its impact on this match. No vague statements.)
 
-**MARKET & MODEL ANALYSIS:**
-State what the h2h market implies. State what the line market implies.
-State what the Squiggle model predicts. Do they agree or disagree?
-If they disagree, state which you weighted more heavily and why, using data to justify.
+**SCORING TRENDS ANALYSIS:** (state the last-5 and last-3 averages for both teams. State
+whether each team's attack and defence is trending up, down, or stable. State which team's
+scoring profile gives them an advantage and why.)
 
-**FATIGUE & TRAVEL IMPACT:**
-State exact days rest for each team. Flag any travel.
-State whether this is sufficient to affect performance and in which quarters.
-If no fatigue factor exists, say so explicitly -- do not omit this section.
+**HOME GROUND ADVANTAGE:** (state each team's home/away win rate from the season data. State
+each team's record at this specific venue. Estimate the point value of home advantage for this
+match. If season data is unavailable, note it and use venue history only. Do not omit.)
 
-**WEATHER IMPACT:**
-State the forecast conditions. State whether conditions favour one team over the other
-based on their scoring style (high-marking vs ground-level). If conditions are neutral, say so.
+**MARKET & MODEL ANALYSIS:** (state what the h2h market implies. State what the line market
+implies. State what the Squiggle model predicts. Note whether they agree or disagree. If they
+disagree, state which you weighted more heavily and why, with data.)
 
-**TEAM NEWS IMPACT:**
-List any confirmed ins/outs and their specific positional impact.
-If no team news is available, state that explicitly -- do not omit this section.
+**FATIGUE & TRAVEL IMPACT:** (state exact days rest for each team. Flag any travel. State
+whether fatigue is a real factor for this match. Do not omit — if no fatigue exists, say so.)
 
-**CONFIDENCE:** [High / Medium / Low]
-Justify in one sentence. Reference specifically whether the data sources agree or conflict.
+**WEATHER IMPACT:** (state the forecast. State whether conditions favour one team over the
+other based on their scoring style. If neutral, say so.)
 
-**UPSET RISK:** [Low / Medium / High]
-List the specific data points that could support an upset. No hypotheticals --
-only factors visible in the data above.
+**TEAM NEWS IMPACT:** (list confirmed ins/outs and their positional impact. If no team news
+is available, state that explicitly. Do not omit.)
 
-**DATA CONFLICTS:**
-List any cases where two data sources gave contradictory signals.
-If no conflicts exist, write "None identified."
+**CONFIDENCE:** High / Medium / or Low — then one sentence referencing whether the data
+sources agree or conflict.
+
+**UPSET RISK:** Low / Medium / or High — then list specific data points that support an upset.
+No hypotheticals — only factors visible in the data above.
+
+**DATA CONFLICTS:** (list any cases where two data sources gave contradictory signals. If
+none, write "None identified.")
 """
 
     return _call_ai_with_retry(prompt)
@@ -517,21 +511,21 @@ def run_weekly_predictions(match_data_list: List[Dict], news_headlines: List[Dic
             "prediction":   prediction_text,
         }
 
-    # Run predictions in parallel (max 3 workers — respects Groq rate limits)
+    # Run predictions sequentially with a small gap between requests.
+    # Groq's free tier allows 6,000 tokens/minute; each prompt is ~3,000–4,000 tokens.
+    # Firing 3+ requests simultaneously blows the TPM limit and causes rate-limit
+    # errors, degraded responses, and prompt-echo artifacts in the output.
+    # Sequential + 3 s gap keeps us well inside the limit at the cost of ~2 min
+    # for a 9-game round — acceptable for a once-per-week task.
     all_predictions: List[Dict] = []
-    with ThreadPoolExecutor(max_workers=3) as pool:
-        futures = {pool.submit(_predict_one, m): m for m in match_data_list}
-        for future in as_completed(futures):
-            try:
-                all_predictions.append(future.result())
-            except Exception as exc:
-                match = futures[future]
-                logger.error("Prediction failed for %s vs %s: %s",
-                             match.get("home_team"), match.get("away_team"), exc)
-
-    # Restore original fixture order (as_completed returns in completion order)
-    order = {(m["home_team"], m["away_team"]): i for i, m in enumerate(match_data_list)}
-    all_predictions.sort(key=lambda p: order.get((p["home_team"], p["away_team"]), 999))
+    for i, match in enumerate(match_data_list):
+        if i > 0:
+            time.sleep(3)   # respect Groq's 6,000 tokens/min rate limit
+        try:
+            all_predictions.append(_predict_one(match))
+        except Exception as exc:
+            logger.error("Prediction failed for %s vs %s: %s",
+                         match.get("home_team"), match.get("away_team"), exc)
 
     # Use 'is not None' so Round 0 (falsy) is saved correctly
     if all_predictions and round_number is not None:
