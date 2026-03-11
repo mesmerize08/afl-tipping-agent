@@ -332,9 +332,20 @@ def save_predictions(predictions_list: List[Dict], round_number: int, year: Opti
         ), None)
         
         if existing:
-            logger.info("Already saved: %s vs %s", pred["home_team"], pred["away_team"])
-            continue
-        
+            if existing.get("correct") is not None:
+                # Results already recorded — never overwrite a settled prediction
+                logger.info(
+                    "Skipping re-generation for %s vs %s (results already recorded)",
+                    pred["home_team"], pred["away_team"]
+                )
+                continue
+            # Results not yet recorded — replace with the newer prediction
+            logger.info(
+                "Overwriting pre-results prediction for %s vs %s",
+                pred["home_team"], pred["away_team"]
+            )
+            history["predictions"].remove(existing)
+
         prediction_text = pred.get("prediction", "")
         predicted_winner = extract_winner(
             prediction_text,
@@ -345,7 +356,7 @@ def save_predictions(predictions_list: List[Dict], round_number: int, year: Opti
             prediction_text,
             predicted_winner
         )
-        
+
         record = {
             "year": year,
             "round": round_number,
@@ -361,7 +372,7 @@ def save_predictions(predictions_list: List[Dict], round_number: int, year: Opti
             "correct": None,
             "saved_at": datetime.now().isoformat()
         }
-        
+
         history["predictions"].append(record)
         
         prob_str = f"{predicted_probability:.0f}%" if predicted_probability else "?"
