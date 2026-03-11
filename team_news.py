@@ -144,12 +144,35 @@ def is_relevant_article(title: str, summary: str) -> bool:
     return any(kw in text for kw in INJURY_KEYWORDS)
 
 
+# Names that are suffixes of a longer team name and need disambiguation.
+# key: the short name (lowercased), value: the prefix that makes it a different team.
+# e.g. "port " + "adelaide" = Port Adelaide, NOT the Adelaide Crows.
+_SUFFIX_CONFLICTS: Dict[str, str] = {
+    "adelaide": "port ",   # "port adelaide" ≠ Adelaide Crows
+    "melbourne": "north ",  # "north melbourne" ≠ Melbourne Demons
+}
+
+
+def _name_in_text(name: str, text: str) -> bool:
+    """
+    Return True if `name` appears in `text` as a standalone team reference.
+    Applies a negative lookbehind for names that are suffixes of other team
+    names (e.g. 'adelaide' won't match inside 'port adelaide').
+    """
+    prefix = _SUFFIX_CONFLICTS.get(name)
+    if prefix:
+        # Fixed-length negative lookbehind — supported by Python's re module
+        pattern = r"(?<!" + re.escape(prefix) + r")" + re.escape(name)
+        return bool(re.search(pattern, text))
+    return name in text
+
+
 def article_mentions_team(title: str, summary: str, team_name: str) -> bool:
     text = (title + " " + summary).lower()
-    if team_name.lower() in text:
+    if _name_in_text(team_name.lower(), text):
         return True
     for alias, canonical in TEAM_ALIASES.items():
-        if canonical == team_name and alias in text:
+        if canonical == team_name and _name_in_text(alias, text):
             return True
     return False
 
