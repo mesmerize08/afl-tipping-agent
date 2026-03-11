@@ -154,31 +154,95 @@ def article_mentions_team(title: str, summary: str, team_name: str) -> bool:
     return False
 
 
-def _html_to_text(html: str, max_chars: int = 900) -> str:
-    """Strip HTML tags and clean whitespace from a string."""
-    if HAS_BS4:
-        try:
-            soup = BeautifulSoup(html, "lxml")
-            for tag in soup(["script", "style", "nav", "header", "footer"]):
-                tag.decompose()
-            text = soup.get_text(separator=" ", strip=True)
-        except Exception:
-            text = re.sub(r"<[^>]+>", " ", html)
-    else:
+_HTML_ENTITIES = [
+    ("&nbsp;", " "), ("&amp;", "&"), ("&lt;", "<"), ("&gt;", ">"),
+    ("&quot;", '"'), ("&#8217;", "'"), ("&#8220;", '"'), ("&#8221;", '"'),
+    ("&#8211;", "-"), ("&#8212;", "--"),
+]
+
+# CSS selectors for Zero Hanger (WordPress) article body
+_WP_BODY_SELECTORS = [
+    ".entry-content",
+    ".post-content",
+    ".article-content",
+    "[class*='entry-content']",
+    "[class*='post-content']",
+    "article .content",
+    "main article",
+]
+
+# Elements to strip before any text extraction
+_NOISE_TAGS = [
+    "script", "style", "nav", "header", "footer", "aside",
+    ".widget", ".sidebar", ".site-nav", ".site-header", ".site-footer",
+    ".navigation", ".nav", ".menu", "#menu", ".wp-block-navigation",
+    "[class*='sidebar']", "[class*='widget']", "[class*='navigation']",
+    "[class*='breadcrumb']", "[class*='related']", "[class*='share']",
+    "[class*='social']", "[class*='newsletter']", "[class*='subscribe']",
+    "[class*='advertisement']", "[class*='ad-']",
+]
+
+
+def _extract_wp_article_body(html: str, max_chars: int = 800) -> str:
+    """
+    Extract the article body from a WordPress page, ignoring nav/sidebar.
+    Returns clean text, or empty string on failure.
+    """
+    if not HAS_BS4:
+        # Plain regex fallback — strip all tags
         text = re.sub(r"<[^>]+>", " ", html)
+        for entity, char in _HTML_ENTITIES:
+            text = text.replace(entity, char)
+        return re.sub(r"\s+", " ", text).strip()[:max_chars]
 
-    # Decode common HTML entities
-    for entity, char in [
-        ("&nbsp;", " "), ("&amp;", "&"), ("&lt;", "<"), ("&gt;", ">"),
-        ("&quot;", '"'), ("&#8217;", "'"), ("&#8220;", '"'), ("&#8221;", '"'),
-        ("&#8211;", "-"), ("&#8212;", "--"),
-    ]:
-        text = text.replace(entity, char)
+    try:
+        soup = BeautifulSoup(html, "lxml")
 
-    text = re.sub(r"\s+", " ", text).strip()
-    if len(text) > max_chars:
-        text = text[:max_chars] + "..."
-    return text
+        # Strip all noise elements first
+        for selector in _NOISE_TAGS:
+            for el in soup.select(selector):
+                el.decompose()
+        for tag in soup.find_all(["script", "style", "nav", "header",
+                                   "footer", "aside"]):
+            tag.decompose()
+
+        # Try to find the article body container
+        body = None
+        for selector in _WP_BODY_SELECTORS:
+            body = soup.select_one(selector)
+            if body:
+                break
+
+        if body is None:
+            # Fallback: use <article> or <main>
+            body = soup.find("article") or soup.find("main") or soup
+
+        # Extract paragraphs from the body only
+        paragraphs = []
+        for p in body.find_all("p"):
+            text = p.get_text(separator=" ", strip=True)
+            # Skip very short or nav-like paragraphs
+            if len(text) < 30:
+                continue
+            # Skip paragraphs that look like nav menus (many caps words)
+            caps_ratio = sum(1 for w in text.split() if w.isupper()) / max(len(text.split()), 1)
+            if caps_ratio > 0.4:
+                continue
+            paragraphs.append(text)
+            if sum(len(p) for p in paragraphs) >= max_chars:
+                break
+
+        content = " ".join(paragraphs)
+        for entity, char in _HTML_ENTITIES:
+            content = content.replace(entity, char)
+        content = re.sub(r"\s+", " ", content).strip()
+
+        if len(content) > max_chars:
+            content = content[:max_chars] + "..."
+        return content
+
+    except Exception:
+        return ""
 
 
 def _get_html(url: str, timeout: int = 12) -> Optional[str]:
@@ -231,11 +295,15 @@ def _parse_rss_feed(url: str, days_back: int, source_label: str) -> List[Dict]:
             if not is_relevant_article(title, summary):
                 continue
 
-            # Upgrade short summaries by fetching the article
+            # match_text uses ONLY title + original RSS summary (never scraped
+            # body) so team matching isn't polluted by nav/sidebar content.
+            match_text = f"{title} {summary}".strip()
+
+            # Upgrade short summaries by fetching the article body
             if len(summary) < 100 and link:
                 html = _get_html(link)
                 if html:
-                    scraped = _html_to_text(html)
+                    scraped = _extract_wp_article_body(html)
                     if len(scraped) > len(summary):
                         summary = scraped
 
@@ -246,6 +314,7 @@ def _parse_rss_feed(url: str, days_back: int, source_label: str) -> List[Dict]:
                 "team":         "General",
                 "title":        title,
                 "summary":      summary,
+                "match_text":   match_text,
                 "published":    pub_str,
                 "source":       source_label,
                 "url":          link,
@@ -333,22 +402,22 @@ def _scrape_zerohanger_html_page(url: str, source_label: str, days_back: int) ->
                 except Exception:
                     pass
 
-            # Get summary from excerpt or first paragraph
+            # Get excerpt from the listing page only (never fetch full article
+            # here — listing-page excerpts are clean; full pages have nav junk)
             excerpt = item.find(class_=re.compile(r"excerpt|summary|entry-summary"))
             summary = excerpt.get_text(strip=True) if excerpt else ""
 
-            if len(summary) < 50 and link:
-                html_full = _get_html(link)
-                if html_full:
-                    summary = _html_to_text(html_full)
-
             if not summary:
                 summary = f"[Headline only] {title}"
+
+            # match_text uses title + listing excerpt only — never full scrape
+            match_text = f"{title} {summary}".strip()
 
             articles.append({
                 "team":         "General",
                 "title":        title,
                 "summary":      summary,
+                "match_text":   match_text,
                 "published":    pub_str,
                 "source":       source_label,
                 "url":          link,
@@ -655,7 +724,7 @@ def get_team_news(team_name: str, days_back: Optional[int] = None) -> List[Dict]
     team_articles = [
         {**a, "team": team_name}
         for a in all_articles
-        if article_mentions_team(a["title"], a["summary"], team_name)
+        if article_mentions_team(a["title"], a.get("match_text", a["title"]), team_name)
            or a.get("team") == team_name
     ]
 
@@ -682,7 +751,7 @@ def get_all_teams_news_summary() -> List[Dict]:
 
         # Match general articles to this team
         for a in all_articles:
-            if article_mentions_team(a["title"], a["summary"], team) or a.get("team") == team:
+            if article_mentions_team(a["title"], a.get("match_text", a["title"]), team) or a.get("team") == team:
                 key = a["title"].lower().strip()
                 if key not in seen_titles:
                     seen_titles.add(key)
