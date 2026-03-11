@@ -6,3 +6,4 @@ feedparser
 fpdf2
 beautifulsoup4
 lxml
+scrapling
