@@ -93,6 +93,7 @@ HIGH_TRAVEL_PAIRS = {
     ("Perth", "Brisbane"),  ("Brisbane", "Perth"),
     ("Perth", "Adelaide"),  ("Adelaide", "Perth"),
     ("Perth", "Geelong"),   ("Geelong", "Perth"),
+    ("Perth", "Gold Coast"),("Gold Coast", "Perth"),
     ("Darwin", "Melbourne"),("Melbourne", "Darwin"),
     ("Darwin", "Sydney"),   ("Sydney", "Darwin"),
     ("Darwin", "Perth"),    ("Perth", "Darwin"),
