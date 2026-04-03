@@ -458,10 +458,11 @@
       "predicted_winner": "Brisbane Lions",
       "predicted_probability": 65.0,
       "prediction_text": "**PREDICTED WINNER:** \nBrisbane Lions\n\n**WIN PROBABILITY:** \nBrisbane Lions: 65% | Collingwood: 35%\nThe betting market's implied probabilities and the Squiggle model's predictions drove the probability, with a weight of 40% on the market's implied probabilities (Brisbane Lions: 73.4% | Collingwood: 31.6%) and 60% on the Squiggle model's predictions (Brisbane Lions: 62.3% | Collingwood: 37.7%).\n\n**PREDICTED MARGIN:** \n~15 points\nThe line market's expected margin of 18.1 points and the Squiggle model's expected margin of 18.5 points were used to estimate the predicted margin, with a slight adjustment downwards due to the lack of recent form data.\n\n**KEY FACTORS:** \n1. The betting market implies a strong chance of Brisbane Lions winning, with an implied probability of 73.4%.\n2. The Squiggle model predicts a Brisbane Lions win, with an expected margin of 18.5 points.\n3. Collingwood has a moderate travel schedule, which may impact their performance.\n4. The lack of recent form data and head-to-head data makes it difficult to accurately predict the outcome.\n\n**SCORING TRENDS ANALYSIS:** \nNo scoring data is available for either team, making it impossible to determine their last-5 and last-3 averages or whether their attack and defence are trending up, down, or stable.\n\n**HOME GROUND ADVANTAGE:** \nNo home/away win rate data is available for this season, and no venue history is available for either team at the Gabba. However, the general AFL home ground advantage is typically worth 5-10 points.\n\n**MARKET & MODEL ANALYSIS:** \nThe head-to-head market implies a Brisbane Lions win, with odds of $1.36. The line market implies a Brisbane Lions win by 18.1 points. The Squiggle model predicts a Brisbane Lions win with an expected margin of 18.5 points. The market and model agree on the predicted winner, which increases confidence in the prediction.\n\n**FATIGUE & TRAVEL IMPACT:** \nNo exact days rest data is available for either team. Collingwood has moderate travel from Melbourne to Brisbane, which may be a factor. However, without exact rest days, it is difficult to determine the impact of fatigue.\n\n**WEATHER IMPACT:** \nThe forecast is for a fine day with a maximum temperature of 27\u00b0C, 0.0mm of rain, and 14 km/h wind. The conditions are unlikely to significantly affect the result.\n\n**TEAM NEWS IMPACT:** \nBrisbane Lions defenders Darcy Gardiner and Noah Answerth are sidelined, which may impact their defensive performance.\n\n**CONFIDENCE:** \nMedium\nThe data sources generally agree on the predicted winner, but the lack of recent form data and head-to-head data reduces confidence in the prediction.\n\n**UPSET RISK:** \nMedium\nThe Squiggle model's predicted margin of 18.5 points and the line market's expected margin of 18.1 points suggest a relatively close game, which increases the risk of an upset. Additionally, Collingwood's moderate travel schedule and the unknown impact of fatigue may contribute to an upset.\n\n**DATA CONFLICTS:** \nNone identified",
-      "actual_winner": null,
-      "actual_margin": null,
-      "correct": null,
-      "saved_at": "2026-04-02T03:35:40.956491"
+      "actual_winner": "Brisbane Lions",
+      "actual_margin": 54,
+      "correct": true,
+      "saved_at": "2026-04-02T03:35:40.956491",
+      "checked_at": "2026-04-03T04:31:29.401763"
     },
     {
       "year": 2026,
@@ -570,9 +571,9 @@
     }
   ],
   "accuracy_summary": {
-    "overall_correct": 20,
-    "overall_total": 28,
-    "overall_accuracy_pct": 71.4,
+    "overall_correct": 21,
+    "overall_total": 29,
+    "overall_accuracy_pct": 72.4,
     "by_round": {
       "0": {
         "correct": 3,
@@ -593,16 +594,21 @@
         "correct": 6,
         "total": 7,
         "pct": 85.7
+      },
+      "4": {
+        "correct": 1,
+        "total": 1,
+        "pct": 100.0
       }
     },
     "favourite_picks": {
-      "correct": 17,
-      "total": 24
+      "correct": 18,
+      "total": 25
     },
     "upset_picks": {
       "correct": 3,
       "total": 4
     },
-    "last_updated": "2026-03-30T01:43:33.741895"
+    "last_updated": "2026-04-03T04:31:29.402583"
   }
 }
