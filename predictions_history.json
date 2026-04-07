@@ -474,10 +474,11 @@
       "predicted_winner": "Carlton",
       "predicted_probability": 57.5,
       "prediction_text": "**PREDICTED WINNER:** Carlton\n\n**WIN PROBABILITY:** North Melbourne: 42.5% | Carlton: 57.5%\nThe win probability is derived from a weighted blend of the betting market (40% weight), Squiggle model (30% weight), and form data (30% weight), with the betting market's implied probabilities and the Squiggle model's predictions both favoring Carlton.\n\n**PREDICTED MARGIN:** ~8 points\nThe predicted margin is anchored to the line market, which expects a margin of 7.6 points, and is slightly adjusted based on the Squiggle model's expected margin of 9.3 points.\n\n**KEY FACTORS:**\n1. The betting market implies a 60.8% chance of Carlton winning, which suggests a strong expectation of a Carlton victory.\n2. The Squiggle model predicts a 9.3-point margin in favor of Carlton, which is consistent with the betting market's expectations.\n3. North Melbourne's ruckman Tristan Xerri is suspended for three weeks, which may impact their team's performance.\n4. Carlton's midfielder Cooper Lord is recovering from a staph infection and will miss the match, which may affect their team's performance.\n\n**SCORING TRENDS ANALYSIS:** \nUnfortunately, no scoring data is available for either team, so no analysis can be performed.\n\n**HOME GROUND ADVANTAGE:** \nBoth teams are playing at a neutral venue (Docklands), so there is no home ground advantage for either team. However, if we consider the general AFL home ground advantage, it is typically worth 5-10 points.\n\n**MARKET & MODEL ANALYSIS:** \nThe head-to-head market implies a 60.8% chance of Carlton winning, while the line market expects a margin of 7.6 points in favor of Carlton. The Squiggle model predicts a 9.3-point margin in favor of Carlton. All data sources agree on a Carlton victory, with the Squiggle model predicting a slightly larger margin.\n\n**FATIGUE & TRAVEL IMPACT:** \nNo fatigue or travel data is available for either team, so it is unclear whether fatigue is a factor in this match.\n\n**WEATHER IMPACT:** \nThe weather forecast is neutral, as the match is being played at a stadium with a roof (Marvel Stadium). Therefore, the weather conditions will not affect the match.\n\n**TEAM NEWS IMPACT:** \nNorth Melbourne's ruckman Tristan Xerri is suspended for three weeks, while Carlton's midfielder Cooper Lord is recovering from a staph infection and will miss the match. Both absences may impact their respective teams' performances.\n\n**CONFIDENCE:** Medium\nThe confidence level is medium because while the data sources agree on a Carlton victory, there is limited data available on the teams' recent form and scoring trends.\n\n**UPSET RISK:** Medium\nThe upset risk is medium because North Melbourne has a 42.5% chance of winning, and the predicted margin is relatively small (~8 points). Specific data points that support an upset include North Melbourne's position on the ladder (6th) and their percentage (116.599190283401%), which suggest they are a competitive team.\n\n**DATA CONFLICTS:** None identified",
-      "actual_winner": null,
-      "actual_margin": null,
-      "correct": null,
-      "saved_at": "2026-04-02T03:35:40.956549"
+      "actual_winner": "North Melbourne",
+      "actual_margin": 10,
+      "correct": false,
+      "saved_at": "2026-04-02T03:35:40.956549",
+      "checked_at": "2026-04-07T00:33:20.945259"
     },
     {
       "year": 2026,
@@ -489,10 +490,11 @@
       "predicted_winner": "Adelaide",
       "predicted_probability": 52.5,
       "prediction_text": "**PREDICTED WINNER:** \nAdelaide\n\n**WIN PROBABILITY:** \nAdelaide: 52.5% | Fremantle: 47.5%\nThe win probability is derived from a weighted blend of the betting market (40%), Squiggle model (30%), and the implied advantage from home ground and travel fatigue (30%), with the Squiggle model and betting market being the primary drivers of this probability.\n\n**PREDICTED MARGIN:** \n~2 points\nThe predicted margin is anchored to the line market, which implies a margin of 1.4 points in favor of Fremantle, but considering the home ground advantage and travel fatigue, the margin is adjusted to slightly favor Adelaide.\n\n**KEY FACTORS:** \n1. Fremantle's long-haul travel from Perth to Adelaide may contribute to significant fatigue, potentially impacting their performance.\n2. The betting market implies a close contest, with Adelaide at $1.95 and Fremantle at $1.87, suggesting a competitive match.\n3. The Squiggle statistical model tips Adelaide to win with an expected margin of 9.2 points, which is a significant input in the prediction.\n4. The lack of recent form data for both teams introduces uncertainty, making it essential to rely on other data points like the Squiggle model and betting markets.\n\n**SCORING TRENDS ANALYSIS:** \nUnfortunately, scoring data is unavailable for both teams, making it impossible to determine their last-5 and last-3 averages or whether their attack and defense are trending up, down, or stable. Without this data, it's challenging to assess which team's scoring profile gives them an advantage.\n\n**HOME GROUND ADVANTAGE:** \nGiven the lack of season data, we cannot accurately state each team's home/away win rate. However, typically, home ground advantage in the AFL is worth around 5-10 points. Since Adelaide is playing at home and Fremantle has to travel, we estimate the point value of home advantage for this match to be around 5-7 points, favoring Adelaide.\n\n**MARKET & MODEL ANALYSIS:** \nThe head-to-head market implies a close contest, with Adelaide at $1.95 and Fremantle at $1.87. The line market suggests Fremantle is expected to win by 1.4 points. The Squiggle model, however, predicts Adelaide to win with a margin of 9.2 points. Since the Squiggle model and the betting market do not entirely agree, the prediction is weighted more heavily towards the Squiggle model due to its specific margin prediction and the consideration of home ground advantage and travel fatigue.\n\n**FATIGUE & TRAVEL IMPACT:** \nFremantle has significant travel fatigue due to their long-haul trip from Perth to Adelaide, which could impact their performance. Adelaide, playing at home, does not have this issue. The exact days rest for each team are not provided, but the travel factor alone flags fatigue as a real consideration for Fremantle.\n\n**WEATHER IMPACT:** \nThe forecast for the match day is fine, with a maximum of 22\u00b0C, 0.0mm of rain, and 17 km/h wind. These conditions are neutral and unlikely to significantly affect the result, favoring neither team's scoring style.\n\n**TEAM NEWS IMPACT:** \nNo relevant team news is available for either Adelaide or Fremantle, which means we cannot list any confirmed ins/outs or their positional impact. This lack of information introduces some uncertainty into the prediction.\n\n**CONFIDENCE:** \nMedium\nThe confidence in this prediction is medium because while the Squiggle model and betting markets provide some guidance, the lack of recent form data, scoring trends, and team news introduces uncertainty and means that the data sources do not entirely agree or provide a complete picture.\n\n**UPSET RISK:** \nMedium\nThe upset risk is medium, supported by the close odds in the head-to-head market ($1.95 for Adelaide and $1.87 for Fremantle) and the line market implying a margin of only 1.4 points in favor of Fremantle. These factors suggest that the match could go either way, with a small margin separating the two teams.\n\n**DATA CONFLICTS:** \nNone identified\nThere are no direct contradictions between the data sources provided, although the lack of certain data (like recent form and scoring trends) means that the prediction relies heavily on the Squiggle model, betting markets, and the implications of travel fatigue and home ground advantage.",
-      "actual_winner": null,
-      "actual_margin": null,
-      "correct": null,
-      "saved_at": "2026-04-03T04:50:33.236401"
+      "actual_winner": "Fremantle",
+      "actual_margin": 2,
+      "correct": false,
+      "saved_at": "2026-04-03T04:50:33.236401",
+      "checked_at": "2026-04-07T00:33:20.945328"
     },
     {
       "year": 2026,
@@ -504,10 +506,11 @@
       "predicted_winner": "Port Adelaide",
       "predicted_probability": 58.0,
       "prediction_text": "**PREDICTED WINNER:** \nPort Adelaide\n\n**WIN PROBABILITY:** \nRichmond: 42% | Port Adelaide: 58%\nThe betting market's implied probabilities (37.4% for Richmond and 67.5% for Port Adelaide) were adjusted to account for the bookmaker's overround, and then combined with the Squiggle model's probabilities (50.7% for Richmond and 49.3% for Port Adelaide) to derive the final win probabilities, with a slightly higher weight given to the betting market due to its historical accuracy.\n\n**PREDICTED MARGIN:** \n~10 points\nThe predicted margin is anchored to the line market, which expects Port Adelaide to win by 13.4 points, but adjusted downward to account for the Squiggle model's expected margin of 1.2 points in favor of Richmond.\n\n**KEY FACTORS:**\n1. Port Adelaide's higher percentage (105.454545454545% vs 56.8627450980392%) suggests they have been more competitive this season.\n2. The betting market implies a 67.5% chance of Port Adelaide winning, which is a strong indicator of their expected performance.\n3. Richmond's injury crisis, with at least two changes needed due to the injuries of Harry Armstrong and Jasper Alger, may impact their team dynamics.\n4. The Squiggle model's expected margin of 1.2 points in favor of Richmond suggests that the game may be closer than the betting market expects.\n\n**SCORING TRENDS ANALYSIS:** \nNo scoring data is available for either team, making it impossible to determine their last-5 and last-3 averages, or whether their attack and defence are trending up, down, or stable.\n\n**HOME GROUND ADVANTAGE:** \nNo season data is available to determine each team's home/away win rate. However, Richmond is playing at home, which typically provides a 5-10 point advantage. Given the lack of data, it's estimated that home advantage is worth around 5 points in this match.\n\n**MARKET & MODEL ANALYSIS:** \nThe head-to-head market implies a 67.5% chance of Port Adelaide winning, while the line market expects Port Adelaide to win by 13.4 points. The Squiggle model predicts a narrow Richmond win, which disagrees with the market. The betting market was weighted more heavily due to its historical accuracy and the lack of contradictory data.\n\n**FATIGUE & TRAVEL IMPACT:** \nNo exact days rest for each team are provided, but Port Adelaide has moderate travel from Adelaide to Melbourne. Fatigue may be a minor factor for Port Adelaide due to travel, but its impact is uncertain without more data.\n\n**WEATHER IMPACT:** \nThe forecast is for a fine day with no rain and moderate wind, which is unlikely to significantly affect the result. The conditions appear neutral, not favoring one team's scoring style over the other.\n\n**TEAM NEWS IMPACT:** \nRichmond has confirmed injuries to Harry Armstrong and Jasper Alger, with potential debutant Zane Peucker. Port Adelaide has no significant team news. The injuries to Richmond players may impact their team dynamics.\n\n**CONFIDENCE:** \nMedium\nThe data sources partially agree, but the lack of scoring data and contradictory signals between the betting market and Squiggle model reduce confidence in the prediction.\n\n**UPSET RISK:** \nMedium\nThe Squiggle model's expected margin of 1.2 points in favor of Richmond and the relatively low implied probability of Richmond winning (37.4%) suggest that an upset is possible, especially if Richmond can mitigate the impact of their injuries.\n\n**DATA CONFLICTS:** \nThe betting market and Squiggle model give contradictory signals, with the market expecting a Port Adelaide win and the Squiggle model expecting a narrow Richmond win.",
-      "actual_winner": null,
-      "actual_margin": null,
-      "correct": null,
-      "saved_at": "2026-04-03T04:50:33.236451"
+      "actual_winner": "Port Adelaide",
+      "actual_margin": 42,
+      "correct": true,
+      "saved_at": "2026-04-03T04:50:33.236451",
+      "checked_at": "2026-04-07T00:33:20.945385"
     },
     {
       "year": 2026,
@@ -519,10 +522,11 @@
       "predicted_winner": "Sydney",
       "predicted_probability": 67.9,
       "prediction_text": "**PREDICTED WINNER:** \nSydney\n\n**WIN PROBABILITY:** \nWest Coast: 32.1% | Sydney: 67.9%\nThe win probability is derived from a weighted blend of the betting market (40% weight), Squiggle model (30% weight), and the teams' current ladder standings and percentage (30% weight), with the market's implied probabilities adjusted to remove the bookmaker's overround.\n\n**PREDICTED MARGIN:** \n~20 points\nThe predicted margin is anchored to the line market, which expects Sydney to give 31.4 points, and adjusted based on the Squiggle model's expected margin of 17.9 points, with a slight adjustment upwards due to Sydney's higher ladder percentage.\n\n**KEY FACTORS:** \n1. Sydney's higher ladder percentage (139.473684210526% vs 87.3015873015873%) suggests they have been scoring more efficiently than West Coast.\n2. The betting market implies a high probability of a Sydney win (84.8%), which is a strong indicator of their expected performance.\n3. The Squiggle model predicts a Sydney win with a margin of 17.9 points, which is consistent with the market's expectations.\n4. West Coast will be missing midfielder Deven Robertson due to a one-match ban, which may impact their midfield performance.\n\n**SCORING TRENDS ANALYSIS:** \nUnfortunately, no scoring data is available for either team, so it is not possible to determine their last-5 and last-3 averages or whether their attack and defence are trending up, down, or stable.\n\n**HOME GROUND ADVANTAGE:** \nNo season data is available to determine each team's home/away win rate. Additionally, no venue history is available for either team at Perth Stadium. However, it is generally expected that home ground advantage is worth 5-10 points, so this may slightly favour West Coast.\n\n**MARKET & MODEL ANALYSIS:** \nThe head-to-head market implies a high probability of a Sydney win (84.8%). The line market implies that Sydney is expected to win by 31.4 points. The Squiggle model predicts a Sydney win with a margin of 17.9 points. The market and model generally agree on a Sydney win, but the line market expects a larger margin than the Squiggle model.\n\n**FATIGUE & TRAVEL IMPACT:** \nNo rest or travel data is available for either team, so it is not possible to determine the impact of fatigue or travel on this match.\n\n**WEATHER IMPACT:** \nNo weather forecast is available, so it is not possible to determine whether the conditions will favour one team over the other.\n\n**TEAM NEWS IMPACT:** \nWest Coast will be missing midfielder Deven Robertson due to a one-match ban, which may impact their midfield performance. No other team news is available.\n\n**CONFIDENCE:** \nMedium\nThe data sources generally agree on a Sydney win, but the lack of scoring data and venue history introduces some uncertainty.\n\n**UPSET RISK:** \nMedium\nThe data points that support an upset include West Coast's home ground advantage (although this is uncertain due to lack of venue history) and the possibility that the market and model may be overestimating Sydney's chances.\n\n**DATA CONFLICTS:** \nNone identified\nThere are no obvious conflicts between the data sources, although the lack of scoring data and venue history introduces some uncertainty.",
-      "actual_winner": null,
-      "actual_margin": null,
-      "correct": null,
-      "saved_at": "2026-04-03T04:50:33.236484"
+      "actual_winner": "Sydney",
+      "actual_margin": 128,
+      "correct": true,
+      "saved_at": "2026-04-03T04:50:33.236484",
+      "checked_at": "2026-04-07T00:33:20.945446"
     },
     {
       "year": 2026,
@@ -534,10 +538,11 @@
       "predicted_winner": "Gold Coast",
       "predicted_probability": 68.8,
       "prediction_text": "**PREDICTED WINNER:** \nGold Coast\n\n**WIN PROBABILITY:** \nMelbourne: 31.2% | Gold Coast: 68.8%\nThe win probability is driven by a weighted blend of the betting market (60% weight), Squiggle model (20% weight), and form data (20% weight), with the betting market's implied probabilities of 29.6% for Melbourne and 75.4% for Gold Coast being adjusted to remove the bookmaker's overround.\n\n**PREDICTED MARGIN:** \n~15 points\nThe predicted margin is anchored to the line market, which implies a margin of 22.1 points in favor of Gold Coast, but is adjusted downward due to the Squiggle model's predicted margin of 7.4 points in favor of Melbourne.\n\n**KEY FACTORS:** \n1. Gold Coast's high percentage of 191.044776119403% suggests they have been outscoring their opponents by a significant margin, which could be a key factor in this match.\n2. The betting market implies a high win probability for Gold Coast (75.4%), which suggests that they are the favored team in this match.\n3. The Squiggle model predicts a Melbourne win, but with a relatively low margin of 7.4 points, which suggests that the model is not highly confident in Melbourne's chances.\n4. Gold Coast's moderate travel from Gold Coast to Melbourne could have some impact on their performance, but it is unlikely to be a significant factor.\n\n**SCORING TRENDS ANALYSIS:** \nNo scoring data is available for either team, so it is not possible to determine their last-5 and last-3 averages or whether their attack and defence are trending up, down, or stable.\n\n**HOME GROUND ADVANTAGE:** \nNo home/away win rate data is available for either team, and no venue history is available for either team at the MCG. However, the general AFL home ground advantage is typically worth 5-10 points, which could be a factor in this match.\n\n**MARKET & MODEL ANALYSIS:** \nThe h2h market implies a high win probability for Gold Coast (75.4%), while the line market implies a margin of 22.1 points in favor of Gold Coast. The Squiggle model predicts a Melbourne win, but with a relatively low margin of 7.4 points. The market and model disagree, and I have weighted the market more heavily due to its implied high win probability for Gold Coast.\n\n**FATIGUE & TRAVEL IMPACT:** \nNo data is available on the exact days rest for each team, but Gold Coast has moderate travel from Gold Coast to Melbourne. Fatigue is unlikely to be a significant factor in this match.\n\n**WEATHER IMPACT:** \nThe forecast is for fine conditions with a maximum temperature of 26\u00b0C, 0.0mm of rain, and 9 km/h wind. The weather conditions are unlikely to significantly affect the result.\n\n**TEAM NEWS IMPACT:** \nThere is no relevant team news available for either Melbourne or Gold Coast, with the exception of a Tribunal verdict for Gold Coast's Bailey Humphrey, but no details are provided on the outcome or its impact on the team.\n\n**CONFIDENCE:** \nMedium\nThe confidence level is medium due to the disagreement between the market and model, and the lack of available data on scoring trends and home ground advantage.\n\n**UPSET RISK:** \nMedium\nThe upset risk is medium due to the Squiggle model's prediction of a Melbourne win, and the relatively low margin implied by the line market.\n\n**DATA CONFLICTS:** \nOne data conflict is identified between the betting market and the Squiggle model, with the market implying a high win probability for Gold Coast and the model predicting a Melbourne win.",
-      "actual_winner": null,
-      "actual_margin": null,
-      "correct": null,
-      "saved_at": "2026-04-03T04:50:33.236576"
+      "actual_winner": "Melbourne",
+      "actual_margin": 20,
+      "correct": false,
+      "saved_at": "2026-04-03T04:50:33.236576",
+      "checked_at": "2026-04-07T00:33:20.945514"
     },
     {
       "year": 2026,
@@ -549,10 +554,11 @@
       "predicted_winner": "Western Bulldogs",
       "predicted_probability": 73.0,
       "prediction_text": "**PREDICTED WINNER:** Western Bulldogs\n\n**WIN PROBABILITY:** Western Bulldogs: 73% | Essendon: 27%\nThe predicted win probability is driven by a weighted blend of the betting market (40% weight), Squiggle model (30% weight), and the teams' ladder standings (30% weight), with the market's implied probabilities adjusted to remove the bookmaker's overround.\n\n**PREDICTED MARGIN:** ~40 points\nThe predicted margin is anchored to the line market, which expects a margin of 74.4 points, but adjusted downward to account for the Squiggle model's expected margin of 30.8 points.\n\n**KEY FACTORS:**\n1. The Western Bulldogs' strong ladder standing (2nd position, 3W-0L) suggests they have a significant advantage over Essendon (17th position, 0W-3L).\n2. The betting market implies a high probability of a Western Bulldogs win (99.0% implied), which is supported by the Squiggle model's prediction of a Western Bulldogs win (69.4% probability).\n3. The lack of recent form data for both teams introduces some uncertainty, but the Western Bulldogs' strong ladder standing suggests they are more likely to perform well.\n4. The home ground advantage at Docklands Stadium may also favor the Western Bulldogs, although the exact value of this advantage is uncertain due to the lack of venue history data.\n\n**SCORING TRENDS ANALYSIS:** \nUnfortunately, no scoring data is available for either team, so it is not possible to calculate last-5 and last-3 averages or determine whether each team's attack and defence is trending up, down, or stable.\n\n**HOME GROUND ADVANTAGE:** \nThe Western Bulldogs are playing at home in Melbourne, but no specific home/away win rates or venue records are available. Assuming a typical home ground advantage of 5-10 points, this could slightly favor the Western Bulldogs.\n\n**MARKET & MODEL ANALYSIS:** \nThe head-to-head market implies a high probability of a Western Bulldogs win (99.0% implied), while the line market expects a margin of 74.4 points. The Squiggle model predicts a Western Bulldogs win with an expected margin of 30.8 points. These sources generally agree, with the market and model both favoring the Western Bulldogs.\n\n**FATIGUE & TRAVEL IMPACT:** \nNo information is available on the exact days of rest for each team, and neither team is traveling, so fatigue is unlikely to be a significant factor in this match.\n\n**WEATHER IMPACT:** \nThe weather forecast is neutral, as Marvel Stadium has a roof, so weather conditions will not affect play.\n\n**TEAM NEWS IMPACT:** \nThe only relevant team news is that Essendon's Nate Caddy is set to miss Round 4 due to delayed concussion symptoms, while Angus Clarke and Brayden Fiorini are tests to return from injury. This may slightly weaken Essendon's lineup.\n\n**CONFIDENCE:** Medium\nThe data sources generally agree on a Western Bulldogs win, but the lack of recent form data and scoring trends introduces some uncertainty.\n\n**UPSET RISK:** Low\nThe low upset risk is supported by the strong ladder standing of the Western Bulldogs, the betting market's high implied probability of a Western Bulldogs win, and the Squiggle model's prediction of a Western Bulldogs win.\n\n**DATA CONFLICTS:** None identified",
-      "actual_winner": null,
-      "actual_margin": null,
-      "correct": null,
-      "saved_at": "2026-04-03T04:50:33.236612"
+      "actual_winner": "Western Bulldogs",
+      "actual_margin": 34,
+      "correct": true,
+      "saved_at": "2026-04-03T04:50:33.236612",
+      "checked_at": "2026-04-07T00:33:20.945587"
     },
     {
       "year": 2026,
@@ -564,16 +570,17 @@
       "predicted_winner": "Hawthorn",
       "predicted_probability": 55.0,
       "prediction_text": "**PREDICTED WINNER:** \nHawthorn\n\n**WIN PROBABILITY:** \nHawthorn: 55% | Geelong: 45%\nThe betting market and Squiggle model probabilities were weighted equally, with the market's implied probabilities (Hawthorn: 63.3% | Geelong: 41.7%) adjusted to remove the bookmaker's overround, and the Squiggle model's probabilities (Hawthorn: 47.4% | Geelong: 52.6%) considered for their expected margin and win probabilities.\n\n**PREDICTED MARGIN:** \n~5 points\nThe predicted margin is anchored to the line market, which expects Hawthorn to give 9.6 points, but adjusted downward considering the Squiggle model's expected margin of 4.4 points in favor of Geelong.\n\n**KEY FACTORS:** \n1. The betting market implies a higher win probability for Hawthorn (63.3%) compared to the Squiggle model (47.4%), suggesting a potential discrepancy in their assessments.\n2. The Squiggle model predicts a Geelong win with an expected margin of 4.4 points, contradicting the betting market's expectation of a Hawthorn win.\n3. The lack of recent form data and scoring statistics for both teams introduces uncertainty in the prediction.\n4. The home ground advantage at the MCG is estimated to be worth 5-10 points, which could favor Hawthorn.\n\n**SCORING TRENDS ANALYSIS:** \nNo scoring data is available for either team, making it impossible to determine their last-5 and last-3 averages or whether their attack and defense are trending up, down, or stable.\n\n**HOME GROUND ADVANTAGE:** \nNo home/away win rates are available for the season, and neither team has a recorded venue history at the MCG. However, the general AFL home ground advantage is typically worth 5-10 points.\n\n**MARKET & MODEL ANALYSIS:** \nThe head-to-head market implies a Hawthorn win (63.3% probability), while the line market expects Hawthorn to give 9.6 points. The Squiggle model predicts a Geelong win with an expected margin of 4.4 points. These predictions disagree, with the betting market favoring Hawthorn and the Squiggle model favoring Geelong.\n\n**FATIGUE & TRAVEL IMPACT:** \nNo fatigue or travel data is available for either team, but Geelong has a short travel from Geelong to Melbourne, which is unlikely to have a significant impact.\n\n**WEATHER IMPACT:** \nThe forecast is for a max of 23\u00b0C, with a 25% chance of 0.4mm of rain and 16 km/h wind. These conditions are unlikely to significantly affect the result.\n\n**TEAM NEWS IMPACT:** \nNo team news is available for either Hawthorn or Geelong, introducing uncertainty into the prediction.\n\n**CONFIDENCE:** \nMedium\nThe data sources (betting market and Squiggle model) conflict, reducing confidence in the prediction.\n\n**UPSET RISK:** \nMedium\nThe Squiggle model's prediction of a Geelong win and the relatively close expected margins (4.4 points from the Squiggle model and 9.6 points from the line market) suggest an upset is possible.\n\n**DATA CONFLICTS:** \nThe betting market and Squiggle model give contradictory signals, with the market favoring Hawthorn and the Squiggle model favoring Geelong.",
-      "actual_winner": null,
-      "actual_margin": null,
-      "correct": null,
-      "saved_at": "2026-04-03T04:50:33.236692"
+      "actual_winner": "Hawthorn",
+      "actual_margin": 1,
+      "correct": true,
+      "saved_at": "2026-04-03T04:50:33.236692",
+      "checked_at": "2026-04-07T00:33:20.945695"
     }
   ],
   "accuracy_summary": {
-    "overall_correct": 21,
-    "overall_total": 29,
-    "overall_accuracy_pct": 72.4,
+    "overall_correct": 25,
+    "overall_total": 36,
+    "overall_accuracy_pct": 69.4,
     "by_round": {
       "0": {
         "correct": 3,
@@ -596,19 +603,19 @@
         "pct": 85.7
       },
       "4": {
-        "correct": 1,
-        "total": 1,
-        "pct": 100.0
+        "correct": 5,
+        "total": 8,
+        "pct": 62.5
       }
     },
     "favourite_picks": {
-      "correct": 18,
-      "total": 25
+      "correct": 22,
+      "total": 31
     },
     "upset_picks": {
       "correct": 3,
-      "total": 4
+      "total": 5
     },
-    "last_updated": "2026-04-03T04:31:29.402583"
+    "last_updated": "2026-04-07T00:33:20.945800"
   }
 }
