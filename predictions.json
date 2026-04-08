@@ -1,142 +1,22 @@
 [
   {
-    "round": 4,
-    "date": "2026-04-02",
-    "date_full": "2026-04-02 19:30:00",
-    "venue": "Gabba",
-    "home_team": "Brisbane Lions",
-    "away_team": "Collingwood",
-    "betting_odds": {
-      "home_team": "Brisbane Lions",
-      "away_team": "Collingwood Magpies",
-      "home_odds": 1.38,
-      "away_odds": 3.06,
-      "home_implied_prob": 72.3,
-      "away_implied_prob": 32.7,
-      "line_home_spread": -17.5,
-      "line_summary": "Brisbane Lions giving 17.5 pts",
-      "total_line": 176.1,
-      "total_summary": "Market expects total score ~176 pts"
-    },
-    "home_scoring": {},
-    "away_scoring": {},
-    "home_rest": null,
-    "away_rest": null,
-    "home_travel": {
-      "travelling": false,
-      "fatigue_level": "none",
-      "description": "Playing at home in Brisbane"
-    },
-    "away_travel": {
-      "travelling": true,
-      "fatigue_level": "medium",
-      "home_city": "Melbourne",
-      "venue_city": "Brisbane",
-      "description": "Moderate travel: Melbourne \u2192 Brisbane"
-    },
-    "home_ha_split": {
-      "home": {
-        "wins": 0,
-        "games": 0,
-        "pct": null
-      },
-      "away": {
-        "wins": 0,
-        "games": 0,
-        "pct": null
-      }
-    },
-    "away_ha_split": {
-      "home": {
-        "wins": 0,
-        "games": 0,
-        "pct": null
-      },
-      "away": {
-        "wins": 0,
-        "games": 0,
-        "pct": null
-      }
-    },
-    "prediction": "\nERROR: Unable to generate AI prediction after 3 retries.\n\nLast error: None\n\nTROUBLESHOOTING:\n1. Check your API keys are set correctly in environment variables:\n   - GROQ_API_KEY: \u2717 Missing\n   - ANTHROPIC_API_KEY: \u2717 Missing (fallback)\n\n2. Check your API rate limits:\n   - Groq: 6,000 requests/day\n   - Check current usage at https://console.groq.com\n\n3. Check your internet connection\n\n4. Try again in a few minutes (may be temporary service issue)\n\nIf this persists, please report at: github.com/mesmerize08/afl-tipping-agent/issues\n"
-  },
-  {
-    "round": 4,
-    "date": "2026-04-03",
-    "date_full": "2026-04-03 15:15:00",
-    "venue": "Docklands",
-    "home_team": "North Melbourne",
-    "away_team": "Carlton",
-    "betting_odds": {
-      "home_team": "North Melbourne Kangaroos",
-      "away_team": "Carlton Blues",
-      "home_odds": 2.27,
-      "away_odds": 1.65,
-      "home_implied_prob": 44.1,
-      "away_implied_prob": 60.7,
-      "line_home_spread": 7.6,
-      "line_summary": "Carlton Blues giving 7.6 pts",
-      "total_line": 177.5,
-      "total_summary": "Market expects total score ~178 pts"
-    },
-    "home_scoring": {},
-    "away_scoring": {},
-    "home_rest": null,
-    "away_rest": null,
-    "home_travel": {
-      "travelling": false,
-      "fatigue_level": "none",
-      "description": "Playing at home in Melbourne"
-    },
-    "away_travel": {
-      "travelling": false,
-      "fatigue_level": "none",
-      "description": "Playing at home in Melbourne"
-    },
-    "home_ha_split": {
-      "home": {
-        "wins": 0,
-        "games": 0,
-        "pct": null
-      },
-      "away": {
-        "wins": 0,
-        "games": 0,
-        "pct": null
-      }
-    },
-    "away_ha_split": {
-      "home": {
-        "wins": 0,
-        "games": 0,
-        "pct": null
-      },
-      "away": {
-        "wins": 0,
-        "games": 0,
-        "pct": null
-      }
-    },
-    "prediction": "\nERROR: Unable to generate AI prediction after 3 retries.\n\nLast error: None\n\nTROUBLESHOOTING:\n1. Check your API keys are set correctly in environment variables:\n   - GROQ_API_KEY: \u2717 Missing\n   - ANTHROPIC_API_KEY: \u2717 Missing (fallback)\n\n2. Check your API rate limits:\n   - Groq: 6,000 requests/day\n   - Check current usage at https://console.groq.com\n\n3. Check your internet connection\n\n4. Try again in a few minutes (may be temporary service issue)\n\nIf this persists, please report at: github.com/mesmerize08/afl-tipping-agent/issues\n"
-  },
-  {
-    "round": 4,
-    "date": "2026-04-03",
-    "date_full": "2026-04-03 19:15:00",
+    "round": 5,
+    "date": "2026-04-09",
+    "date_full": "2026-04-09 19:40:00",
     "venue": "Adelaide Oval",
     "home_team": "Adelaide",
-    "away_team": "Fremantle",
+    "away_team": "Carlton",
     "betting_odds": {
       "home_team": "Adelaide Crows",
-      "away_team": "Fremantle Dockers",
-      "home_odds": 1.82,
-      "away_odds": 2.01,
-      "home_implied_prob": 55.1,
-      "away_implied_prob": 49.8,
-      "line_home_spread": -2.5,
-      "line_summary": "Adelaide Crows giving 2.5 pts",
-      "total_line": 175.7,
-      "total_summary": "Market expects total score ~176 pts"
+      "away_team": "Carlton Blues",
+      "home_odds": 1.14,
+      "away_odds": 5.73,
+      "home_implied_prob": 87.5,
+      "away_implied_prob": 17.5,
+      "line_home_spread": -33.6,
+      "line_summary": "Adelaide Crows giving 33.6 pts",
+      "total_line": 168.1,
+      "total_summary": "Market expects total score ~168 pts"
     },
     "home_scoring": {},
     "away_scoring": {},
@@ -146,6 +26,69 @@
       "travelling": false,
       "fatigue_level": "none",
       "description": "Playing at home in Adelaide"
+    },
+    "away_travel": {
+      "travelling": true,
+      "fatigue_level": "medium",
+      "home_city": "Melbourne",
+      "venue_city": "Adelaide",
+      "description": "Moderate travel: Melbourne \u2192 Adelaide"
+    },
+    "home_ha_split": {
+      "home": {
+        "wins": 0,
+        "games": 0,
+        "pct": null
+      },
+      "away": {
+        "wins": 0,
+        "games": 0,
+        "pct": null
+      }
+    },
+    "away_ha_split": {
+      "home": {
+        "wins": 0,
+        "games": 0,
+        "pct": null
+      },
+      "away": {
+        "wins": 0,
+        "games": 0,
+        "pct": null
+      }
+    },
+    "prediction": "\nERROR: Unable to generate AI prediction after 3 retries.\n\nLast error: None\n\nTROUBLESHOOTING:\n1. Check your API keys are set correctly in environment variables:\n   - GROQ_API_KEY: \u2717 Missing\n   - ANTHROPIC_API_KEY: \u2717 Missing (fallback)\n\n2. Check your API rate limits:\n   - Groq: 6,000 requests/day\n   - Check current usage at https://console.groq.com\n\n3. Check your internet connection\n\n4. Try again in a few minutes (may be temporary service issue)\n\nIf this persists, please report at: github.com/mesmerize08/afl-tipping-agent/issues\n"
+  },
+  {
+    "round": 5,
+    "date": "2026-04-10",
+    "date_full": "2026-04-10 19:40:00",
+    "venue": "Adelaide Oval",
+    "home_team": "Collingwood",
+    "away_team": "Fremantle",
+    "betting_odds": {
+      "home_team": "Collingwood Magpies",
+      "away_team": "Fremantle Dockers",
+      "home_odds": 2.66,
+      "away_odds": 1.48,
+      "home_implied_prob": 37.6,
+      "away_implied_prob": 67.4,
+      "line_home_spread": 13.4,
+      "line_summary": "Fremantle Dockers giving 13.4 pts",
+      "total_line": 172.5,
+      "total_summary": "Market expects total score ~172 pts"
+    },
+    "home_scoring": {},
+    "away_scoring": {},
+    "home_rest": null,
+    "away_rest": null,
+    "home_travel": {
+      "travelling": true,
+      "fatigue_level": "medium",
+      "home_city": "Melbourne",
+      "venue_city": "Adelaide",
+      "description": "Moderate travel: Melbourne \u2192 Adelaide"
     },
     "away_travel": {
       "travelling": true,
@@ -181,202 +124,21 @@
     "prediction": "\nERROR: Unable to generate AI prediction after 3 retries.\n\nLast error: None\n\nTROUBLESHOOTING:\n1. Check your API keys are set correctly in environment variables:\n   - GROQ_API_KEY: \u2717 Missing\n   - ANTHROPIC_API_KEY: \u2717 Missing (fallback)\n\n2. Check your API rate limits:\n   - Groq: 6,000 requests/day\n   - Check current usage at https://console.groq.com\n\n3. Check your internet connection\n\n4. Try again in a few minutes (may be temporary service issue)\n\nIf this persists, please report at: github.com/mesmerize08/afl-tipping-agent/issues\n"
   },
   {
-    "round": 4,
-    "date": "2026-04-04",
-    "date_full": "2026-04-04 16:15:00",
-    "venue": "MCG",
-    "home_team": "Richmond",
-    "away_team": "Port Adelaide",
+    "round": 5,
+    "date": "2026-04-11",
+    "date_full": "2026-04-11 12:35:00",
+    "venue": "Barossa Park",
+    "home_team": "North Melbourne",
+    "away_team": "Brisbane Lions",
     "betting_odds": {
-      "home_team": "Richmond Tigers",
-      "away_team": "Port Adelaide Power",
-      "home_odds": 2.51,
-      "away_odds": 1.53,
-      "home_implied_prob": 39.8,
-      "away_implied_prob": 65.2,
-      "line_home_spread": 11.6,
-      "line_summary": "Port Adelaide Power giving 11.6 pts",
-      "total_line": 179.5,
-      "total_summary": "Market expects total score ~180 pts"
-    },
-    "home_scoring": {},
-    "away_scoring": {},
-    "home_rest": null,
-    "away_rest": null,
-    "home_travel": {
-      "travelling": false,
-      "fatigue_level": "none",
-      "description": "Playing at home in Melbourne"
-    },
-    "away_travel": {
-      "travelling": true,
-      "fatigue_level": "medium",
-      "home_city": "Adelaide",
-      "venue_city": "Melbourne",
-      "description": "Moderate travel: Adelaide \u2192 Melbourne"
-    },
-    "home_ha_split": {
-      "home": {
-        "wins": 0,
-        "games": 0,
-        "pct": null
-      },
-      "away": {
-        "wins": 0,
-        "games": 0,
-        "pct": null
-      }
-    },
-    "away_ha_split": {
-      "home": {
-        "wins": 0,
-        "games": 0,
-        "pct": null
-      },
-      "away": {
-        "wins": 0,
-        "games": 0,
-        "pct": null
-      }
-    },
-    "prediction": "\nERROR: Unable to generate AI prediction after 3 retries.\n\nLast error: None\n\nTROUBLESHOOTING:\n1. Check your API keys are set correctly in environment variables:\n   - GROQ_API_KEY: \u2717 Missing\n   - ANTHROPIC_API_KEY: \u2717 Missing (fallback)\n\n2. Check your API rate limits:\n   - Groq: 6,000 requests/day\n   - Check current usage at https://console.groq.com\n\n3. Check your internet connection\n\n4. Try again in a few minutes (may be temporary service issue)\n\nIf this persists, please report at: github.com/mesmerize08/afl-tipping-agent/issues\n"
-  },
-  {
-    "round": 4,
-    "date": "2026-04-04",
-    "date_full": "2026-04-04 19:35:00",
-    "venue": "Perth Stadium",
-    "home_team": "West Coast",
-    "away_team": "Sydney",
-    "betting_odds": {
-      "home_team": "West Coast Eagles",
-      "away_team": "Sydney Swans",
-      "home_odds": 4.57,
-      "away_odds": 1.2,
-      "home_implied_prob": 21.9,
-      "away_implied_prob": 83.2,
-      "line_home_spread": 30.5,
-      "line_summary": "Sydney Swans giving 30.5 pts",
-      "total_line": 182.3,
-      "total_summary": "Market expects total score ~182 pts"
-    },
-    "home_scoring": {},
-    "away_scoring": {},
-    "home_rest": null,
-    "away_rest": null,
-    "home_travel": {
-      "travelling": false,
-      "fatigue_level": "unknown",
-      "description": ""
-    },
-    "away_travel": {
-      "travelling": false,
-      "fatigue_level": "unknown",
-      "description": ""
-    },
-    "home_ha_split": {
-      "home": {
-        "wins": 0,
-        "games": 0,
-        "pct": null
-      },
-      "away": {
-        "wins": 0,
-        "games": 0,
-        "pct": null
-      }
-    },
-    "away_ha_split": {
-      "home": {
-        "wins": 0,
-        "games": 0,
-        "pct": null
-      },
-      "away": {
-        "wins": 0,
-        "games": 0,
-        "pct": null
-      }
-    },
-    "prediction": "\nERROR: Unable to generate AI prediction after 3 retries.\n\nLast error: None\n\nTROUBLESHOOTING:\n1. Check your API keys are set correctly in environment variables:\n   - GROQ_API_KEY: \u2717 Missing\n   - ANTHROPIC_API_KEY: \u2717 Missing (fallback)\n\n2. Check your API rate limits:\n   - Groq: 6,000 requests/day\n   - Check current usage at https://console.groq.com\n\n3. Check your internet connection\n\n4. Try again in a few minutes (may be temporary service issue)\n\nIf this persists, please report at: github.com/mesmerize08/afl-tipping-agent/issues\n"
-  },
-  {
-    "round": 4,
-    "date": "2026-04-05",
-    "date_full": "2026-04-05 15:15:00",
-    "venue": "MCG",
-    "home_team": "Melbourne",
-    "away_team": "Gold Coast",
-    "betting_odds": {
-      "home_team": "Melbourne Demons",
-      "away_team": "Gold Coast Suns",
-      "home_odds": 3.25,
-      "away_odds": 1.34,
-      "home_implied_prob": 30.7,
-      "away_implied_prob": 74.5,
-      "line_home_spread": 20.4,
-      "line_summary": "Gold Coast Suns giving 20.4 pts",
-      "total_line": 189.3,
-      "total_summary": "Market expects total score ~189 pts"
-    },
-    "home_scoring": {},
-    "away_scoring": {},
-    "home_rest": null,
-    "away_rest": null,
-    "home_travel": {
-      "travelling": false,
-      "fatigue_level": "none",
-      "description": "Playing at home in Melbourne"
-    },
-    "away_travel": {
-      "travelling": true,
-      "fatigue_level": "medium",
-      "home_city": "Gold Coast",
-      "venue_city": "Melbourne",
-      "description": "Moderate travel: Gold Coast \u2192 Melbourne"
-    },
-    "home_ha_split": {
-      "home": {
-        "wins": 0,
-        "games": 0,
-        "pct": null
-      },
-      "away": {
-        "wins": 0,
-        "games": 0,
-        "pct": null
-      }
-    },
-    "away_ha_split": {
-      "home": {
-        "wins": 0,
-        "games": 0,
-        "pct": null
-      },
-      "away": {
-        "wins": 0,
-        "games": 0,
-        "pct": null
-      }
-    },
-    "prediction": "\nERROR: Unable to generate AI prediction after 3 retries.\n\nLast error: None\n\nTROUBLESHOOTING:\n1. Check your API keys are set correctly in environment variables:\n   - GROQ_API_KEY: \u2717 Missing\n   - ANTHROPIC_API_KEY: \u2717 Missing (fallback)\n\n2. Check your API rate limits:\n   - Groq: 6,000 requests/day\n   - Check current usage at https://console.groq.com\n\n3. Check your internet connection\n\n4. Try again in a few minutes (may be temporary service issue)\n\nIf this persists, please report at: github.com/mesmerize08/afl-tipping-agent/issues\n"
-  },
-  {
-    "round": 4,
-    "date": "2026-04-05",
-    "date_full": "2026-04-05 19:20:00",
-    "venue": "Docklands",
-    "home_team": "Western Bulldogs",
-    "away_team": "Essendon",
-    "betting_odds": {
-      "home_team": "Western Bulldogs",
-      "away_team": "Essendon Bombers",
-      "home_odds": 1.01,
-      "away_odds": 19.89,
-      "home_implied_prob": 98.9,
-      "away_implied_prob": 5.0,
-      "line_home_spread": -73.8,
-      "line_summary": "Western Bulldogs giving 73.8 pts",
+      "home_team": "North Melbourne Kangaroos",
+      "away_team": "Brisbane Lions",
+      "home_odds": 5.4,
+      "away_odds": 1.15,
+      "home_implied_prob": 18.5,
+      "away_implied_prob": 86.6,
+      "line_home_spread": 34.5,
+      "line_summary": "Brisbane Lions giving 34.5 pts",
       "total_line": 190.9,
       "total_summary": "Market expects total score ~191 pts"
     },
@@ -386,13 +148,13 @@
     "away_rest": null,
     "home_travel": {
       "travelling": false,
-      "fatigue_level": "none",
-      "description": "Playing at home in Melbourne"
+      "fatigue_level": "unknown",
+      "description": ""
     },
     "away_travel": {
       "travelling": false,
-      "fatigue_level": "none",
-      "description": "Playing at home in Melbourne"
+      "fatigue_level": "unknown",
+      "description": ""
     },
     "home_ha_split": {
       "home": {
@@ -421,23 +183,326 @@
     "prediction": "\nERROR: Unable to generate AI prediction after 3 retries.\n\nLast error: None\n\nTROUBLESHOOTING:\n1. Check your API keys are set correctly in environment variables:\n   - GROQ_API_KEY: \u2717 Missing\n   - ANTHROPIC_API_KEY: \u2717 Missing (fallback)\n\n2. Check your API rate limits:\n   - Groq: 6,000 requests/day\n   - Check current usage at https://console.groq.com\n\n3. Check your internet connection\n\n4. Try again in a few minutes (may be temporary service issue)\n\nIf this persists, please report at: github.com/mesmerize08/afl-tipping-agent/issues\n"
   },
   {
-    "round": 4,
-    "date": "2026-04-06",
-    "date_full": "2026-04-06 15:15:00",
-    "venue": "MCG",
+    "round": 5,
+    "date": "2026-04-11",
+    "date_full": "2026-04-11 13:15:00",
+    "venue": "Adelaide Oval",
+    "home_team": "Essendon",
+    "away_team": "Melbourne",
+    "betting_odds": {
+      "home_team": "Essendon Bombers",
+      "away_team": "Melbourne Demons",
+      "home_odds": 4.06,
+      "away_odds": 1.25,
+      "home_implied_prob": 24.6,
+      "away_implied_prob": 80.3,
+      "line_home_spread": 26.8,
+      "line_summary": "Melbourne Demons giving 26.8 pts",
+      "total_line": 186.7,
+      "total_summary": "Market expects total score ~187 pts"
+    },
+    "home_scoring": {},
+    "away_scoring": {},
+    "home_rest": null,
+    "away_rest": null,
+    "home_travel": {
+      "travelling": true,
+      "fatigue_level": "medium",
+      "home_city": "Melbourne",
+      "venue_city": "Adelaide",
+      "description": "Moderate travel: Melbourne \u2192 Adelaide"
+    },
+    "away_travel": {
+      "travelling": true,
+      "fatigue_level": "medium",
+      "home_city": "Melbourne",
+      "venue_city": "Adelaide",
+      "description": "Moderate travel: Melbourne \u2192 Adelaide"
+    },
+    "home_ha_split": {
+      "home": {
+        "wins": 0,
+        "games": 0,
+        "pct": null
+      },
+      "away": {
+        "wins": 0,
+        "games": 0,
+        "pct": null
+      }
+    },
+    "away_ha_split": {
+      "home": {
+        "wins": 0,
+        "games": 0,
+        "pct": null
+      },
+      "away": {
+        "wins": 0,
+        "games": 0,
+        "pct": null
+      }
+    },
+    "prediction": "\nERROR: Unable to generate AI prediction after 3 retries.\n\nLast error: None\n\nTROUBLESHOOTING:\n1. Check your API keys are set correctly in environment variables:\n   - GROQ_API_KEY: \u2717 Missing\n   - ANTHROPIC_API_KEY: \u2717 Missing (fallback)\n\n2. Check your API rate limits:\n   - Groq: 6,000 requests/day\n   - Check current usage at https://console.groq.com\n\n3. Check your internet connection\n\n4. Try again in a few minutes (may be temporary service issue)\n\nIf this persists, please report at: github.com/mesmerize08/afl-tipping-agent/issues\n"
+  },
+  {
+    "round": 5,
+    "date": "2026-04-11",
+    "date_full": "2026-04-11 16:15:00",
+    "venue": "Norwood Oval",
+    "home_team": "Sydney",
+    "away_team": "Gold Coast",
+    "betting_odds": {
+      "home_team": "Sydney Swans",
+      "away_team": "Gold Coast Suns",
+      "home_odds": 1.77,
+      "away_odds": 2.06,
+      "home_implied_prob": 56.4,
+      "away_implied_prob": 48.6,
+      "line_home_spread": -3.5,
+      "line_summary": "Sydney Swans giving 3.5 pts",
+      "total_line": 193.3,
+      "total_summary": "Market expects total score ~193 pts"
+    },
+    "home_scoring": {},
+    "away_scoring": {},
+    "home_rest": null,
+    "away_rest": null,
+    "home_travel": {
+      "travelling": false,
+      "fatigue_level": "unknown",
+      "description": ""
+    },
+    "away_travel": {
+      "travelling": false,
+      "fatigue_level": "unknown",
+      "description": ""
+    },
+    "home_ha_split": {
+      "home": {
+        "wins": 0,
+        "games": 0,
+        "pct": null
+      },
+      "away": {
+        "wins": 0,
+        "games": 0,
+        "pct": null
+      }
+    },
+    "away_ha_split": {
+      "home": {
+        "wins": 0,
+        "games": 0,
+        "pct": null
+      },
+      "away": {
+        "wins": 0,
+        "games": 0,
+        "pct": null
+      }
+    },
+    "prediction": "\nERROR: Unable to generate AI prediction after 3 retries.\n\nLast error: None\n\nTROUBLESHOOTING:\n1. Check your API keys are set correctly in environment variables:\n   - GROQ_API_KEY: \u2717 Missing\n   - ANTHROPIC_API_KEY: \u2717 Missing (fallback)\n\n2. Check your API rate limits:\n   - Groq: 6,000 requests/day\n   - Check current usage at https://console.groq.com\n\n3. Check your internet connection\n\n4. Try again in a few minutes (may be temporary service issue)\n\nIf this persists, please report at: github.com/mesmerize08/afl-tipping-agent/issues\n"
+  },
+  {
+    "round": 5,
+    "date": "2026-04-11",
+    "date_full": "2026-04-11 19:35:00",
+    "venue": "Adelaide Oval",
     "home_team": "Hawthorn",
-    "away_team": "Geelong",
+    "away_team": "Western Bulldogs",
     "betting_odds": {
       "home_team": "Hawthorn Hawks",
-      "away_team": "Geelong Cats",
-      "home_odds": 1.58,
-      "away_odds": 2.4,
-      "home_implied_prob": 63.3,
-      "away_implied_prob": 41.7,
-      "line_home_spread": -9.6,
-      "line_summary": "Hawthorn Hawks giving 9.6 pts",
-      "total_line": 185.3,
-      "total_summary": "Market expects total score ~185 pts"
+      "away_team": "Western Bulldogs",
+      "home_odds": 1.64,
+      "away_odds": 2.28,
+      "home_implied_prob": 61.1,
+      "away_implied_prob": 43.8,
+      "line_home_spread": -7.8,
+      "line_summary": "Hawthorn Hawks giving 7.8 pts",
+      "total_line": 184.3,
+      "total_summary": "Market expects total score ~184 pts"
+    },
+    "home_scoring": {},
+    "away_scoring": {},
+    "home_rest": null,
+    "away_rest": null,
+    "home_travel": {
+      "travelling": true,
+      "fatigue_level": "medium",
+      "home_city": "Melbourne",
+      "venue_city": "Adelaide",
+      "description": "Moderate travel: Melbourne \u2192 Adelaide"
+    },
+    "away_travel": {
+      "travelling": true,
+      "fatigue_level": "medium",
+      "home_city": "Melbourne",
+      "venue_city": "Adelaide",
+      "description": "Moderate travel: Melbourne \u2192 Adelaide"
+    },
+    "home_ha_split": {
+      "home": {
+        "wins": 0,
+        "games": 0,
+        "pct": null
+      },
+      "away": {
+        "wins": 0,
+        "games": 0,
+        "pct": null
+      }
+    },
+    "away_ha_split": {
+      "home": {
+        "wins": 0,
+        "games": 0,
+        "pct": null
+      },
+      "away": {
+        "wins": 0,
+        "games": 0,
+        "pct": null
+      }
+    },
+    "prediction": "\nERROR: Unable to generate AI prediction after 3 retries.\n\nLast error: None\n\nTROUBLESHOOTING:\n1. Check your API keys are set correctly in environment variables:\n   - GROQ_API_KEY: \u2717 Missing\n   - ANTHROPIC_API_KEY: \u2717 Missing (fallback)\n\n2. Check your API rate limits:\n   - Groq: 6,000 requests/day\n   - Check current usage at https://console.groq.com\n\n3. Check your internet connection\n\n4. Try again in a few minutes (may be temporary service issue)\n\nIf this persists, please report at: github.com/mesmerize08/afl-tipping-agent/issues\n"
+  },
+  {
+    "round": 5,
+    "date": "2026-04-12",
+    "date_full": "2026-04-12 12:30:00",
+    "venue": "Norwood Oval",
+    "home_team": "Geelong",
+    "away_team": "West Coast",
+    "betting_odds": {
+      "home_team": "Geelong Cats",
+      "away_team": "West Coast Eagles",
+      "home_odds": 1.1,
+      "away_odds": 7.28,
+      "home_implied_prob": 91.2,
+      "away_implied_prob": 13.7,
+      "line_home_spread": -45.4,
+      "line_summary": "Geelong Cats giving 45.4 pts",
+      "total_line": 191.5,
+      "total_summary": "Market expects total score ~192 pts"
+    },
+    "home_scoring": {},
+    "away_scoring": {},
+    "home_rest": null,
+    "away_rest": null,
+    "home_travel": {
+      "travelling": false,
+      "fatigue_level": "unknown",
+      "description": ""
+    },
+    "away_travel": {
+      "travelling": false,
+      "fatigue_level": "unknown",
+      "description": ""
+    },
+    "home_ha_split": {
+      "home": {
+        "wins": 0,
+        "games": 0,
+        "pct": null
+      },
+      "away": {
+        "wins": 0,
+        "games": 0,
+        "pct": null
+      }
+    },
+    "away_ha_split": {
+      "home": {
+        "wins": 0,
+        "games": 0,
+        "pct": null
+      },
+      "away": {
+        "wins": 0,
+        "games": 0,
+        "pct": null
+      }
+    },
+    "prediction": "\nERROR: Unable to generate AI prediction after 3 retries.\n\nLast error: None\n\nTROUBLESHOOTING:\n1. Check your API keys are set correctly in environment variables:\n   - GROQ_API_KEY: \u2717 Missing\n   - ANTHROPIC_API_KEY: \u2717 Missing (fallback)\n\n2. Check your API rate limits:\n   - Groq: 6,000 requests/day\n   - Check current usage at https://console.groq.com\n\n3. Check your internet connection\n\n4. Try again in a few minutes (may be temporary service issue)\n\nIf this persists, please report at: github.com/mesmerize08/afl-tipping-agent/issues\n"
+  },
+  {
+    "round": 5,
+    "date": "2026-04-12",
+    "date_full": "2026-04-12 15:15:00",
+    "venue": "Barossa Park",
+    "home_team": "GWS Giants",
+    "away_team": "Richmond",
+    "betting_odds": {
+      "home_team": "Greater Western Sydney Giants",
+      "away_team": "Richmond Tigers",
+      "home_odds": 1.14,
+      "away_odds": 5.76,
+      "home_implied_prob": 87.6,
+      "away_implied_prob": 17.4,
+      "line_home_spread": -35.1,
+      "line_summary": "Greater Western Sydney Giants giving 35.1 pts",
+      "total_line": 179.3,
+      "total_summary": "Market expects total score ~179 pts"
+    },
+    "home_scoring": {},
+    "away_scoring": {},
+    "home_rest": null,
+    "away_rest": null,
+    "home_travel": {
+      "travelling": false,
+      "fatigue_level": "unknown",
+      "description": ""
+    },
+    "away_travel": {
+      "travelling": false,
+      "fatigue_level": "unknown",
+      "description": ""
+    },
+    "home_ha_split": {
+      "home": {
+        "wins": 0,
+        "games": 0,
+        "pct": null
+      },
+      "away": {
+        "wins": 0,
+        "games": 0,
+        "pct": null
+      }
+    },
+    "away_ha_split": {
+      "home": {
+        "wins": 0,
+        "games": 0,
+        "pct": null
+      },
+      "away": {
+        "wins": 0,
+        "games": 0,
+        "pct": null
+      }
+    },
+    "prediction": "\nERROR: Unable to generate AI prediction after 3 retries.\n\nLast error: None\n\nTROUBLESHOOTING:\n1. Check your API keys are set correctly in environment variables:\n   - GROQ_API_KEY: \u2717 Missing\n   - ANTHROPIC_API_KEY: \u2717 Missing (fallback)\n\n2. Check your API rate limits:\n   - Groq: 6,000 requests/day\n   - Check current usage at https://console.groq.com\n\n3. Check your internet connection\n\n4. Try again in a few minutes (may be temporary service issue)\n\nIf this persists, please report at: github.com/mesmerize08/afl-tipping-agent/issues\n"
+  },
+  {
+    "round": 5,
+    "date": "2026-04-12",
+    "date_full": "2026-04-12 19:15:00",
+    "venue": "Adelaide Oval",
+    "home_team": "Port Adelaide",
+    "away_team": "St Kilda",
+    "betting_odds": {
+      "home_team": "Port Adelaide Power",
+      "away_team": "St Kilda Saints",
+      "home_odds": 2.33,
+      "away_odds": 1.61,
+      "home_implied_prob": 42.9,
+      "away_implied_prob": 62.0,
+      "line_home_spread": 8.8,
+      "line_summary": "St Kilda Saints giving 8.8 pts",
+      "total_line": 173.9,
+      "total_summary": "Market expects total score ~174 pts"
     },
     "home_scoring": {},
     "away_scoring": {},
@@ -446,14 +511,14 @@
     "home_travel": {
       "travelling": false,
       "fatigue_level": "none",
-      "description": "Playing at home in Melbourne"
+      "description": "Playing at home in Adelaide"
     },
     "away_travel": {
       "travelling": true,
-      "fatigue_level": "low",
-      "home_city": "Geelong",
-      "venue_city": "Melbourne",
-      "description": "Short travel: Geelong \u2192 Melbourne"
+      "fatigue_level": "medium",
+      "home_city": "Melbourne",
+      "venue_city": "Adelaide",
+      "description": "Moderate travel: Melbourne \u2192 Adelaide"
     },
     "home_ha_split": {
       "home": {
