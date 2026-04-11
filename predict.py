@@ -190,18 +190,22 @@ def format_form(form_list: List[Dict]) -> str:
     return f"{wins}/{len(form_list)} wins. " + " | ".join(parts)
 
 
-def format_scoring_stats(scoring: Dict, team_name: str) -> str:
-    """Format scoring stats and trends into readable prompt text."""
-    if not scoring:
-        return "Scoring data unavailable"
+def format_scoring_stats(scoring: Dict, team_name: str,
+                         hist_scoring: Optional[Dict] = None) -> str:
+    """
+    Format scoring stats and trends. When current-season data is thin (< 5 games),
+    shows historical baseline from afltables as supplementary context.
+    """
     lines = []
-    af5 = scoring.get("avg_for_5")
-    aa5 = scoring.get("avg_against_5")
-    af3 = scoring.get("avg_for_3")
-    aa3 = scoring.get("avg_against_3")
-    atk = scoring.get("attack_trend",  "stable")
-    dft = scoring.get("defense_trend", "stable")
-    am5 = scoring.get("avg_margin_5")
+    af5   = scoring.get("avg_for_5")    if scoring else None
+    aa5   = scoring.get("avg_against_5") if scoring else None
+    af3   = scoring.get("avg_for_3")    if scoring else None
+    aa3   = scoring.get("avg_against_3") if scoring else None
+    atk   = scoring.get("attack_trend",  "stable") if scoring else "stable"
+    dft   = scoring.get("defense_trend", "stable") if scoring else "stable"
+    am5   = scoring.get("avg_margin_5")  if scoring else None
+    wins5 = scoring.get("wins_last_5",   0)         if scoring else 0
+
     if af5 is not None:
         lines.append(f"  Avg score (last 5): {af5} pts for, {aa5} pts against")
     if af3 is not None:
@@ -210,19 +214,44 @@ def format_scoring_stats(scoring: Dict, team_name: str) -> str:
         lines.append(f"  Attack trend: {atk}  |  Defence trend: {dft}")
     if am5 is not None:
         lines.append(f"  Average margin (last 5): {am5:+.1f} pts")
+
+    # Show historical baseline when current-season sample is thin
+    current_thin = af5 is None or wins5 < 5
+    if current_thin and hist_scoring:
+        years      = hist_scoring.get("years", [])
+        year_range = f"{min(years)}–{max(years)}" if years else "historical"
+        hs_for     = hist_scoring.get("avg_score_for")
+        hs_ag      = hist_scoring.get("avg_score_against")
+        hs_mg      = hist_scoring.get("avg_margin")
+        hs_home    = hist_scoring.get("home_avg_for")
+        hs_away    = hist_scoring.get("away_avg_for")
+        hs_n       = hist_scoring.get("games", 0)
+        if hs_for is not None:
+            lines.append(
+                f"  ** Historical baseline ({year_range}, {hs_n} games): "
+                f"avg {hs_for} for / {hs_ag} against (margin {hs_mg:+.1f})"
+            )
+        if hs_home is not None and hs_away is not None:
+            lines.append(f"     Home avg: {hs_home} | Away avg: {hs_away}")
+        if af5 is None:
+            lines.append("  NOTE: No current-season games yet — historical baseline only")
+
     return "\n".join(lines) if lines else "Scoring data unavailable"
 
 
 def format_rest_and_travel(rest: Optional[Dict], travel: Optional[Dict], team_name: str) -> str:
-    """Format rest days and travel fatigue."""
+    """Format rest days and travel fatigue. Always produces explicit output — no silent gaps."""
     parts = []
     if rest:
         parts.append(rest.get("description", ""))
+    else:
+        parts.append("Rest days: not yet available (no completed games this season)")
+
     if travel:
         desc = travel.get("description", "")
         if desc:
             parts.append(desc)
-    return "\n  ".join(parts) if parts else "No rest/travel data"
+    return "\n  ".join(p for p in parts if p) or "No rest/travel data"
 
 
 def format_odds_section(odds: Dict, home: str, away: str) -> str:
@@ -245,13 +274,35 @@ def format_odds_section(odds: Dict, home: str, away: str) -> str:
     return "\n".join(lines)
 
 
-def format_h2h(h2h_list: List[Dict]) -> str:
-    if not h2h_list:
+def format_h2h(h2h_list: List[Dict], h2h_stats: Optional[Dict] = None,
+               team1: str = "", team2: str = "") -> str:
+    """Format H2H data with an aggregated stats summary followed by recent game results."""
+    lines = []
+
+    # Aggregated summary from enhanced get_head_to_head()
+    if h2h_stats and team1:
+        l20 = h2h_stats.get("last_20", {})
+        l5  = h2h_stats.get("last_5",  {})
+        if l20:
+            lines.append(
+                f"H2H summary (last {l20['games']}): "
+                f"{team1} {l20['wins']}W-{l20['losses']}L ({l20['win_pct']}% win rate) | "
+                f"avg score {l20['avg_for']} vs {l20['avg_against']}"
+            )
+        if l5 and l5.get("last_5_seq"):
+            lines.append(f"Last 5 sequence ({team1}): {' '.join(l5['last_5_seq'])}")
+
+    # Individual recent games
+    if h2h_list:
+        game_strs = " | ".join(
+            f"{g['winner']} won {g['score']} at {g['venue']} in {g['year']}"
+            for g in h2h_list[:6]
+        )
+        lines.append(game_strs)
+    elif not lines:
         return "No H2H data"
-    return " | ".join(
-        f"{g['winner']} won {g['score']} at {g['venue']} in {g['year']}"
-        for g in h2h_list[:6]
-    )
+
+    return "\n".join(lines)
 
 
 def format_ladder(ld: Dict) -> str:
@@ -267,12 +318,16 @@ def format_ladder(ld: Dict) -> str:
 def format_home_advantage(match_data: Dict, home: str, away: str) -> str:
     """
     Format home/away win splits and venue record into a clear prompt block.
-    Combines the season split (broad) with the specific venue record (narrow).
+    Tier 1: current-season split (primary).
+    Tier 2: multi-year historical split (supplementary, from afltables).
+    Tier 3: venue record (Squiggle current + afltables historical).
+    Special event venues skip historical venue lookup and show an explanatory note.
     """
     lines = []
-    venue = match_data.get("venue", "this venue")
+    venue            = match_data.get("venue", "this venue")
+    is_special_venue = match_data.get("is_special_venue", False)
 
-    # Season home vs away win rate
+    # ── Tier 1: Current-season home/away split ─────────────────────────────────
     for team, key in [(home, "home_ha_split"), (away, "away_ha_split")]:
         split = match_data.get(key, {})
         h = split.get("home", {})
@@ -293,20 +348,60 @@ def format_home_advantage(match_data: Dict, home: str, away: str) -> str:
                         f"  >> {team} win rate is {abs(diff)}pp higher away "
                         f"-- performs better as visitor"
                     )
-
-    # Specific venue record
-    for team, record_key in [(home, "home_venue_record"), (away, "away_venue_record")]:
-        rec = match_data.get(record_key, [])
-        if rec:
-            wins       = sum(1 for g in rec if g["result"] == "W")
-            n          = len(rec)
-            avg_margin = sum(g["margin"] for g in rec) / n
-            lines.append(
-                f"{team} at {venue} (last {n} games): {wins}W-{n - wins}L "
-                f"| avg margin {avg_margin:+.1f} pts"
-            )
         else:
-            lines.append(f"{team} at {venue}: no venue history available")
+            lines.append(f"{team} this season -- Home/away split: no data yet (early season)")
+
+    # ── Tier 2: Historical home/away split (afltables, last 3 seasons) ────────
+    for team, hist_key in [(home, "home_hist_ha_split"), (away, "away_hist_ha_split")]:
+        hist = match_data.get(hist_key, {})
+        if not hist:
+            continue
+        h = hist.get("home", {})
+        a = hist.get("away", {})
+        years = hist.get("years", [])
+        year_range = f"{min(years)}–{max(years)}" if years else "historical"
+        h_str = f"{h['wins']}/{h['games']} ({h['pct']}%)" if h.get("games") else "no data"
+        a_str = f"{a['wins']}/{a['games']} ({a['pct']}%)" if a.get("games") else "no data"
+        lines.append(f"{team} {year_range} (3yr hist) -- Home: {h_str} | Away: {a_str}")
+        if h.get("pct") is not None and a.get("pct") is not None:
+            diff = h["pct"] - a["pct"]
+            if abs(diff) >= 15:
+                direction = "stronger at home" if diff > 0 else "stronger away"
+                lines.append(f"  >> Multi-year pattern: {team} {diff:+d}pp {direction}")
+
+    # ── Tier 3: Venue record ───────────────────────────────────────────────────
+    if is_special_venue:
+        lines.append(
+            f"NOTE: {venue} is a special event venue — no historical venue record applicable."
+        )
+    else:
+        # Current-season venue record (Squiggle)
+        for team, record_key in [(home, "home_venue_record"), (away, "away_venue_record")]:
+            rec = match_data.get(record_key, [])
+            if rec:
+                wins       = sum(1 for g in rec if g["result"] == "W")
+                n          = len(rec)
+                avg_margin = sum(g["margin"] for g in rec) / n
+                lines.append(
+                    f"{team} at {venue} (last {n} games): {wins}W-{n - wins}L "
+                    f"| avg margin {avg_margin:+.1f} pts"
+                )
+            else:
+                lines.append(f"{team} at {venue}: no current-season venue history")
+
+        # Historical venue record (afltables, last 3 seasons)
+        for team, hist_key in [(home, "home_hist_venue"), (away, "away_hist_venue")]:
+            hist = match_data.get(hist_key, {})
+            if not hist or not hist.get("games"):
+                continue
+            years = hist.get("years", [])
+            year_range = f"{min(years)}–{max(years)}" if years else "historical"
+            lines.append(
+                f"{team} at {venue} {year_range}: "
+                f"{hist['wins']}W-{hist['losses']}L ({hist['win_pct']}% win rate) | "
+                f"avg {hist['avg_score_for']} vs {hist['avg_score_against']} "
+                f"(avg margin {hist['avg_margin']:+.1f}) over {hist['games']} games"
+            )
 
     lines.append(
         "Context: AFL home ground advantage is typically worth 5-10 pts. "
@@ -331,12 +426,14 @@ def generate_prediction(match_data: Dict, general_news_context: str = "") -> str
     history_text   = format_history_for_ai(home, away)
     squiggle_text  = match_data.get("squiggle_model", "Not available.")
 
-    home_scoring = match_data.get("home_scoring", {})
-    away_scoring = match_data.get("away_scoring", {})
-    home_rest    = match_data.get("home_rest",    {})
-    away_rest    = match_data.get("away_rest",    {})
-    home_travel  = match_data.get("home_travel",  {})
-    away_travel  = match_data.get("away_travel",  {})
+    home_scoring      = match_data.get("home_scoring",      {})
+    away_scoring      = match_data.get("away_scoring",      {})
+    home_rest         = match_data.get("home_rest",         {})
+    away_rest         = match_data.get("away_rest",         {})
+    home_travel       = match_data.get("home_travel",       {})
+    away_travel       = match_data.get("away_travel",       {})
+    home_hist_scoring = match_data.get("home_hist_scoring", {})
+    away_hist_scoring = match_data.get("away_hist_scoring", {})
 
     prompt = f"""
 You are a professional Australian Rules Football data analyst. You have no team allegiances,
@@ -371,10 +468,10 @@ Round {match_data['round']} | {date} | {venue}
 
 --- SCORING STATISTICS & TRENDS ---
 {home}:
-{format_scoring_stats(home_scoring, home)}
+{format_scoring_stats(home_scoring, home, hist_scoring=home_hist_scoring)}
 
 {away}:
-{format_scoring_stats(away_scoring, away)}
+{format_scoring_stats(away_scoring, away, hist_scoring=away_hist_scoring)}
 
 --- REST DAYS & TRAVEL FATIGUE ---
 {home} (Home):
@@ -384,7 +481,7 @@ Round {match_data['round']} | {date} | {venue}
   {format_rest_and_travel(away_rest, away_travel, away)}
 
 --- HEAD TO HEAD (last 10 meetings) ---
-{format_h2h(match_data['head_to_head'])}
+{format_h2h(match_data['head_to_head'], match_data.get('head_to_head_stats', {}), home, away)}
 
 --- HOME GROUND ADVANTAGE & VENUE RECORD ---
 {format_home_advantage(match_data, home, away)}

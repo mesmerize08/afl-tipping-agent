@@ -25,6 +25,12 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 from urllib.parse import urlsplit
 
+from afltables_fetcher import (
+    get_historical_home_away_split,
+    get_historical_venue_record,
+    get_historical_scoring_averages,
+)
+
 SQUIGGLE_BASE = "https://api.squiggle.com.au/"
 ODDS_API_KEY  = os.getenv("ODDS_API_KEY")
 
@@ -60,18 +66,29 @@ TEAM_HOME_CITIES = {
 }
 
 VENUE_CITIES = {
+    # Melbourne metro
     "MCG":                              "Melbourne",
     "Marvel Stadium":                   "Melbourne",
     "Docklands":                        "Melbourne",
     "Etihad Stadium":                   "Melbourne",
+    "Moorabbin Oval":                   "Melbourne",
+    "Whitten Oval":                     "Melbourne",
+    # Geelong
     "GMHBA Stadium":                    "Geelong",
     "Kardinia Park":                    "Geelong",
+    # Country Victoria
     "Mars Stadium":                     "Ballarat",
+    # South Australia
     "Adelaide Oval":                    "Adelaide",
+    "Norwood Oval":                     "Adelaide",   # Gather Round special venue
+    "Lyndoch Oval":                     "Adelaide",   # Gather Round special venue (Barossa Valley)
+    # Western Australia
     "Optus Stadium":                    "Perth",
+    # Queensland
     "Gabba":                            "Brisbane",
     "People First Stadium":             "Gold Coast",
     "Carrara":                          "Gold Coast",
+    # New South Wales / ACT
     "SCG":                              "Sydney",
     "Giants Stadium":                   "Sydney",
     "GIANTS Stadium":                   "Sydney",
@@ -79,40 +96,115 @@ VENUE_CITIES = {
     "ENGIE Stadium":                    "Sydney",
     "Sydney Showground":                "Sydney",
     "Spotless Stadium":                 "Sydney",
+    "Manuka Oval":                      "Canberra",
+    # Northern Territory & remote
     "TIO Stadium":                      "Darwin",
     "Traeger Park":                     "Alice Springs",
     "Cazaly's Stadium":                 "Cairns",
+    # Tasmania
     "University of Tasmania Stadium":   "Launceston",
     "Blundstone Arena":                 "Hobart",
-    "Manuka Oval":                      "Canberra",
 }
 
-HIGH_TRAVEL_PAIRS = {
-    ("Perth", "Melbourne"), ("Melbourne", "Perth"),
-    ("Perth", "Sydney"),    ("Sydney", "Perth"),
-    ("Perth", "Brisbane"),  ("Brisbane", "Perth"),
-    ("Perth", "Adelaide"),  ("Adelaide", "Perth"),
-    ("Perth", "Geelong"),   ("Geelong", "Perth"),
-    ("Perth", "Gold Coast"),("Gold Coast", "Perth"),
-    ("Darwin", "Melbourne"),("Melbourne", "Darwin"),
-    ("Darwin", "Sydney"),   ("Sydney", "Darwin"),
-    ("Darwin", "Perth"),    ("Perth", "Darwin"),
-    ("Cairns", "Melbourne"),("Melbourne", "Cairns"),
-    ("Cairns", "Sydney"),   ("Sydney", "Cairns"),
-    ("Alice Springs", "Melbourne"), ("Melbourne", "Alice Springs"),
+# Venues that are special one-off events — skip historical venue record lookups
+SPECIAL_EVENT_VENUES = {
+    "Norwood Oval",      # Gather Round (SA)
+    "Lyndoch Oval",      # Gather Round (SA)
+    "Traeger Park",      # Alice Springs (occasional)
+    "Cazaly's Stadium",  # Cairns (occasional)
 }
 
-MEDIUM_TRAVEL_PAIRS = {
-    ("Adelaide", "Melbourne"), ("Melbourne", "Adelaide"),
-    ("Adelaide", "Sydney"),    ("Sydney", "Adelaide"),
-    ("Adelaide", "Geelong"),   ("Geelong", "Adelaide"),
-    ("Brisbane", "Melbourne"), ("Melbourne", "Brisbane"),
-    ("Brisbane", "Geelong"),   ("Geelong", "Brisbane"),
-    ("Gold Coast", "Melbourne"),("Melbourne", "Gold Coast"),
-    ("Canberra", "Melbourne"), ("Melbourne", "Canberra"),
-    ("Launceston", "Melbourne"),("Melbourne", "Launceston"),
-    ("Hobart", "Melbourne"),   ("Melbourne", "Hobart"),
+# Flight times in minutes between Australian cities relevant to AFL travel.
+# Symmetric — both directions use the same time.
+_FLIGHT_TIMES_RAW = {
+    # Perth routes (user-verified times)
+    ("Perth", "Adelaide"):      180,   # 3h00m
+    ("Perth", "Melbourne"):     225,   # 3h45m
+    ("Perth", "Sydney"):        250,   # 4h10m
+    ("Perth", "Brisbane"):      270,   # 4h30m
+    ("Perth", "Gold Coast"):    270,   # ~Perth→Brisbane
+    ("Perth", "Geelong"):       225,   # ~Perth→Melbourne
+    ("Perth", "Darwin"):        210,   # 3h30m
+    ("Perth", "Alice Springs"): 180,   # 3h00m
+    ("Perth", "Cairns"):        240,   # 4h00m
+    # Adelaide routes
+    ("Adelaide", "Brisbane"):   150,   # 2h30m (user-verified)
+    ("Adelaide", "Melbourne"):   75,   # 1h15m
+    ("Adelaide", "Sydney"):     105,   # 1h45m
+    ("Adelaide", "Gold Coast"): 150,   # ~Adelaide→Brisbane
+    ("Adelaide", "Geelong"):     75,   # ~Adelaide→Melbourne
+    ("Adelaide", "Darwin"):     180,   # 3h00m
+    ("Adelaide", "Alice Springs"): 120, # 2h00m
+    ("Adelaide", "Cairns"):     180,   # 3h00m
+    ("Adelaide", "Launceston"): 120,   # 2h00m
+    ("Adelaide", "Hobart"):     120,   # 2h00m
+    ("Adelaide", "Canberra"):   100,   # 1h40m
+    # Brisbane / Gold Coast routes
+    ("Brisbane", "Melbourne"):  150,   # 2h30m (user-verified)
+    ("Brisbane", "Sydney"):      90,   # 1h30m
+    ("Brisbane", "Geelong"):    150,   # ~Brisbane→Melbourne
+    ("Brisbane", "Darwin"):     210,   # 3h30m
+    ("Brisbane", "Alice Springs"): 210,
+    ("Brisbane", "Cairns"):     120,   # 2h00m
+    ("Brisbane", "Launceston"): 150,
+    ("Brisbane", "Hobart"):     150,
+    ("Brisbane", "Canberra"):   100,   # 1h40m
+    ("Gold Coast", "Melbourne"): 150,
+    ("Gold Coast", "Sydney"):    90,
+    ("Gold Coast", "Geelong"):  150,
+    ("Gold Coast", "Darwin"):   210,
+    ("Gold Coast", "Cairns"):   120,
+    ("Gold Coast", "Canberra"): 100,
+    # Melbourne / Geelong
+    ("Melbourne", "Sydney"):     85,   # 1h25m
+    ("Melbourne", "Geelong"):     0,   # same metro, no flight needed
+    ("Melbourne", "Darwin"):    240,   # 4h00m
+    ("Melbourne", "Alice Springs"): 180, # 3h00m
+    ("Melbourne", "Cairns"):    210,   # 3h30m
+    ("Melbourne", "Launceston"):  60,  # 1h00m
+    ("Melbourne", "Hobart"):     60,   # 1h00m
+    ("Melbourne", "Canberra"):   60,   # 1h00m
+    ("Melbourne", "Ballarat"):    0,   # 1h drive, no flight
+    # Sydney routes
+    ("Sydney", "Geelong"):       85,
+    ("Sydney", "Darwin"):       270,   # 4h30m
+    ("Sydney", "Alice Springs"): 210,  # 3h30m
+    ("Sydney", "Cairns"):       150,   # 2h30m
+    ("Sydney", "Launceston"):    90,   # 1h30m
+    ("Sydney", "Hobart"):        90,   # 1h30m
+    ("Sydney", "Canberra"):      45,   # 45min
+    ("Sydney", "Ballarat"):      85,   # ~Sydney→Melbourne
+    # Darwin / remote
+    ("Darwin", "Alice Springs"): 90,   # 1h30m
+    ("Darwin", "Cairns"):       120,   # 2h00m
+    ("Alice Springs", "Cairns"): 120,
+    # Geelong same-region pairs
+    ("Geelong", "Darwin"):      240,
+    ("Geelong", "Alice Springs"): 180,
+    ("Geelong", "Cairns"):      210,
+    ("Geelong", "Launceston"):   60,
+    ("Geelong", "Hobart"):       60,
+    ("Geelong", "Canberra"):     60,
+    ("Geelong", "Ballarat"):      0,   # very close
+    # Ballarat (Mars Stadium)
+    ("Ballarat", "Darwin"):     240,
+    ("Ballarat", "Alice Springs"): 180,
 }
+# Make symmetric
+CITY_FLIGHT_TIMES = {}
+for (_a, _b), _t in _FLIGHT_TIMES_RAW.items():
+    CITY_FLIGHT_TIMES[(_a, _b)] = _t
+    CITY_FLIGHT_TIMES[(_b, _a)] = _t
+
+
+def _flight_fatigue_tier(minutes: int) -> str:
+    """Map flight duration to a fatigue tier label."""
+    if minutes == 0:   return "none"
+    if minutes < 60:   return "minimal"   # e.g. Geelong↔Melbourne, Hobart↔Melbourne
+    if minutes < 120:  return "low"       # e.g. Adelaide↔Melbourne, Sydney↔Melbourne
+    if minutes < 180:  return "moderate"  # e.g. Brisbane↔Melbourne, Adelaide↔Brisbane
+    if minutes < 240:  return "high"      # e.g. Perth↔Adelaide, Darwin↔Adelaide
+    return "very_high"                    # e.g. Perth↔Sydney, Perth↔Brisbane
 
 
 # ─── Fixtures ──────────────────────────────────────────────────────────────────
@@ -370,15 +462,20 @@ def get_days_rest(team_name, completed_games, upcoming_game_date_str):
             last_date = datetime.strptime(game["date"][:10], "%Y-%m-%d")
             if last_date < upcoming_date:
                 days = (upcoming_date - last_date).days
+                if days >= 13:
+                    flag = "✅ BYE WEEK"
+                    desc = f"{days} days rest (bye week — full recovery)"
+                elif days <= 6:
+                    flag = "⚠️ SHORT TURNAROUND"
+                    desc = f"{days} days rest (short turnaround — fatigue risk)"
+                else:
+                    flag = ""
+                    desc = f"{days} days rest"
                 return {
                     "days":        days,
                     "last_game":   game["date"][:10],
-                    "flag":        "⚠️ SHORT TURNAROUND" if days <= 6 else ("✅ GOOD REST" if days >= 10 else ""),
-                    "description": (
-                        f"{days} days rest (SHORT TURNAROUND — fatigue risk)"
-                        if days <= 6
-                        else f"{days} days rest"
-                    )
+                    "flag":        flag,
+                    "description": desc,
                 }
         except Exception:
             continue
@@ -390,61 +487,92 @@ def get_days_rest(team_name, completed_games, upcoming_game_date_str):
 
 def get_travel_info(team_name, game_venue):
     """
-    Detect if a team is travelling far from their home city.
-    Flags high-fatigue situations like Perth teams going east.
+    Calculate travel fatigue based on actual flight time between a team's home
+    city and the match venue city. Uses CITY_FLIGHT_TIMES for accurate coverage
+    of all interstate routes, including those between non-Perth cities.
     """
     home_city  = TEAM_HOME_CITIES.get(team_name)
     venue_city = VENUE_CITIES.get(game_venue)
 
-    # Try partial venue name match
+    # Try partial venue name match if exact key not found
     if not venue_city:
         for v, c in VENUE_CITIES.items():
             if v.lower() in game_venue.lower() or game_venue.lower() in v.lower():
                 venue_city = c
                 break
 
-    if not home_city or not venue_city:
-        return {"travelling": False, "fatigue_level": "unknown", "description": ""}
+    if not home_city:
+        return {
+            "travelling":    False,
+            "fatigue_level": "unknown",
+            "description":   f"Travel unknown — '{team_name}' not in TEAM_HOME_CITIES",
+        }
+    if not venue_city:
+        return {
+            "travelling":    False,
+            "fatigue_level": "unknown",
+            "description":   (
+                f"Travel unknown — venue '{game_venue}' not mapped. "
+                f"{team_name} home: {home_city}. Add to VENUE_CITIES to fix."
+            ),
+        }
 
     if home_city == venue_city:
         return {
             "travelling":    False,
             "fatigue_level": "none",
-            "description":   f"Playing at home in {home_city}"
+            "description":   f"Playing at home in {home_city}",
         }
 
-    pair = (home_city, venue_city)
+    flight_mins = CITY_FLIGHT_TIMES.get((home_city, venue_city))
+    if flight_mins is None:
+        # Cities known but route not in matrix — treat as low travel
+        logger.warning(
+            "No flight time entry for %s → %s (team: %s). "
+            "Add to CITY_FLIGHT_TIMES for accurate fatigue.",
+            home_city, venue_city, team_name
+        )
+        return {
+            "travelling":    True,
+            "fatigue_level": "unknown",
+            "home_city":     home_city,
+            "venue_city":    venue_city,
+            "description":   f"Travel: {home_city} → {venue_city} (flight time not mapped — add to CITY_FLIGHT_TIMES)",
+        }
 
-    if pair in HIGH_TRAVEL_PAIRS:
-        return {
-            "travelling":    True,
-            "fatigue_level": "high",
-            "home_city":     home_city,
-            "venue_city":    venue_city,
-            "description":   f"⚠️ LONG-HAUL TRAVEL: {home_city} → {venue_city} (significant fatigue factor)"
-        }
-    elif pair in MEDIUM_TRAVEL_PAIRS:
-        return {
-            "travelling":    True,
-            "fatigue_level": "medium",
-            "home_city":     home_city,
-            "venue_city":    venue_city,
-            "description":   f"Moderate travel: {home_city} → {venue_city}"
-        }
-    else:
-        return {
-            "travelling":    True,
-            "fatigue_level": "low",
-            "home_city":     home_city,
-            "venue_city":    venue_city,
-            "description":   f"Short travel: {home_city} → {venue_city}"
-        }
+    tier = _flight_fatigue_tier(flight_mins)
+    h, m = divmod(flight_mins, 60)
+    time_str = f"{h}h{m:02d}m" if m else f"{h}h"
+
+    tier_prefixes = {
+        "none":      "Playing at home",
+        "minimal":   "Minimal travel",
+        "low":       "Short travel",
+        "moderate":  "Moderate travel",
+        "high":      "⚠️ LONG-HAUL TRAVEL",
+        "very_high": "⚠️ VERY LONG-HAUL TRAVEL",
+    }
+    prefix = tier_prefixes.get(tier, "Travel")
+
+    return {
+        "travelling":    True,
+        "fatigue_level": tier,
+        "flight_mins":   flight_mins,
+        "home_city":     home_city,
+        "venue_city":    venue_city,
+        "description":   f"{prefix}: {home_city} → {venue_city} (~{time_str} flight)",
+    }
 
 
 # ─── Head to Head ─────────────────────────────────────────────────────────────
 
 def get_head_to_head(team1, team2, num_games=10):
-    """Get recent H2H results between two teams across all years."""
+    """
+    Get H2H results between two teams across all years.
+    Returns a dict with:
+      'games': individual game list (capped at num_games)
+      'stats': aggregated win-rate data over last 20 and last 5 meetings
+    """
     try:
         r = requests.get(
             f"{SQUIGGLE_BASE}?q=games;team={requests.utils.quote(team1)}",
@@ -454,28 +582,60 @@ def get_head_to_head(team1, team2, num_games=10):
         games = r.json().get("games", [])
     except Exception as e:
         logger.warning("Could not fetch H2H data: %s", e)
-        return []
+        return {"games": [], "stats": {}}
 
     h2h = []
     for game in games:
-        if (game.get("hteam") == team2 or game.get("ateam") == team2) and game.get("complete") == 100:
-            hscore = int(game.get("hscore") or 0)
-            ascore = int(game.get("ascore") or 0)
-            winner = game.get("hteam") if hscore > ascore else game.get("ateam")
-            h2h.append({
-                "date":      game.get("date", "")[:10],
-                "home_team": game.get("hteam"),
-                "away_team": game.get("ateam"),
-                "score":     f"{hscore}-{ascore}",
-                "winner":    winner,
-                "venue":     game.get("venue", ""),
-                "year":      game.get("year")
-            })
+        # Use robust string conversion (same as rest of codebase) to handle int/float/str variants
+        is_complete = str(game.get("complete", "")).split(".")[0] == "100"
+        involves_t2 = game.get("hteam") == team2 or game.get("ateam") == team2
+        if not (involves_t2 and is_complete):
+            continue
+
+        hscore   = int(game.get("hscore") or 0)
+        ascore   = int(game.get("ascore") or 0)
+        is_home  = game.get("hteam") == team1
+        t1_score = hscore if is_home else ascore
+        t2_score = ascore if is_home else hscore
+        winner   = game.get("hteam") if hscore > ascore else game.get("ateam")
+        h2h.append({
+            "date":      game.get("date", "")[:10],
+            "home_team": game.get("hteam"),
+            "away_team": game.get("ateam"),
+            "score":     f"{hscore}-{ascore}",
+            "winner":    winner,
+            "venue":     game.get("venue", ""),
+            "year":      game.get("year"),
+            "t1_score":  t1_score,
+            "t2_score":  t2_score,
+        })
 
     h2h.sort(key=lambda x: x.get("date", ""), reverse=True)
+
+    def _agg(subset):
+        if not subset:
+            return {}
+        wins = sum(1 for g in subset if g["winner"] == team1)
+        n    = len(subset)
+        return {
+            "wins":        wins,
+            "losses":      n - wins,
+            "games":       n,
+            "win_pct":     round(wins / n * 100),
+            "avg_for":     round(sum(g["t1_score"] for g in subset) / n, 1),
+            "avg_against": round(sum(g["t2_score"] for g in subset) / n, 1),
+            "last_5_seq":  "".join("W" if g["winner"] == team1 else "L" for g in subset[:5]),
+        }
+
+    stats = {
+        "last_20": _agg(h2h[:20]),
+        "last_5":  _agg(h2h[:5]),
+    }
+
     if not h2h:
         logger.info("No H2H history found between %s and %s", team1, team2)
-    return h2h[:num_games]
+
+    return {"games": h2h[:num_games], "stats": stats}
 
 
 # ─── Venue Record ─────────────────────────────────────────────────────────────
@@ -785,12 +945,30 @@ def compile_match_data(game, ladder, betting_odds, squiggle_tips=None):
     away_travel = get_travel_info(away_team, venue)
 
     # H2H and venue records (separate calls — span multiple years)
-    h2h               = get_head_to_head(home_team, away_team)
-    home_venue_record = get_venue_record(home_team, venue)
-    away_venue_record = get_venue_record(away_team, venue)
+    h2h = get_head_to_head(home_team, away_team)
+    # Skip venue record lookups for special event venues (e.g. Gather Round one-off grounds)
+    is_special_venue  = venue in SPECIAL_EVENT_VENUES
+    home_venue_record = [] if is_special_venue else get_venue_record(home_team, venue)
+    away_venue_record = [] if is_special_venue else get_venue_record(away_team, venue)
     # Home/away win split (no extra API call — uses already-fetched season data)
     home_ha_split     = get_home_away_split(home_team, home_games)
     away_ha_split     = get_home_away_split(away_team, away_games)
+
+    # Historical data from afltables (6 calls in parallel; rate-limited internally)
+    logger.info("Fetching afltables historical data for %s and %s", home_team, away_team)
+    with ThreadPoolExecutor(max_workers=6) as hist_pool:
+        h_ha_fut    = hist_pool.submit(get_historical_home_away_split, home_team)
+        a_ha_fut    = hist_pool.submit(get_historical_home_away_split, away_team)
+        h_ven_fut   = hist_pool.submit(get_historical_venue_record,    home_team, venue)
+        a_ven_fut   = hist_pool.submit(get_historical_venue_record,    away_team, venue)
+        h_score_fut = hist_pool.submit(get_historical_scoring_averages, home_team)
+        a_score_fut = hist_pool.submit(get_historical_scoring_averages, away_team)
+        home_hist_ha_split  = h_ha_fut.result()
+        away_hist_ha_split  = a_ha_fut.result()
+        home_hist_venue     = h_ven_fut.result()
+        away_hist_venue     = a_ven_fut.result()
+        home_hist_scoring   = h_score_fut.result()
+        away_hist_scoring   = a_score_fut.result()
 
     # Ladder positions
     home_ladder = next((t for t in ladder if t.get("name") == home_team), {})
@@ -827,11 +1005,19 @@ def compile_match_data(game, ladder, betting_odds, squiggle_tips=None):
         "away_rest":          away_rest,
         "home_travel":        home_travel,
         "away_travel":        away_travel,
-        "head_to_head":       h2h,
+        "head_to_head":       h2h.get("games", []),
+        "head_to_head_stats": h2h.get("stats", {}),
+        "is_special_venue":   is_special_venue,
         "home_venue_record":  home_venue_record,
         "away_venue_record":  away_venue_record,
         "home_ha_split":      home_ha_split,
         "away_ha_split":      away_ha_split,
+        "home_hist_ha_split": home_hist_ha_split,
+        "away_hist_ha_split": away_hist_ha_split,
+        "home_hist_venue":    home_hist_venue,
+        "away_hist_venue":    away_hist_venue,
+        "home_hist_scoring":  home_hist_scoring,
+        "away_hist_scoring":  away_hist_scoring,
         "home_ladder":        home_ladder,
         "away_ladder":        away_ladder,
         "betting_odds":       odds,
