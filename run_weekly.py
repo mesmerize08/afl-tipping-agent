@@ -1,5 +1,6 @@
 import json
-from data_fetcher import get_upcoming_fixtures, get_ladder, get_betting_odds, get_afl_news, compile_match_data
+from data_fetcher import (get_upcoming_fixtures, get_ladder, get_betting_odds,
+                           get_afl_news, compile_match_data, get_squiggle_tips)
 from predict import run_weekly_predictions
 from tracker import check_and_update_results
 
@@ -11,14 +12,18 @@ if summary:
 else:
     print("No pending results to update.")
 
-# Step 2: Generate this week's predictions
+# Step 2: Fetch this week's fixtures and supporting data
 print("\nFetching fixtures...")
 fixtures = get_upcoming_fixtures()
-ladder   = get_ladder()
-odds     = get_betting_odds()
-news     = get_afl_news()
+round_num = fixtures[0].get("round") if fixtures else None
 
-match_data  = [compile_match_data(g, ladder, odds) for g in fixtures]
+ladder        = get_ladder()
+odds          = get_betting_odds()
+news          = get_afl_news()
+squiggle_tips = get_squiggle_tips(round_number=round_num)
+
+match_data  = [compile_match_data(g, ladder, odds, squiggle_tips=squiggle_tips)
+               for g in fixtures]
 predictions = run_weekly_predictions(match_data, news)
 
 with open("predictions.json", "w") as f:

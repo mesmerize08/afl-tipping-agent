@@ -215,8 +215,9 @@ def format_scoring_stats(scoring: Dict, team_name: str,
     if am5 is not None:
         lines.append(f"  Average margin (last 5): {am5:+.1f} pts")
 
-    # Show historical baseline when current-season sample is thin
-    current_thin = af5 is None or wins5 < 5
+    # Show historical baseline when fewer than 5 games played this season
+    sample = scoring.get("sample_size", 0) if scoring else 0
+    current_thin = af5 is None or sample < 5
     if current_thin and hist_scoring:
         years      = hist_scoring.get("years", [])
         year_range = f"{min(years)}–{max(years)}" if years else "historical"
@@ -574,15 +575,16 @@ def run_weekly_predictions(match_data_list: List[Dict], news_headlines: List[Dic
         for item in news_headlines[:10]
     )
 
-    round_number = match_data_list[0].get("round")
-    logger.info("Fetching Squiggle model predictions for Round %s", round_number)
-    squiggle_tips = get_squiggle_tips(round_number=round_number)
-
-    # Attach Squiggle tips to each match dict before spawning threads
-    for match in match_data_list:
-        match["squiggle_model"] = format_squiggle_tips_for_prompt(
-            squiggle_tips, match["home_team"], match["away_team"]
-        )
+    # Squiggle tips are pre-fetched in run_weekly.py and attached via compile_match_data().
+    # Only fetch here if they weren't already set (e.g. when called directly in tests).
+    if not match_data_list[0].get("squiggle_model"):
+        round_number = match_data_list[0].get("round")
+        logger.info("Fetching Squiggle model predictions for Round %s", round_number)
+        squiggle_tips = get_squiggle_tips(round_number=round_number)
+        for match in match_data_list:
+            match["squiggle_model"] = format_squiggle_tips_for_prompt(
+                squiggle_tips, match["home_team"], match["away_team"]
+            )
 
     def _predict_one(match: Dict) -> Dict:
         home = match["home_team"]

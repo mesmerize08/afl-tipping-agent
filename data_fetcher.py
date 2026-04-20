@@ -23,6 +23,7 @@ import os
 import requests
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
+from typing import Dict, List
 from urllib.parse import urlsplit
 
 from afltables_fetcher import (
@@ -218,6 +219,33 @@ SQUIGGLE_TEAM_NAME_MAP = {
 # See https://api.squiggle.com.au/#section_bots
 _UA = {"User-Agent": "AFL-Tipping-Agent/1.0 (github.com/mesmerize08/afl-tipping-agent)"}
 
+# ── Per-run year cache ────────────────────────────────────────────────────────
+# The Squiggle `team=<name>` filter has been unreliable (returns 0 games for all
+# team names). Workaround: fetch ALL completed games for a given year once, cache
+# at module level, then filter by team name locally. This is called once per year
+# per process, so a full 9-game round costs 1–2 unique year API calls total.
+_completed_games_by_year: Dict[int, List] = {}
+
+
+def _fetch_year_completed(year: int) -> List:
+    """Return all completed games for `year`, using module-level cache."""
+    if year in _completed_games_by_year:
+        return _completed_games_by_year[year]
+    try:
+        r = requests.get(
+            f"{SQUIGGLE_BASE}?q=games;year={year};complete=100",
+            timeout=15, headers=_UA,
+        )
+        r.raise_for_status()
+        games = [_normalise_game(g) for g in r.json().get("games", [])]
+        _completed_games_by_year[year] = games
+        logger.info("Year %s: cached %d completed games", year, len(games))
+        return games
+    except Exception as e:
+        logger.warning("Could not fetch completed games for year %s: %s", year, e)
+        _completed_games_by_year[year] = []
+        return []
+
 
 def _normalise_game(game):
     """Normalise team names and strip dots from venue abbreviations."""
@@ -332,38 +360,25 @@ def get_ladder():
 
 def get_team_season_data(team_name, year=None):
     """
-    Fetch ALL completed games for a team in a given year in one API call.
-    Returns completed games sorted by date descending.
-    If no completed games found for the current year (start of season),
-    automatically falls back to the previous year for form calculations.
+    Return all completed games for a team in the given year, sorted by date descending.
+    Uses _fetch_year_completed() (bulk year cache) to avoid Squiggle's broken
+    team-name filter (team=<name> returns 0 results for all team names as of 2026).
+    Falls back to the previous year if no completed games found yet this season.
     """
     if year is None:
         year = datetime.now().year
-    url = f"{SQUIGGLE_BASE}?q=games;year={year};team={requests.utils.quote(team_name)}"
-    try:
-        r = requests.get(url, timeout=15, headers=_UA)
-        r.raise_for_status()
-        games = r.json().get("games", [])
-    except Exception as e:
-        logger.warning("Could not fetch season data for %s: %s", team_name, e)
-        games = []
 
-    completed = [g for g in games if str(g.get("complete", "")).split(".")[0] == "100"]
+    all_year = _fetch_year_completed(year)
+    completed = [g for g in all_year
+                 if g.get("hteam") == team_name or g.get("ateam") == team_name]
     completed.sort(key=lambda x: x.get("date", ""), reverse=True)
 
     # Fall back to previous year if no completed games yet this season
     if not completed:
         logger.info("No %s data for %s — falling back to %s", year, team_name, year - 1)
-        try:
-            r2 = requests.get(
-                f"{SQUIGGLE_BASE}?q=games;year={year-1};team={requests.utils.quote(team_name)}",
-                timeout=15, headers=_UA)
-            r2.raise_for_status()
-            fb_games = r2.json().get("games", [])
-        except Exception as e:
-            logger.warning("Fallback fetch failed for %s: %s", team_name, e)
-            fb_games = []
-        completed = [g for g in fb_games if str(g.get("complete", "")).split(".")[0] == "100"]
+        prev_year = _fetch_year_completed(year - 1)
+        completed = [g for g in prev_year
+                     if g.get("hteam") == team_name or g.get("ateam") == team_name]
         completed.sort(key=lambda x: x.get("date", ""), reverse=True)
 
     return completed
@@ -438,6 +453,7 @@ def get_scoring_stats(team_name, completed_games):
         "attack_trend":   attack_trend,
         "defense_trend":  defense_trend,
         "wins_last_5":    wins_5,
+        "sample_size":    len(form_5),
         "avg_margin_5":   avg(form_5, "margin"),
     }
 
@@ -568,47 +584,36 @@ def get_travel_info(team_name, game_venue):
 
 def get_head_to_head(team1, team2, num_games=10):
     """
-    Get H2H results between two teams across all years.
+    Get H2H results between two teams across the last 5 seasons.
+    Uses _fetch_year_completed() cache so no extra API calls after get_team_season_data().
     Returns a dict with:
       'games': individual game list (capped at num_games)
       'stats': aggregated win-rate data over last 20 and last 5 meetings
     """
-    try:
-        r = requests.get(
-            f"{SQUIGGLE_BASE}?q=games;team={requests.utils.quote(team1)}",
-            timeout=15, headers=_UA
-        )
-        r.raise_for_status()
-        games = r.json().get("games", [])
-    except Exception as e:
-        logger.warning("Could not fetch H2H data: %s", e)
-        return {"games": [], "stats": {}}
-
+    current_year = datetime.now().year
     h2h = []
-    for game in games:
-        # Use robust string conversion (same as rest of codebase) to handle int/float/str variants
-        is_complete = str(game.get("complete", "")).split(".")[0] == "100"
-        involves_t2 = game.get("hteam") == team2 or game.get("ateam") == team2
-        if not (involves_t2 and is_complete):
-            continue
-
-        hscore   = int(game.get("hscore") or 0)
-        ascore   = int(game.get("ascore") or 0)
-        is_home  = game.get("hteam") == team1
-        t1_score = hscore if is_home else ascore
-        t2_score = ascore if is_home else hscore
-        winner   = game.get("hteam") if hscore > ascore else game.get("ateam")
-        h2h.append({
-            "date":      game.get("date", "")[:10],
-            "home_team": game.get("hteam"),
-            "away_team": game.get("ateam"),
-            "score":     f"{hscore}-{ascore}",
-            "winner":    winner,
-            "venue":     game.get("venue", ""),
-            "year":      game.get("year"),
-            "t1_score":  t1_score,
-            "t2_score":  t2_score,
-        })
+    for year in range(current_year, current_year - 5, -1):
+        for game in _fetch_year_completed(year):
+            if not (game.get("hteam") in (team1, team2)
+                    and game.get("ateam") in (team1, team2)):
+                continue
+            hscore   = int(game.get("hscore") or 0)
+            ascore   = int(game.get("ascore") or 0)
+            is_home  = game.get("hteam") == team1
+            t1_score = hscore if is_home else ascore
+            t2_score = ascore if is_home else hscore
+            winner   = game.get("hteam") if hscore > ascore else game.get("ateam")
+            h2h.append({
+                "date":      game.get("date", "")[:10],
+                "home_team": game.get("hteam"),
+                "away_team": game.get("ateam"),
+                "score":     f"{hscore}-{ascore}",
+                "winner":    winner,
+                "venue":     game.get("venue", ""),
+                "year":      game.get("year"),
+                "t1_score":  t1_score,
+                "t2_score":  t2_score,
+            })
 
     h2h.sort(key=lambda x: x.get("date", ""), reverse=True)
 
@@ -641,19 +646,22 @@ def get_head_to_head(team1, team2, num_games=10):
 # ─── Venue Record ─────────────────────────────────────────────────────────────
 
 def get_venue_record(team_name, venue, num_games=5):
-    """Get a team's recent record at a specific venue (all years)."""
-    try:
-        r = requests.get(
-            f"{SQUIGGLE_BASE}?q=games;team={requests.utils.quote(team_name)};venue={requests.utils.quote(venue)}",
-            timeout=15, headers=_UA
-        )
-        r.raise_for_status()
-        games = r.json().get("games", [])
-    except Exception as e:
-        logger.warning("Could not fetch venue record: %s", e)
-        return []
+    """
+    Get a team's recent record at a specific venue across the last 5 years.
+    Uses _fetch_year_completed() cache — no extra API calls.
+    """
+    current_year = datetime.now().year
+    all_games = []
+    for year in range(current_year, current_year - 5, -1):
+        all_games.extend(_fetch_year_completed(year))
 
-    completed = [g for g in games if str(g.get("complete", "")).split(".")[0] == "100"]
+    completed = [
+        g for g in all_games
+        if (g.get("hteam") == team_name or g.get("ateam") == team_name)
+        and (g.get("venue", "").lower() == venue.lower()
+             or venue.lower() in g.get("venue", "").lower()
+             or g.get("venue", "").lower() in venue.lower())
+    ]
     completed.sort(key=lambda x: x.get("date", ""), reverse=True)
 
     venue_form = []
