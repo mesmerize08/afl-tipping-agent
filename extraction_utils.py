@@ -131,21 +131,24 @@ def extract_probability(text: str, winner: Optional[str]) -> Optional[float]:
 def extract_margin(text: str) -> Optional[int]:
     """
     Extract predicted margin from AI prediction text.
-    
-    Args:
-        text: AI prediction text
-        
-    Returns:
-        Margin as integer (1-150) or None
+    Anchors search near "PREDICTED MARGIN:" label to avoid false matches in
+    scoring stats (e.g. "avg margin +12.3 pts" would otherwise match "3 pts").
+    Falls back to full-text scan if the label is absent.
     """
-    # Look for patterns like "~25 points" or "25 pts"
-    matches = re.findall(r'~?(\d{1,3})\s*(?:points?|pts)', text.lower())
-    if matches:
-        for m in matches:
-            val = int(m)
-            if 1 <= val <= 150:
-                return val
-    
+    t_upper = text.upper()
+    label = "PREDICTED MARGIN:"
+    search_text = text
+
+    if label in t_upper:
+        idx = t_upper.index(label)
+        search_text = text[idx:idx + 150]
+
+    matches = re.findall(r'~?(\d{1,3})\s*(?:points?|pts)', search_text.lower())
+    for m in matches:
+        val = int(m)
+        if 1 <= val <= 150:
+            return val
+
     return None
 
 

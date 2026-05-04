@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Dict, List, Any, Optional
 
 # Import shared extraction utilities
-from extraction_utils import extract_winner, extract_probability
+from extraction_utils import extract_winner, extract_probability, extract_margin
 
 logger = logging.getLogger(__name__)
 
@@ -366,6 +366,7 @@ def save_predictions(predictions_list: List[Dict], round_number: int, year: Opti
             "away_team": pred["away_team"],
             "predicted_winner": predicted_winner,
             "predicted_probability": predicted_probability,
+            "predicted_margin": extract_margin(prediction_text),
             "prediction_text": prediction_text,
             "actual_winner": None,
             "actual_margin": None,
@@ -609,7 +610,26 @@ def format_history_for_ai(home_team: str, away_team: str, max_season_records: in
                 f"  Rd {p['round']}: Tipped {p['predicted_winner']} over "
                 f"{p['actual_winner']} — actual winner won by {p.get('actual_margin', '?')} pts"
             )
-    
+
+    # Detect systematic away-team pick bias and surface it as a calibration note.
+    resolved = [p for p in predictions if p["correct"] is not None]
+    if len(resolved) >= 10:
+        total_errors = sum(1 for p in resolved if p["correct"] is False)
+        away_errors = [
+            p for p in resolved
+            if p["correct"] is False
+            and p.get("predicted_winner") == p.get("away_team")
+        ]
+        if total_errors > 0 and away_errors:
+            away_err_pct = round(len(away_errors) / total_errors * 100)
+            if away_err_pct >= 50:
+                sections.append(
+                    f"\n⚠️  CALIBRATION NOTE: {away_err_pct}% of this season's errors were "
+                    f"away-team picks ({len(away_errors)}/{total_errors} wrong). "
+                    "You are systematically underweighting home ground advantage. "
+                    "In close matchups (within 1–2 goals on the line), lean toward the home team."
+                )
+
     return "\n".join(sections)
 
 

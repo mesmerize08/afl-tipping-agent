@@ -363,7 +363,7 @@ def format_home_advantage(match_data: Dict, home: str, away: str) -> str:
         year_range = f"{min(years)}–{max(years)}" if years else "historical"
         h_str = f"{h['wins']}/{h['games']} ({h['pct']}%)" if h.get("games") else "no data"
         a_str = f"{a['wins']}/{a['games']} ({a['pct']}%)" if a.get("games") else "no data"
-        lines.append(f"{team} {year_range} (3yr hist) -- Home: {h_str} | Away: {a_str}")
+        lines.append(f"{team} {year_range} (all-time) -- Home: {h_str} | Away: {a_str}")
         if h.get("pct") is not None and a.get("pct") is not None:
             diff = h["pct"] - a["pct"]
             if abs(diff) >= 15:
@@ -405,8 +405,10 @@ def format_home_advantage(match_data: Dict, home: str, away: str) -> str:
             )
 
     lines.append(
-        "Context: AFL home ground advantage is typically worth 5-10 pts. "
-        "Key factors: crowd noise, ground familiarity, reduced travel for home side."
+        "Context: AFL home ground advantage is typically worth 8-15 pts "
+        "(larger at high-attendance fortress venues). "
+        "Key factors: crowd noise, ground familiarity, reduced travel for home side. "
+        "When data is ambiguous, favour the home team."
     )
 
     return "\n".join(lines) if lines else "Home/away data unavailable."
@@ -575,10 +577,11 @@ def run_weekly_predictions(match_data_list: List[Dict], news_headlines: List[Dic
         for item in news_headlines[:10]
     )
 
+    round_number = match_data_list[0].get("round")
+
     # Squiggle tips are pre-fetched in run_weekly.py and attached via compile_match_data().
     # Only fetch here if they weren't already set (e.g. when called directly in tests).
     if not match_data_list[0].get("squiggle_model"):
-        round_number = match_data_list[0].get("round")
         logger.info("Fetching Squiggle model predictions for Round %s", round_number)
         squiggle_tips = get_squiggle_tips(round_number=round_number)
         for match in match_data_list:

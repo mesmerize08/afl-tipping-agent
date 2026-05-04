@@ -14,15 +14,24 @@ jobs:
     steps:
 
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
       - name: Install dependencies
         run: pip install -r requirements.txt
+
+      - name: Verify dependencies
+        run: |
+          python -c "
+          import requests, feedparser, bs4, lxml
+          from bs4 import BeautifulSoup
+          BeautifulSoup('<div/>', 'lxml')
+          print('All dependencies verified OK')
+          "
 
       - name: Run weekly predictions
         env:
@@ -31,7 +40,7 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           set -e
-          python run_weekly.py
+          python -u run_weekly.py
           test -f predictions.json || (echo "predictions.json not created" && exit 1)
 
       - name: Commit results back to repo
@@ -39,5 +48,5 @@ jobs:
           git config --global user.email "afl-agent@github-actions"
           git config --global user.name "AFL Tipping Agent"
           git add predictions_history.json predictions.json
-          git diff --staged --quiet || git commit -m "Auto: weekly predictions [skip ci]"
+          git diff --staged --quiet || git commit -m "chore: auto-update predictions history [$(date +'%Y-%m-%d')]"
           git push

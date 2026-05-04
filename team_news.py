@@ -26,6 +26,15 @@ try:
 except ImportError:
     HAS_BS4 = False
 
+# Prefer lxml for speed; fall back to stdlib html.parser if lxml is unavailable.
+_BS4_PARSER = "html.parser"
+if HAS_BS4:
+    try:
+        BeautifulSoup("<div/>", "lxml")
+        _BS4_PARSER = "lxml"
+    except Exception:
+        pass
+
 try:
     from scrapling.fetchers import Fetcher as ScraplingFetcher
     HAS_SCRAPLING = True
@@ -219,7 +228,7 @@ def _extract_wp_article_body(html: str, max_chars: int = 800) -> str:
         return re.sub(r"\s+", " ", text).strip()[:max_chars]
 
     try:
-        soup = BeautifulSoup(html, "lxml")
+        soup = BeautifulSoup(html, _BS4_PARSER)
 
         # Strip all noise elements first
         for selector in _NOISE_TAGS:
@@ -398,7 +407,7 @@ def _scrape_zerohanger_html_page(url: str, source_label: str, days_back: int) ->
         return []
 
     try:
-        soup = BeautifulSoup(html, "lxml")
+        soup = BeautifulSoup(html, _BS4_PARSER)
 
         # Zero Hanger uses standard WordPress article listings
         for item in soup.select("article, .post, .entry"):
@@ -461,7 +470,7 @@ def _extract_next_data(html: str) -> Optional[dict]:
     if not HAS_BS4:
         match = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', html, re.DOTALL)
         return json.loads(match.group(1)) if match else None
-    soup = BeautifulSoup(html, "lxml")
+    soup = BeautifulSoup(html, _BS4_PARSER)
     tag = soup.find("script", id="__NEXT_DATA__")
     if tag and tag.string:
         try:
@@ -528,7 +537,7 @@ def get_afl_injury_list() -> List[Dict]:
     # Fallback: parse visible text from page
     if HAS_BS4:
         try:
-            soup = BeautifulSoup(html, "lxml")
+            soup = BeautifulSoup(html, _BS4_PARSER)
             for tag in soup(["script", "style", "nav", "header", "footer"]):
                 tag.decompose()
             rows = soup.select("tr, .injury-row, [class*='injury'], [class*='player-row']")
@@ -612,7 +621,7 @@ def get_afl_tribunal_news(days_back: int = 7) -> List[Dict]:
     # Fallback: scrape visible text
     if HAS_BS4:
         try:
-            soup = BeautifulSoup(html, "lxml")
+            soup = BeautifulSoup(html, _BS4_PARSER)
             for tag in soup(["script", "style", "nav", "header", "footer"]):
                 tag.decompose()
             for item in soup.select("article, .news-item, [class*='article'], [class*='card']"):
