@@ -640,12 +640,27 @@ def get_accuracy_display_data() -> Dict:
     history = load_history()
     predictions = history.get("predictions", [])
     accuracy = history.get("accuracy_summary", {})
-    
+
     completed = [p for p in predictions if p["correct"] is not None]
     pending = [p for p in predictions if p["correct"] is None]
-    
+
+    # Compute by_round live so the chart never lags behind the completed table.
+    # accuracy_summary["by_round"] is only recalculated by check_and_update_results(),
+    # so it can be stale when results are entered via the app or partially via CI.
+    by_round_live: Dict[str, Dict] = {}
+    for p in completed:
+        r = str(p.get("round", "?"))
+        if r not in by_round_live:
+            by_round_live[r] = {"correct": 0, "total": 0, "pct": 0.0}
+        by_round_live[r]["total"] += 1
+        if p["correct"]:
+            by_round_live[r]["correct"] += 1
+    for r, v in by_round_live.items():
+        v["pct"] = round(v["correct"] / v["total"] * 100, 1) if v["total"] else 0.0
+
     return {
         "accuracy_summary": accuracy,
+        "by_round_live": by_round_live,
         "completed_predictions": completed,
         "pending_predictions": pending,
         "all_predictions": predictions

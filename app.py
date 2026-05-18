@@ -558,7 +558,7 @@ with tab2:
             upset = accuracy.get("upset_picks", {})
             if upset.get("total", 0) > 0:
                 m4.metric("Underdog Accuracy", f"{round(upset['correct']/upset['total']*100,1)}%", f"{upset['correct']}/{upset['total']}")
-            by_round = accuracy.get("by_round", {})
+            by_round = data.get("by_round_live", {})
             if by_round:
                 st.divider()
                 st.markdown("<h3>Round by Round</h3>", unsafe_allow_html=True)
