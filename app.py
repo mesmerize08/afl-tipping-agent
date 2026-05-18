@@ -563,7 +563,7 @@ with tab2:
                 st.divider()
                 st.markdown("<h3>Round by Round</h3>", unsafe_allow_html=True)
                 chart_data = pd.DataFrame([
-                    {"Round": f"Rd {r}", "Accuracy %": v["pct"]}
+                    {"Round": f"Rd {int(r):02d}", "Accuracy %": v["pct"]}
                     for r, v in sorted(by_round.items(), key=lambda x: int(x[0]))
                 ])
                 st.bar_chart(chart_data.set_index("Round")["Accuracy %"])
