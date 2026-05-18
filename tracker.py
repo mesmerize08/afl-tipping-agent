@@ -572,7 +572,31 @@ def format_history_for_ai(home_team: str, away_team: str, max_season_records: in
         if upset.get("total", 0) > 0:
             upset_pct = round((upset["correct"] / upset["total"]) * 100, 1)
             sections.append(f"  Underdog picks: {upset['correct']}/{upset['total']} ({upset_pct}%)")
-        
+
+        # Confidence calibration: show accuracy per confidence tier
+        resolved_cal = [p for p in predictions
+                        if p["correct"] is not None and p.get("predicted_probability") is not None]
+        if len(resolved_cal) >= 10:
+            tiers = [
+                ("High confidence (75%+)",     [p for p in resolved_cal if p["predicted_probability"] >= 75]),
+                ("Medium confidence (65-74%)", [p for p in resolved_cal if 65 <= p["predicted_probability"] < 75]),
+                ("Low confidence (<65%)",      [p for p in resolved_cal if p["predicted_probability"] < 65]),
+            ]
+            tier_lines = []
+            for label, picks in tiers:
+                if picks:
+                    pct = round(sum(1 for p in picks if p["correct"]) / len(picks) * 100, 1)
+                    tier_lines.append(
+                        f"  {label}: {sum(1 for p in picks if p['correct'])}/{len(picks)} ({pct}%)"
+                    )
+            if tier_lines:
+                sections.append("  Confidence calibration:")
+                sections.extend(tier_lines)
+                sections.append(
+                    "  (If high-confidence picks win at a lower rate, you are overconfident "
+                    "and should widen your probability range.)"
+                )
+
         by_round = accuracy.get("by_round", {})
         if by_round:
             recent_rounds = sorted(by_round.keys(), key=lambda x: int(x))[-3:]
@@ -628,6 +652,32 @@ def format_history_for_ai(home_team: str, away_team: str, max_season_records: in
                     f"away-team picks ({len(away_errors)}/{total_errors} wrong). "
                     "You are systematically underweighting home ground advantage. "
                     "In close matchups (within 1–2 goals on the line), lean toward the home team."
+                )
+
+        # Detect teams the agent has struggled to predict correctly.
+        team_record: Dict[str, Dict] = {}
+        for p in resolved:
+            for team in [p.get("home_team"), p.get("away_team")]:
+                if not team:
+                    continue
+                if team not in team_record:
+                    team_record[team] = {"correct": 0, "total": 0}
+                team_record[team]["total"] += 1
+                if p["correct"]:
+                    team_record[team]["correct"] += 1
+        problem_teams = [
+            (team, stats)
+            for team, stats in team_record.items()
+            if stats["total"] >= 4 and (stats["correct"] / stats["total"]) < 0.50
+        ]
+        if problem_teams:
+            problem_teams.sort(key=lambda x: x[1]["correct"] / x[1]["total"])
+            sections.append("\n⚠️  TEAM ACCURACY WARNINGS (low historical accuracy in games involving):")
+            for team, stats in problem_teams[:3]:
+                pct = round(stats["correct"] / stats["total"] * 100)
+                sections.append(
+                    f"  {team}: {stats['correct']}/{stats['total']} ({pct}%) — "
+                    "scrutinise your assumptions about this team carefully."
                 )
 
     return "\n".join(sections)

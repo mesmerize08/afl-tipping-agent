@@ -507,6 +507,12 @@ Round {match_data['round']} | {date} | {venue}
 --- AGENT ACCURACY HISTORY ---
 {history_text}
 
+LEARNING DIRECTIVE:
+Study the accuracy history above before producing your prediction.
+If recent incorrect predictions show a pattern (e.g. overestimating a team, ignoring home
+advantage, following the market blindly), explicitly correct for that pattern in this prediction.
+State in your CONFIDENCE section whether any past errors informed your reasoning here.
+
 =====================================
 OUTPUT INSTRUCTIONS
 =====================================
