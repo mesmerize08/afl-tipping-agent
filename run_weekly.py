@@ -1,4 +1,12 @@
 import json
+import sys
+from dotenv import load_dotenv
+load_dotenv()
+
+# Ensure stdout handles the full Unicode range (prediction text contains arrows, etc.)
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
 from data_fetcher import (get_upcoming_fixtures, get_ladder, get_betting_odds,
                            get_afl_news, compile_match_data, get_squiggle_tips)
 from predict import run_weekly_predictions
