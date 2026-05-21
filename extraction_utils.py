@@ -59,7 +59,7 @@ def extract_winner(text: str, home_team: str, away_team: str) -> Optional[str]:
         return None
 
     idx = t.index("PREDICTED WINNER:")
-    snippet = t[idx:idx + 120]
+    snippet = t[idx:idx + 300]
 
     home_upper = home_team.upper()
     away_upper = away_team.upper()

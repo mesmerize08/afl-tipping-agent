@@ -42,7 +42,7 @@ from data_fetcher import get_squiggle_tips, format_squiggle_tips_for_prompt
 API_TIMEOUT = 60  # seconds
 MAX_RETRIES = 3
 RETRY_DELAY_BASE = 2  # exponential backoff base (2^attempt seconds)
-MAX_PROMPT_LENGTH = 12000  # characters (approx 3000 tokens)
+MAX_PROMPT_LENGTH = 16000  # characters (approx 4000 tokens — llama-3.3-70b supports 128k)
 
 
 # ── AI backend with retry logic ───────────────────────────────────────────────
