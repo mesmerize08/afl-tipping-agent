@@ -32,5 +32,5 @@ with open("predictions.json", "w") as f:
 print(f"\nGenerated {len(predictions)} predictions")
 for p in predictions:
     print(f"\n{'='*50}")
-    print(f"🏉 {p['home_team']} vs {p['away_team']}")
+    print(f"AFL: {p['home_team']} vs {p['away_team']}")
     print(p['prediction'])
