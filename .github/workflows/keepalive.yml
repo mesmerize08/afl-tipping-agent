@@ -1,0 +1,27 @@
+name: Keepalive
+
+on:
+  schedule:
+    # Run every 45 days to prevent GitHub disabling the weekly_tips workflow
+    # after 60 days of inactivity (GitHub's scheduled-workflow inactivity rule)
+    - cron: '0 12 1,16 * *'   # 1st and 16th of every month at noon UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Re-enable workflows via dummy commit if needed
+        run: |
+          git config --global user.email "afl-agent@github-actions"
+          git config --global user.name "AFL Tipping Agent"
+          # Touch a keepalive file to register repo activity
+          date -u > .github/keepalive.txt
+          git add .github/keepalive.txt
+          git diff --staged --quiet || git commit -m "chore: keepalive [$(date +'%Y-%m-%d')]"
+          git push || true

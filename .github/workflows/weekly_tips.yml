@@ -42,11 +42,14 @@ jobs:
           set -e
           python -u run_weekly.py
           test -f predictions.json || (echo "predictions.json not created" && exit 1)
+          echo "Prediction count: $(python -c 'import json; p=json.load(open("predictions.json")); print(len(p))')"
 
       - name: Commit results back to repo
         run: |
           git config --global user.email "afl-agent@github-actions"
           git config --global user.name "AFL Tipping Agent"
           git add predictions_history.json predictions.json
-          git diff --staged --quiet || git commit -m "chore: auto-update predictions history [$(date +'%Y-%m-%d')]"
+          git diff --staged --quiet && echo "No changes to commit" && exit 0
+          git commit -m "chore: auto-update predictions history [$(date +'%Y-%m-%d')]"
+          git pull --rebase origin main
           git push

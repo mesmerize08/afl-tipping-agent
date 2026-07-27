@@ -1,148 +1,56 @@
 [
   {
-    "round": 20,
-    "date": "2026-07-23",
-    "date_full": "2026-07-23 19:30:00",
-    "venue": "Adelaide Oval",
-    "home_team": "Adelaide",
-    "away_team": "Collingwood",
-    "betting_odds": {
-      "home_team": "Adelaide Crows",
-      "away_team": "Collingwood Magpies",
-      "home_odds": 1.42,
-      "away_odds": 2.92,
-      "home_implied_prob": 70.4,
-      "away_implied_prob": 34.3,
-      "line_home_spread": -14.5,
-      "line_summary": "Adelaide Crows giving 14.5 pts",
-      "total_line": 163.3,
-      "total_summary": "Market expects total score ~163 pts"
-    },
-    "home_scoring": {
-      "avg_for_5": 92.8,
-      "avg_against_5": 70.6,
-      "avg_for_3": 104.7,
-      "avg_against_3": 64.7,
-      "attack_trend": "improving \u2191",
-      "defense_trend": "stable",
-      "wins_last_5": 4,
-      "sample_size": 5,
-      "avg_margin_5": 22.2
-    },
-    "away_scoring": {
-      "avg_for_5": 93.4,
-      "avg_against_5": 75.0,
-      "avg_for_3": 94.3,
-      "avg_against_3": 84.0,
-      "attack_trend": "stable",
-      "defense_trend": "leaking more \u2191",
-      "wins_last_5": 5,
-      "sample_size": 5,
-      "avg_margin_5": 18.4
-    },
-    "home_rest": {
-      "days": 6,
-      "last_game": "2026-07-17",
-      "flag": "\u26a0\ufe0f SHORT TURNAROUND",
-      "description": "6 days rest (short turnaround \u2014 fatigue risk)"
-    },
-    "away_rest": {
-      "days": 5,
-      "last_game": "2026-07-18",
-      "flag": "\u26a0\ufe0f SHORT TURNAROUND",
-      "description": "5 days rest (short turnaround \u2014 fatigue risk)"
-    },
-    "home_travel": {
-      "travelling": false,
-      "fatigue_level": "none",
-      "description": "Playing at home in Adelaide"
-    },
-    "away_travel": {
-      "travelling": true,
-      "fatigue_level": "low",
-      "flight_mins": 75,
-      "home_city": "Melbourne",
-      "venue_city": "Adelaide",
-      "description": "Short travel: Melbourne \u2192 Adelaide (~1h15m flight)"
-    },
-    "home_ha_split": {
-      "home": {
-        "wins": 7,
-        "games": 9,
-        "pct": 78
-      },
-      "away": {
-        "wins": 5,
-        "games": 9,
-        "pct": 56
-      }
-    },
-    "away_ha_split": {
-      "home": {
-        "wins": 6,
-        "games": 10,
-        "pct": 60
-      },
-      "away": {
-        "wins": 4,
-        "games": 8,
-        "pct": 50
-      }
-    },
-    "prediction": "**PREDICTED WINNER:** Adelaide\n\n**WIN PROBABILITY:** Adelaide: 58% | Collingwood: 42%\nThe probability is derived from a weighted blend of the betting market (40%), Squiggle model (30%), and form data (30%), with the market's implied probabilities adjusted to remove the bookmaker's overround. The betting market and Squiggle model both favour Adelaide, while the form data suggests a closer contest.\n\n**PREDICTED MARGIN:** ~10 points\nThe predicted margin is anchored to the line market of 14.5 points and the average scoring margins of both teams, with Adelaide's average margin over the last 5 games being +22.2 points and Collingwood's being +18.4 points. The margin is adjusted downwards to reflect the potential impact of the heavy rain forecast.\n\n**KEY FACTORS:**\n1. Adelaide's strong home ground advantage, with a 78% win rate at home this season and a +24pp stronger record at home historically.\n2. Collingwood's recent form, with 5 wins in their last 5 games, but with an average margin of +18.4 points, which is lower than Adelaide's average margin.\n3. The heavy rain forecast, which is likely to reduce the effectiveness of high-marking forwards and benefit the team with a stronger defensive record, which is Adelaide.\n4. The absence of Adelaide's key forward Darcy Fogarty, which may impact their attacking potency, but is partially offset by their strong home ground advantage.\n\n**SCORING TRENDS ANALYSIS:**\nAdelaide's last-5 average is 92.8 points for and 70.6 points against, while their last-3 average is 104.7 points for and 64.7 points against. Their attack is trending up, while their defence is stable. Collingwood's last-5 average is 93.4 points for and 75.0 points against, while their last-3 average is 94.3 points for and 84.0 points against. Their attack is stable, while their defence is trending down. Adelaide's scoring profile gives them an advantage due to their stronger defensive record.\n\n**HOME GROUND ADVANTAGE:**\nAdelaide has a 78% win rate at home this season, while Collingwood has a 60% win rate at home. At Adelaide Oval, Adelaide has a 59% win rate historically, while Collingwood has a 65% win rate. The point value of home advantage for this match is estimated to be around 8-10 points, based on the historical data.\n\n**MARKET & MODEL ANALYSIS:**\nThe h2h market implies a 70.4% chance of Adelaide winning, while the line market implies a 14.5-point margin. The Squiggle model predicts a 10.4-point margin in favour of Adelaide. The market and model agree on Adelaide being the likely winner, but the line market implies a slightly larger margin.\n\n**FATIGUE & TRAVEL IMPACT:**\nAdelaide has 6 days of rest, while Collingwood has 5 days of rest. Collingwood has to travel from Melbourne to Adelaide, which is a short flight. Fatigue is not a significant factor for this match, but the short rest and travel may have a minor impact on Collingwood.\n\n**WEATHER IMPACT:**\nThe forecast is for heavy rain, with a 78% chance of rain and a maximum temperature of 13\u00b0C. The conditions favour Adelaide, who have a stronger defensive record and are more likely to benefit from the reduced effectiveness of high-marking forwards.\n\n**TEAM NEWS IMPACT:**\nAdelaide's key forward Darcy Fogarty is suspended, which may impact their attacking potency. Collingwood's small forward Lachie Schultz is injured and unlikely to play. The team news has a minor impact on the predicted outcome, but Adelaide's home ground advantage and stronger defensive record offset the loss of Fogarty.\n\n**CONFIDENCE:** Medium\nThe confidence level is medium due to the agreement between the market and model on Adelaide being the likely winner, but the potential impact of the heavy rain and the absence of Darcy Fogarty introduce some uncertainty.\n\n**UPSET RISK:** Medium\nThe upset risk is medium due to Collingwood's recent form and the potential impact of the heavy rain, which may reduce the effectiveness of Adelaide's attack. Specific data points that support an upset include Collingwood's 5 wins in their last 5 games and their 65% win rate at Adelaide Oval historically.\n\n**DATA CONFLICTS:** None identified."
-  },
-  {
-    "round": 20,
-    "date": "2026-07-24",
-    "date_full": "2026-07-24 19:40:00",
+    "round": 21,
+    "date": "2026-07-30",
+    "date_full": "2026-07-30 19:30:00",
     "venue": "MCG",
-    "home_team": "Melbourne",
+    "home_team": "Collingwood",
     "away_team": "Geelong",
     "betting_odds": {
-      "home_team": "Melbourne Demons",
+      "home_team": "Collingwood Magpies",
       "away_team": "Geelong Cats",
-      "home_odds": 1.84,
-      "away_odds": 1.99,
-      "home_implied_prob": 54.5,
-      "away_implied_prob": 50.3,
-      "line_home_spread": -1.6,
-      "line_summary": "Melbourne Demons giving 1.6 pts",
-      "total_line": 175.9,
-      "total_summary": "Market expects total score ~176 pts"
+      "home_odds": 1.94,
+      "away_odds": 1.86,
+      "home_implied_prob": 51.4,
+      "away_implied_prob": 53.6,
+      "line_home_spread": 1.2,
+      "line_summary": "Geelong Cats giving 1.2 pts",
+      "total_line": 171.5,
+      "total_summary": "Market expects total score ~172 pts"
     },
     "home_scoring": {
-      "avg_for_5": 97.0,
-      "avg_against_5": 72.0,
-      "avg_for_3": 109.3,
-      "avg_against_3": 77.0,
-      "attack_trend": "improving \u2191",
-      "defense_trend": "stable",
-      "wins_last_5": 4,
-      "sample_size": 5,
-      "avg_margin_5": 25.0
-    },
-    "away_scoring": {
-      "avg_for_5": 94.2,
-      "avg_against_5": 88.6,
-      "avg_for_3": 92.0,
-      "avg_against_3": 94.7,
+      "avg_for_5": 99.4,
+      "avg_against_5": 79.6,
+      "avg_for_3": 95.7,
+      "avg_against_3": 76.0,
       "attack_trend": "stable",
       "defense_trend": "stable",
+      "wins_last_5": 5,
+      "sample_size": 5,
+      "avg_margin_5": 19.8
+    },
+    "away_scoring": {
+      "avg_for_5": 96.6,
+      "avg_against_5": 96.0,
+      "avg_for_3": 97.3,
+      "avg_against_3": 86.0,
+      "attack_trend": "stable",
+      "defense_trend": "tightening \u2193",
       "wins_last_5": 2,
       "sample_size": 5,
-      "avg_margin_5": 5.6
+      "avg_margin_5": 0.6
     },
     "home_rest": {
-      "days": 6,
-      "last_game": "2026-07-18",
-      "flag": "\u26a0\ufe0f SHORT TURNAROUND",
-      "description": "6 days rest (short turnaround \u2014 fatigue risk)"
+      "days": 7,
+      "last_game": "2026-07-23",
+      "flag": "",
+      "description": "7 days rest"
     },
     "away_rest": {
-      "days": 8,
-      "last_game": "2026-07-16",
-      "flag": "",
-      "description": "8 days rest"
+      "days": 6,
+      "last_game": "2026-07-24",
+      "flag": "\u26a0\ufe0f SHORT TURNAROUND",
+      "description": "6 days rest (short turnaround \u2014 fatigue risk)"
     },
     "home_travel": {
       "travelling": false,
@@ -159,14 +67,14 @@
     },
     "home_ha_split": {
       "home": {
-        "wins": 7,
-        "games": 8,
-        "pct": 88
+        "wins": 6,
+        "games": 10,
+        "pct": 60
       },
       "away": {
         "wins": 5,
-        "games": 10,
-        "pct": 50
+        "games": 9,
+        "pct": 56
       }
     },
     "away_ha_split": {
@@ -176,63 +84,61 @@
         "pct": 90
       },
       "away": {
-        "wins": 1,
-        "games": 8,
-        "pct": 12
+        "wins": 2,
+        "games": 9,
+        "pct": 22
       }
     },
-    "prediction": "**PREDICTED WINNER:** Melbourne\n\n**WIN PROBABILITY:** Melbourne: 52.5% | Geelong: 47.5%\nThe probability is derived from a weighted blend of the betting market (40%), Squiggle model (30%), and form data (30%), with the market's implied probabilities adjusted to remove the overround and the Squiggle model's prediction given slightly more weight due to its recent accuracy.\n\n**PREDICTED MARGIN:** ~4 points\nThe predicted margin is anchored to the line market, which gives Melbourne a 1.6-point advantage, and adjusted based on the teams' scoring margin averages, with Melbourne's average margin over the last 5 games being +25.0 points and Geelong's being +5.6 points.\n\n**KEY FACTORS:**\n1. Melbourne's recent form, with 4 wins in their last 5 games, including a 46-point win over Richmond, suggests they are in strong shape.\n2. Geelong's away record this season is 1/8 (12%), which is significantly worse than their home record, indicating a potential vulnerability on the road.\n3. Melbourne's home ground advantage is significant, with a 7/8 (88%) win rate at home this season, compared to 5/10 (50%) away.\n4. The head-to-head record between the two teams shows Geelong with a 3-1 advantage in their last 4 meetings, but Melbourne's recent improvement in form may offset this historical disadvantage.\n\n**SCORING TRENDS ANALYSIS:**\nMelbourne's last-5 average is 97.0 points for and 72.0 points against, while their last-3 average is 109.3 points for and 77.0 points against, indicating an improving attack and stable defence. Geelong's last-5 average is 94.2 points for and 88.6 points against, while their last-3 average is 92.0 points for and 94.7 points against, indicating a stable attack and defence. Melbourne's scoring profile, with an improving attack, gives them an advantage.\n\n**HOME GROUND ADVANTAGE:**\nMelbourne's home win rate this season is 7/8 (88%), while Geelong's away win rate is 1/8 (12%). At the MCG, Melbourne has a 5-0 record in their last 5 games, with an average margin of +38.4 points. Geelong has a 2-3 record in their last 5 games at the MCG, with an average margin of +6.4 points. The home ground advantage is estimated to be worth around 10-12 points in this match.\n\n**MARKET & MODEL ANALYSIS:**\nThe head-to-head market implies a 54.5% chance of Melbourne winning, while the line market implies a 1.6-point advantage for Melbourne. The Squiggle model predicts a 1.9-point win for Melbourne. The market and model are in general agreement, with the Squiggle model given slightly more weight due to its recent accuracy.\n\n**FATIGUE & TRAVEL IMPACT:**\nMelbourne has 6 days of rest, while Geelong has 8 days of rest. Geelong is traveling from Geelong to Melbourne, which is a relatively short trip. Fatigue is not considered a significant factor in this match, given the relatively short rest period for Melbourne and the longer rest period for Geelong.\n\n**WEATHER IMPACT:**\nThe weather forecast is unavailable, so it is assumed to be neutral.\n\n**TEAM NEWS IMPACT:**\nThere is limited team news available, with only a mention of a Melbourne coach's comment on Tom Sparrow's performance. There are no confirmed ins or outs for either team.\n\n**CONFIDENCE:** Medium\nThe data sources generally agree, but there is some uncertainty due to Geelong's historical head-to-head advantage and Melbourne's short rest period.\n\n**UPSET RISK:** Medium\nThe upset risk is supported by Geelong's historical head-to-head advantage, with 3 wins in their last 4 meetings, and their stable attack and defence. Additionally, Melbourne's short rest period may be a factor, despite their recent strong form.\n\n**DATA CONFLICTS:** None identified."
+    "prediction": "**PREDICTED WINNER:** Collingwood\n\n**WIN PROBABILITY:** Collingwood: 52.5% | Geelong: 47.5%\nThe win probability is derived from a weighted blend of the betting market (40%), Squiggle model (30%), and form data (30%), with the market's implied probabilities adjusted to remove the overround and the Squiggle model's prediction given more weight due to its recent accuracy.\n\n**PREDICTED MARGIN:** ~4 points\nThe predicted margin is anchored to the line market, which implies a margin of 1.2 points in Geelong's favor, and the scoring margin averages, with Collingwood's average margin over the last 5 games being +19.8 points and Geelong's being +0.6 points.\n\n**KEY FACTORS:**\n1. Collingwood's recent form, with 5 consecutive wins, including a 34-point win over Adelaide, suggests a strong momentum going into the match.\n2. Geelong's away record this season is 2/9 (22%), which is significantly lower than their home record, indicating a potential disadvantage playing away from home.\n3. The head-to-head record between the two teams shows that Geelong has won 5 of the last 7 meetings, but Collingwood has won 2 of the last 5, including a 109-101 win at the MCG in 2023.\n4. Collingwood's average score at the MCG over the last 5 games is 95.7 points for and 76.0 points against, indicating a strong scoring profile at the venue.\n\n**SCORING TRENDS ANALYSIS:**\nCollingwood's last-5 average is 99.4 points for and 79.6 points against, with their last-3 average being 95.7 points for and 76.0 points against. Their attack and defence are both trending stable. Geelong's last-5 average is 96.6 points for and 96.0 points against, with their last-3 average being 97.3 points for and 86.0 points against. Their attack is trending stable, while their defence is tightening. Collingwood's scoring profile gives them an advantage due to their strong defence and stable attack.\n\n**HOME GROUND ADVANTAGE:**\nCollingwood's home win rate this season is 6/10 (60%), while Geelong's away win rate is 2/9 (22%). At the MCG, Collingwood has a record of 4W-1L over the last 5 games, with an average margin of +16.8 points. Geelong has a record of 2W-3L at the MCG over the last 5 games, with an average margin of +4.4 points. The estimated point value of home advantage for this match is around 8-10 points, given Collingwood's strong record at the MCG and Geelong's poor away record.\n\n**MARKET & MODEL ANALYSIS:**\nThe head-to-head market implies a 51.4% chance of Collingwood winning and a 53.6% chance of Geelong winning. The line market implies a margin of 1.2 points in Geelong's favor. The Squiggle model predicts a Geelong win by 3.1 points. The market and model disagree, with the market favoring Geelong and the Squiggle model predicting a Geelong win. I weighted the Squiggle model more heavily due to its recent accuracy, but also considered the market's implied probabilities.\n\n**FATIGUE & TRAVEL IMPACT:**\nCollingwood has 7 days of rest, while Geelong has 6 days of rest, which is a short turnaround and may lead to fatigue. Geelong also has to travel from Geelong to Melbourne, which may add to their fatigue. Fatigue is a potential factor for Geelong in this match.\n\n**WEATHER IMPACT:**\nThe forecast is for a maximum temperature of 12\u00b0C, with a 20% chance of rain and a wind speed of 14 km/h. The conditions are neutral and unlikely to favor one team over the other.\n\n**TEAM NEWS IMPACT:**\nCollingwood's co-captain Brayden Maynard has been cleared of any structural damage to his knee, but his return to play timeline is still uncertain. Geelong has no relevant team news. The impact of team news is minimal, with Maynard's status still uncertain.\n\n**CONFIDENCE:** Medium\nThe data sources agree that Collingwood has a strong scoring profile and home ground advantage, but the market and Squiggle model disagree on the predicted winner, which reduces confidence in the prediction.\n\n**UPSET RISK:** Medium\nThe upset risk is supported by Geelong's strong head-to-head record against Collingwood, with 5 wins in the last 7 meetings, and their recent win over Melbourne by 20 points. Additionally, Collingwood's co-captain Brayden Maynard's uncertain return to play timeline may impact their performance.\n\n**DATA CONFLICTS:** None identified."
   },
   {
-    "round": 20,
-    "date": "2026-07-24",
-    "date_full": "2026-07-24 20:10:00",
+    "round": 21,
+    "date": "2026-07-31",
+    "date_full": "2026-07-31 20:10:00",
     "venue": "Perth Stadium",
     "home_team": "Fremantle",
-    "away_team": "West Coast",
+    "away_team": "Western Bulldogs",
     "betting_odds": {
       "home_team": "Fremantle Dockers",
-      "away_team": "West Coast Eagles",
-      "home_odds": 1.07,
-      "away_odds": 9.09,
-      "home_implied_prob": 93.6,
-      "away_implied_prob": 11.0,
-      "line_home_spread": -43.8,
-      "line_summary": "Fremantle Dockers giving 43.8 pts",
-      "total_line": 171.5,
-      "total_summary": "Market expects total score ~172 pts"
+      "away_team": "Western Bulldogs",
+      "home_odds": 1.16,
+      "away_odds": 5.2,
+      "home_implied_prob": 86.1,
+      "away_implied_prob": 19.2,
+      "line_home_spread": -32.6,
+      "line_summary": "Fremantle Dockers giving 32.6 pts"
     },
     "home_scoring": {
-      "avg_for_5": 96.2,
-      "avg_against_5": 75.2,
-      "avg_for_3": 100.7,
-      "avg_against_3": 85.7,
-      "attack_trend": "stable",
-      "defense_trend": "leaking more \u2191",
+      "avg_for_5": 98.8,
+      "avg_against_5": 65.6,
+      "avg_for_3": 108.7,
+      "avg_against_3": 63.3,
+      "attack_trend": "improving \u2191",
+      "defense_trend": "stable",
       "wins_last_5": 4,
       "sample_size": 5,
-      "avg_margin_5": 21.0
+      "avg_margin_5": 33.2
     },
     "away_scoring": {
-      "avg_for_5": 70.0,
-      "avg_against_5": 93.8,
-      "avg_for_3": 71.0,
-      "avg_against_3": 92.7,
-      "attack_trend": "stable",
+      "avg_for_5": 81.2,
+      "avg_against_5": 67.4,
+      "avg_for_3": 89.3,
+      "avg_against_3": 62.0,
+      "attack_trend": "improving \u2191",
       "defense_trend": "stable",
-      "wins_last_5": 0,
+      "wins_last_5": 4,
       "sample_size": 5,
-      "avg_margin_5": -23.8
+      "avg_margin_5": 13.8
     },
     "home_rest": {
-      "days": 6,
-      "last_game": "2026-07-18",
-      "flag": "\u26a0\ufe0f SHORT TURNAROUND",
-      "description": "6 days rest (short turnaround \u2014 fatigue risk)"
+      "days": 7,
+      "last_game": "2026-07-24",
+      "flag": "",
+      "description": "7 days rest"
     },
     "away_rest": {
       "days": 6,
-      "last_game": "2026-07-18",
+      "last_game": "2026-07-25",
       "flag": "\u26a0\ufe0f SHORT TURNAROUND",
       "description": "6 days rest (short turnaround \u2014 fatigue risk)"
     },
@@ -244,12 +150,12 @@
     "away_travel": {
       "travelling": false,
       "fatigue_level": "unknown",
-      "description": "Travel unknown \u2014 venue 'Perth Stadium' not mapped. West Coast home: Perth. Add to VENUE_CITIES to fix."
+      "description": "Travel unknown \u2014 venue 'Perth Stadium' not mapped. Western Bulldogs home: Melbourne. Add to VENUE_CITIES to fix."
     },
     "home_ha_split": {
       "home": {
-        "wins": 8,
-        "games": 8,
+        "wins": 9,
+        "games": 9,
         "pct": 100
       },
       "away": {
@@ -260,70 +166,68 @@
     },
     "away_ha_split": {
       "home": {
-        "wins": 3,
+        "wins": 6,
         "games": 9,
-        "pct": 33
+        "pct": 67
       },
       "away": {
-        "wins": 1,
-        "games": 9,
-        "pct": 11
+        "wins": 6,
+        "games": 10,
+        "pct": 60
       }
     },
-    "prediction": "**PREDICTED WINNER:** Fremantle\n\n**WIN PROBABILITY:** Fremantle: 85% | West Coast: 15%\nThe win probability is driven by a weighted blend of the betting market (60% weight), Squiggle model (20% weight), and form data (20% weight), with the market's implied probability of 93.6% for Fremantle being adjusted downward to account for the potential impact of fatigue and travel.\n\n**PREDICTED MARGIN:** ~38 points\nThe predicted margin is anchored to the line market of 43.8 points and adjusted downward based on Fremantle's average margin of +21.0 points over the last 5 games, as well as West Coast's average margin of -23.8 points over the same period.\n\n**KEY FACTORS:**\n1. Fremantle's strong recent form, with 4 wins in their last 5 games, including a +28 point win over Port Adelaide and a +38 point win over Sydney.\n2. West Coast's poor recent form, with 0 wins in their last 5 games, including a -24 point loss to Brisbane Lions and a -25 point loss to Adelaide.\n3. Fremantle's significant home ground advantage, with a 100% win rate at home this season and a +23pp stronger record at home historically.\n4. The Squiggle model's prediction of a 47.0 point margin in favor of Fremantle, which suggests a high level of confidence in Fremantle's chances.\n\n**SCORING TRENDS ANALYSIS:**\nFremantle's last-5 average is 96.2 points for and 75.2 points against, while their last-3 average is 100.7 points for and 85.7 points against. Their attack is stable, while their defense is leaking more. West Coast's last-5 average is 70.0 points for and 93.8 points against, while their last-3 average is 71.0 points for and 92.7 points against. Their attack and defense are both stable. Fremantle's scoring profile gives them an advantage due to their higher average score and lower average concession.\n\n**HOME GROUND ADVANTAGE:**\nFremantle has a 100% win rate at home this season, while West Coast has a 33% win rate at home. At Perth Stadium, Fremantle has a 5W-0L record in their last 5 games, with an average margin of +28.6 points. West Coast has a 1W-4L record at Perth Stadium in their last 5 games, with an average margin of -5.2 points. The point value of home advantage for this match is estimated to be around 10-15 points.\n\n**MARKET & MODEL ANALYSIS:**\nThe h2h market implies a 93.6% chance of Fremantle winning, while the line market implies a 43.8 point margin in favor of Fremantle. The Squiggle model predicts a 47.0 point margin in favor of Fremantle. The market and model are in agreement, with the model providing a slightly higher margin. The market and model are weighted more heavily than the form data due to their consistency and accuracy.\n\n**FATIGUE & TRAVEL IMPACT:**\nBoth teams have 6 days of rest, which is a short turnaround and may lead to fatigue. However, since both teams are playing at their home ground, travel is not a factor. Fatigue is a potential factor for this match, but its impact is likely to be minimal.\n\n**WEATHER IMPACT:**\nThe weather forecast is unavailable, so it is unclear whether the conditions will favor one team over the other. However, since both teams are familiar with the Perth Stadium conditions, the weather is unlikely to have a significant impact.\n\n**TEAM NEWS IMPACT:**\nThere is no team news available for either Fremantle or West Coast, so there are no confirmed ins or outs to consider.\n\n**CONFIDENCE:** High\nThe data sources are in agreement, with the market, model, and form data all suggesting a strong chance of Fremantle winning. The only potential factor that could affect the outcome is fatigue, but its impact is likely to be minimal.\n\n**UPSET RISK:** Low\nThe specific data points that support a low upset risk include Fremantle's strong recent form, West Coast's poor recent form, and the significant home ground advantage in favor of Fremantle. The Squiggle model's prediction of a 47.0 point margin in favor of Fremantle also suggests a low upset risk.\n\n**DATA CONFLICTS:** None identified\nThere are no cases where two data sources gave contradictory signals. The market, model, and form data are all in agreement, suggesting a high level of confidence in the predicted outcome."
+    "prediction": "**PREDICTED WINNER:** Fremantle\n\n**WIN PROBABILITY:** Fremantle: 72% | Western Bulldogs: 28%\nThe probability is driven by a weighted blend of the betting market (60% weight), Squiggle model (20% weight), and form data (20% weight), with the market's implied probability of 86.1% for Fremantle adjusted downward to account for the bookmaker's overround and the potential for Western Bulldogs to cause an upset.\n\n**PREDICTED MARGIN:** ~28 points\nThe predicted margin is anchored to the line market of 32.6 points and adjusted downward based on Fremantle's average margin of +33.2 points over the last 5 games, as well as Western Bulldogs' average margin of +13.8 points over the same period.\n\n**KEY FACTORS:**\n1. Fremantle's strong home ground advantage, with a 100% win rate at Perth Stadium this season and a +23pp stronger record at home historically.\n2. Western Bulldogs' short turnaround of 6 days rest, which may contribute to fatigue and impact their performance.\n3. Fremantle's improving attack trend, with an average score of 108.7 points for over the last 3 games, compared to Western Bulldogs' average score of 89.3 points for over the same period.\n4. The head-to-head record between the two teams, with Fremantle winning 6 out of the last 9 meetings, including the last 3 games at Perth Stadium.\n\n**SCORING TRENDS ANALYSIS:**\nFremantle's last-5 average is 98.8 points for and 65.6 points against, while their last-3 average is 108.7 points for and 63.3 points against. Their attack is trending up, while their defence is stable. Western Bulldogs' last-5 average is 81.2 points for and 67.4 points against, while their last-3 average is 89.3 points for and 62.0 points against. Their attack is also trending up, while their defence is stable. Fremantle's scoring profile gives them an advantage due to their higher average score and stronger attack trend.\n\n**HOME GROUND ADVANTAGE:**\nFremantle has a 100% win rate at home this season, while Western Bulldogs have a 67% win rate at home. At Perth Stadium, Fremantle has a 62% win rate historically, while Western Bulldogs have a 33% win rate. The point value of home advantage for this match is estimated to be around 10-15 points, based on the historical data and the fact that Fremantle has a significant home ground advantage.\n\n**MARKET & MODEL ANALYSIS:**\nThe head-to-head market implies a 86.1% chance of Fremantle winning, while the line market implies a 32.6-point margin in favour of Fremantle. The Squiggle model predicts a 30.4-point margin in favour of Fremantle. The market and model agree on Fremantle winning, but the model predicts a slightly lower margin. The market's implied probability is given more weight due to its historical accuracy.\n\n**FATIGUE & TRAVEL IMPACT:**\nFremantle has 7 days rest, while Western Bulldogs have 6 days rest and are travelling from Melbourne. Fatigue may be a real factor for Western Bulldogs due to their short turnaround and travel.\n\n**WEATHER IMPACT:**\nThe weather forecast is unavailable, so it is unclear whether the conditions will favour one team over the other.\n\n**TEAM NEWS IMPACT:**\nThere is no relevant team news available for either team, so there is no impact on the prediction.\n\n**CONFIDENCE:** Medium\nThe data sources generally agree on Fremantle winning, but the margin of victory is uncertain due to Western Bulldogs' improving form and potential for an upset.\n\n**UPSET RISK:** Medium\nThe upset risk is supported by Western Bulldogs' recent form, with 4 wins out of their last 5 games, and their ability to cause an upset against a top team. Additionally, Fremantle's loss to GWS Giants in round 17 shows that they are not invincible.\n\n**DATA CONFLICTS:** None identified\nThere are no significant conflicts between the data sources, with the market, model, and form data all pointing to a Fremantle win."
   },
   {
-    "round": 20,
-    "date": "2026-07-25",
-    "date_full": "2026-07-25 13:05:00",
+    "round": 21,
+    "date": "2026-08-01",
+    "date_full": "2026-08-01 13:05:00",
     "venue": "Docklands",
-    "home_team": "Carlton",
-    "away_team": "Gold Coast",
+    "home_team": "St Kilda",
+    "away_team": "Sydney",
     "betting_odds": {
-      "home_team": "Carlton Blues",
-      "away_team": "Gold Coast Suns",
-      "home_odds": 1.66,
-      "away_odds": 2.23,
-      "home_implied_prob": 60.1,
-      "away_implied_prob": 44.8,
-      "line_home_spread": -6.5,
-      "line_summary": "Carlton Blues giving 6.5 pts",
-      "total_line": 171.1,
-      "total_summary": "Market expects total score ~171 pts"
+      "home_team": "St Kilda Saints",
+      "away_team": "Sydney Swans",
+      "home_odds": 2.68,
+      "away_odds": 1.47,
+      "home_implied_prob": 37.3,
+      "away_implied_prob": 68.1,
+      "line_home_spread": 13.4,
+      "line_summary": "Sydney Swans giving 13.4 pts"
     },
     "home_scoring": {
-      "avg_for_5": 77.4,
-      "avg_against_5": 78.8,
-      "avg_for_3": 60.7,
-      "avg_against_3": 88.3,
-      "attack_trend": "declining \u2193",
-      "defense_trend": "leaking more \u2191",
-      "wins_last_5": 3,
-      "sample_size": 5,
-      "avg_margin_5": -1.4
-    },
-    "away_scoring": {
-      "avg_for_5": 68.2,
-      "avg_against_5": 100.4,
-      "avg_for_3": 71.7,
-      "avg_against_3": 103.0,
+      "avg_for_5": 86.6,
+      "avg_against_5": 74.0,
+      "avg_for_3": 85.0,
+      "avg_against_3": 79.0,
       "attack_trend": "stable",
       "defense_trend": "stable",
-      "wins_last_5": 0,
+      "wins_last_5": 3,
       "sample_size": 5,
-      "avg_margin_5": -32.2
+      "avg_margin_5": 12.6
+    },
+    "away_scoring": {
+      "avg_for_5": 91.2,
+      "avg_against_5": 93.4,
+      "avg_for_3": 94.3,
+      "avg_against_3": 95.3,
+      "attack_trend": "stable",
+      "defense_trend": "stable",
+      "wins_last_5": 2,
+      "sample_size": 5,
+      "avg_margin_5": -2.2
     },
     "home_rest": {
-      "days": 7,
-      "last_game": "2026-07-18",
-      "flag": "",
-      "description": "7 days rest"
-    },
-    "away_rest": {
       "days": 6,
-      "last_game": "2026-07-19",
+      "last_game": "2026-07-26",
       "flag": "\u26a0\ufe0f SHORT TURNAROUND",
       "description": "6 days rest (short turnaround \u2014 fatigue risk)"
+    },
+    "away_rest": {
+      "days": 7,
+      "last_game": "2026-07-25",
+      "flag": "",
+      "description": "7 days rest"
     },
     "home_travel": {
       "travelling": false,
@@ -332,11 +236,11 @@
     },
     "away_travel": {
       "travelling": true,
-      "fatigue_level": "moderate",
-      "flight_mins": 150,
-      "home_city": "Gold Coast",
+      "fatigue_level": "low",
+      "flight_mins": 85,
+      "home_city": "Sydney",
       "venue_city": "Melbourne",
-      "description": "Moderate travel: Gold Coast \u2192 Melbourne (~2h30m flight)"
+      "description": "Short travel: Sydney \u2192 Melbourne (~1h25m flight)"
     },
     "home_ha_split": {
       "home": {
@@ -345,187 +249,9 @@
         "pct": 50
       },
       "away": {
-        "wins": 4,
-        "games": 10,
-        "pct": 40
-      }
-    },
-    "away_ha_split": {
-      "home": {
-        "wins": 6,
-        "games": 10,
-        "pct": 60
-      },
-      "away": {
-        "wins": 1,
-        "games": 8,
-        "pct": 12
-      }
-    },
-    "prediction": "**PREDICTED WINNER:** Carlton\n\n**WIN PROBABILITY:** Carlton: 58% | Gold Coast: 42%\nThe probability is derived from a weighted blend of the betting market (40%), Squiggle model (30%), and form data (30%), with the market's implied probabilities adjusted to remove the overround and the Squiggle model's prediction given slightly more weight due to its specific margin forecast.\n\n**PREDICTED MARGIN:** ~8 points\nThe predicted margin is anchored to the line market, which gives Carlton a 6.5-point advantage, and adjusted based on the teams' scoring margin averages, with Carlton's average margin over the last 5 games being -1.4 points and Gold Coast's being -32.2 points.\n\n**KEY FACTORS:**\n1. Carlton's recent form, with 3 wins in their last 5 games, including a 2-point win over Richmond, suggests they have a slight edge in terms of momentum.\n2. Gold Coast's poor away record, with only 1 win in 8 games, indicates they may struggle at Docklands.\n3. The head-to-head record between the two teams shows Carlton with a 60% win rate over the last 5 meetings, which could give them a psychological advantage.\n4. The significant home ground advantage, with Gold Coast's win rate being 48 percentage points higher at home, suggests that playing at Docklands could be a major factor in the outcome.\n\n**SCORING TRENDS ANALYSIS:**\nCarlton's last-5 average is 77.4 points for and 78.8 points against, while their last-3 average is 60.7 points for and 88.3 points against, indicating a declining attack and a leaking defence. Gold Coast's last-5 average is 68.2 points for and 100.4 points against, with their last-3 average being 71.7 points for and 103.0 points against, indicating a stable attack and defence. Carlton's scoring profile, with a slightly higher average score, gives them a slight advantage.\n\n**HOME GROUND ADVANTAGE:**\nCarlton has a 50% win rate at home this season, while Gold Coast has a 12% win rate away from home. At Docklands, Carlton has a 38% win rate historically, while Gold Coast has a 31% win rate. The estimated point value of home advantage for this match is around 10-12 points, given the significant difference in Gold Coast's home and away win rates.\n\n**MARKET & MODEL ANALYSIS:**\nThe head-to-head market implies a 60.1% chance of Carlton winning, while the line market implies a 6.5-point advantage for Carlton. The Squiggle model predicts an 11.5-point win for Carlton, with a 57.5% chance of them winning. The market and model generally agree, with the model giving a slightly higher margin, so the model's prediction is weighted slightly more heavily due to its specific margin forecast.\n\n**FATIGUE & TRAVEL IMPACT:**\nCarlton has 7 days of rest, while Gold Coast has 6 days of rest and moderate travel from Gold Coast to Melbourne. Fatigue is not a significant factor for this match, but Gold Coast's shorter rest and travel may have a slight impact.\n\n**WEATHER IMPACT:**\nThe weather forecast is neutral, with the game being played at Marvel Stadium, which has a roof. The conditions will not favour one team over the other based on their scoring style.\n\n**TEAM NEWS IMPACT:**\nThere is no relevant team news for Carlton, while Gold Coast's Ben Long had his ban halved to one game, but this is not expected to have a significant impact on the match.\n\n**CONFIDENCE:** Medium\nThe data sources generally agree, but there is some uncertainty due to Gold Coast's stable attack and defence, which could potentially cause an upset.\n\n**UPSET RISK:** Medium\nThe specific data points that support an upset are Gold Coast's stable attack and defence, their moderate travel and shorter rest, and the fact that they have won 3 of their last 5 games at Docklands.\n\n**DATA CONFLICTS:** None identified."
-  },
-  {
-    "round": 20,
-    "date": "2026-07-25",
-    "date_full": "2026-07-25 16:15:00",
-    "venue": "MCG",
-    "home_team": "Hawthorn",
-    "away_team": "Essendon",
-    "betting_odds": {
-      "home_team": "Hawthorn Hawks",
-      "away_team": "Essendon Bombers",
-      "home_odds": 1.03,
-      "away_odds": 12.77,
-      "home_implied_prob": 96.8,
-      "away_implied_prob": 7.8,
-      "line_home_spread": -53.5,
-      "line_summary": "Hawthorn Hawks giving 53.5 pts",
-      "total_line": 170.3,
-      "total_summary": "Market expects total score ~170 pts"
-    },
-    "home_scoring": {
-      "avg_for_5": 104.8,
-      "avg_against_5": 79.0,
-      "avg_for_3": 105.0,
-      "avg_against_3": 72.0,
-      "attack_trend": "stable",
-      "defense_trend": "stable",
-      "wins_last_5": 4,
-      "sample_size": 5,
-      "avg_margin_5": 25.8
-    },
-    "away_scoring": {
-      "avg_for_5": 58.2,
-      "avg_against_5": 100.8,
-      "avg_for_3": 58.7,
-      "avg_against_3": 110.0,
-      "attack_trend": "stable",
-      "defense_trend": "leaking more \u2191",
-      "wins_last_5": 1,
-      "sample_size": 5,
-      "avg_margin_5": -42.6
-    },
-    "home_rest": {
-      "days": 6,
-      "last_game": "2026-07-19",
-      "flag": "\u26a0\ufe0f SHORT TURNAROUND",
-      "description": "6 days rest (short turnaround \u2014 fatigue risk)"
-    },
-    "away_rest": {
-      "days": 6,
-      "last_game": "2026-07-19",
-      "flag": "\u26a0\ufe0f SHORT TURNAROUND",
-      "description": "6 days rest (short turnaround \u2014 fatigue risk)"
-    },
-    "home_travel": {
-      "travelling": false,
-      "fatigue_level": "none",
-      "description": "Playing at home in Melbourne"
-    },
-    "away_travel": {
-      "travelling": false,
-      "fatigue_level": "none",
-      "description": "Playing at home in Melbourne"
-    },
-    "home_ha_split": {
-      "home": {
-        "wins": 7,
-        "games": 9,
-        "pct": 78
-      },
-      "away": {
-        "wins": 6,
-        "games": 9,
-        "pct": 67
-      }
-    },
-    "away_ha_split": {
-      "home": {
-        "wins": 2,
-        "games": 9,
-        "pct": 22
-      },
-      "away": {
-        "wins": 0,
-        "games": 9,
-        "pct": 0
-      }
-    },
-    "prediction": "**PREDICTED WINNER:** Hawthorn\n\n**WIN PROBABILITY:** Hawthorn: 82% | Essendon: 18%\nThe win probability is driven by a weighted blend of the betting market (60% weight), Squiggle model (20% weight), and form data (20% weight), with the market's implied probability of 96.8% for Hawthorn being adjusted downward to account for the overround and the potential for Essendon to cause an upset.\n\n**PREDICTED MARGIN:** ~45 points\nThe predicted margin is anchored to the line market of 53.5 points and adjusted downward based on Hawthorn's average margin of +25.8 points over the last 5 games and Essendon's average margin of -42.6 points over the last 5 games.\n\n**KEY FACTORS:**\n1. Hawthorn's strong recent form, with 4 wins in their last 5 games, including a 70-point win over Richmond and a 64-point win over Carlton.\n2. Essendon's poor recent form, with only 1 win in their last 5 games, and an average margin of -42.6 points over that period.\n3. Hawthorn's stable attack and defence trends, with an average score of 104.8 points for and 79.0 points against over the last 5 games.\n4. Essendon's leaking defence trend, with an average score of 100.8 points against over the last 5 games.\n\n**SCORING TRENDS ANALYSIS:**\nHawthorn's last-5 average is 104.8 points for and 79.0 points against, while their last-3 average is 105.0 points for and 72.0 points against. Their attack and defence trends are stable. Essendon's last-5 average is 58.2 points for and 100.8 points against, while their last-3 average is 58.7 points for and 110.0 points against. Their attack trend is stable, but their defence trend is leaking more. Hawthorn's scoring profile gives them an advantage due to their high average score and stable defence trend.\n\n**HOME GROUND ADVANTAGE:**\nHawthorn has a home win rate of 78% and an away win rate of 67% this season, while Essendon has a home win rate of 22% and an away win rate of 0%. At the MCG, Hawthorn has a historical win rate of 56% and an average margin of +6.8 points, while Essendon has a historical win rate of 54% and an average margin of +4.2 points. The estimated point value of home advantage for this match is around 8-10 points, given the historical data and the fact that both teams are playing at the MCG.\n\n**MARKET & MODEL ANALYSIS:**\nThe h2h market implies a 96.8% chance of Hawthorn winning, while the line market implies a margin of 53.5 points. The Squiggle model predicts a margin of 43.4 points in favour of Hawthorn. The market and model agree that Hawthorn will win, but the market implies a larger margin. I weighted the model's prediction more heavily due to its more conservative margin estimate.\n\n**FATIGUE & TRAVEL IMPACT:**\nBoth teams have 6 days of rest, which is a short turnaround and may lead to some fatigue. However, neither team has to travel, as they are both playing at the MCG. Fatigue is a potential factor, but its impact is likely to be minimal.\n\n**WEATHER IMPACT:**\nThe forecast is for a maximum temperature of 15\u00b0C, with a 43% chance of rain and a wind speed of 19 km/h. The conditions may be slightly slippery, which could reduce kicking accuracy. However, the weather is unlikely to favour one team over the other, as both teams are accustomed to playing in similar conditions.\n\n**TEAM NEWS IMPACT:**\nThere is no relevant team news available for either Hawthorn or Essendon, so I have weighted form, odds, and venue data more heavily.\n\n**CONFIDENCE:** High\nThe data sources generally agree that Hawthorn will win, with the market, model, and form data all pointing to a Hawthorn victory. My confidence is high due to the consistency of the data and the lack of any significant contradictory signals.\n\n**UPSET RISK:** Low\nThe upset risk is low due to Essendon's poor recent form and Hawthorn's strong recent form. However, some data points that could support an upset include Essendon's historical win rate of 54% at the MCG and their ability to cause an upset in their last game against GWS Giants.\n\n**DATA CONFLICTS:** None identified\nThere are no significant data conflicts that would suggest a contradictory outcome. The market, model, and form data all point to a Hawthorn victory, with the only potential caveat being Essendon's historical performance at the MCG."
-  },
-  {
-    "round": 20,
-    "date": "2026-07-25",
-    "date_full": "2026-07-25 16:35:00",
-    "venue": "Sydney Showground",
-    "home_team": "GWS Giants",
-    "away_team": "Sydney",
-    "betting_odds": {
-      "home_team": "Greater Western Sydney Giants",
-      "away_team": "Sydney Swans",
-      "home_odds": 2.44,
-      "away_odds": 1.56,
-      "home_implied_prob": 40.9,
-      "away_implied_prob": 64.1,
-      "line_home_spread": 9.8,
-      "line_summary": "Sydney Swans giving 9.8 pts",
-      "total_line": 183.9,
-      "total_summary": "Market expects total score ~184 pts"
-    },
-    "home_scoring": {
-      "avg_for_5": 81.2,
-      "avg_against_5": 82.4,
-      "avg_for_3": 86.3,
-      "avg_against_3": 76.0,
-      "attack_trend": "stable",
-      "defense_trend": "stable",
-      "wins_last_5": 2,
-      "sample_size": 5,
-      "avg_margin_5": -1.2
-    },
-    "away_scoring": {
-      "avg_for_5": 82.0,
-      "avg_against_5": 93.8,
-      "avg_for_3": 78.0,
-      "avg_against_3": 84.3,
-      "attack_trend": "stable",
-      "defense_trend": "tightening \u2193",
-      "wins_last_5": 2,
-      "sample_size": 5,
-      "avg_margin_5": -11.8
-    },
-    "home_rest": {
-      "days": 6,
-      "last_game": "2026-07-19",
-      "flag": "\u26a0\ufe0f SHORT TURNAROUND",
-      "description": "6 days rest (short turnaround \u2014 fatigue risk)"
-    },
-    "away_rest": {
-      "days": 8,
-      "last_game": "2026-07-17",
-      "flag": "",
-      "description": "8 days rest"
-    },
-    "home_travel": {
-      "travelling": false,
-      "fatigue_level": "none",
-      "description": "Playing at home in Sydney"
-    },
-    "away_travel": {
-      "travelling": false,
-      "fatigue_level": "none",
-      "description": "Playing at home in Sydney"
-    },
-    "home_ha_split": {
-      "home": {
-        "wins": 7,
-        "games": 9,
-        "pct": 78
-      },
-      "away": {
-        "wins": 1,
-        "games": 9,
-        "pct": 11
+        "wins": 5,
+        "games": 11,
+        "pct": 45
       }
     },
     "away_ha_split": {
@@ -535,185 +261,91 @@
         "pct": 90
       },
       "away": {
-        "wins": 4,
-        "games": 8,
-        "pct": 50
+        "wins": 5,
+        "games": 9,
+        "pct": 56
       }
     },
-    "prediction": "**PREDICTED WINNER:** GWS Giants\n\n**WIN PROBABILITY:** GWS Giants: 55% | Sydney: 45%\nThe probability is driven by a weighted blend of the betting market (40.9% implied for GWS Giants), form data (GWS Giants' recent wins and home ground advantage), and the lack of Squiggle model data. I gave more weight to the form data and home ground advantage, as the betting market may not fully account for these factors.\n\n**PREDICTED MARGIN:** ~3 points\nThe predicted margin is anchored to the line market (Sydney giving 9.8 points) and adjusted based on GWS Giants' average margin (last 5: -1.2 points) and their home ground advantage. The margin is also influenced by Sydney's recent poor form (2/5 wins) and their relatively low scoring average (last 5: 82.0 points for).\n\n**KEY FACTORS:**\n1. GWS Giants' home ground advantage: They have a 78% win rate at home this season, with a significant 67pp difference between their home and away win rates.\n2. Sydney's recent form: They have only 2 wins in their last 5 games, with an average margin of -11.8 points, indicating a potential decline in performance.\n3. Head-to-head record: While Sydney has a strong overall record against GWS Giants (8-2 in the last 10 meetings), GWS Giants have a good record at Sydney Showground (61% win rate).\n4. Scoring trends: GWS Giants' attack and defence are both stable, while Sydney's defence is tightening, which may limit their scoring potential.\n\n**SCORING TRENDS ANALYSIS:**\nGWS Giants: last-5 average 81.2 points for, 82.4 points against; last-3 average 86.3 points for, 76.0 points against. Attack and defence are stable.\nSydney: last-5 average 82.0 points for, 93.8 points against; last-3 average 78.0 points for, 84.3 points against. Attack is stable, defence is tightening.\nGWS Giants' scoring profile gives them an advantage due to their stable attack and defence, as well as their home ground advantage.\n\n**HOME GROUND ADVANTAGE:**\nGWS Giants: 78% home win rate, 11% away win rate. At Sydney Showground: 61% win rate.\nSydney: 90% home win rate, 50% away win rate. At Sydney Showground: 56% win rate.\nThe estimated point value of home advantage for this match is around 8-10 points, based on the significant difference in GWS Giants' home and away win rates.\n\n**MARKET & MODEL ANALYSIS:**\nThe head-to-head market implies a 64.1% chance of Sydney winning. The line market implies a 9.8-point margin in favour of Sydney. No Squiggle model prediction is available. I weighted the form data and home ground advantage more heavily, as the betting market may not fully account for these factors.\n\n**FATIGUE & TRAVEL IMPACT:**\nGWS Giants: 6 days rest, playing at home. Sydney: 8 days rest, no travel fatigue.\nFatigue is not a significant factor for this match, as both teams have sufficient rest.\n\n**WEATHER IMPACT:**\nNo weather forecast is available. Assuming neutral conditions, neither team is likely to be significantly affected.\n\n**TEAM NEWS IMPACT:**\nNo team news is available for either team. This may introduce some uncertainty into the prediction.\n\n**CONFIDENCE:** Medium\nThe data sources generally agree, but the lack of team news and Squiggle model data introduces some uncertainty.\n\n**UPSET RISK:** Medium\nSpecific data points that support an upset include GWS Giants' home ground advantage, their recent wins, and Sydney's poor form. However, Sydney's strong overall record against GWS Giants and their high implied win probability in the head-to-head market suggest that an upset is not highly likely.\n\n**DATA CONFLICTS:** None identified."
+    "prediction": "**PREDICTED WINNER:** Sydney\n\n**WIN PROBABILITY:** St Kilda: 42% | Sydney: 58%\nThe probability is driven by a weighted blend of the betting market (40% weight), Squiggle model (30% weight), and form data (30% weight), with the market's implied probabilities adjusted to remove the bookmaker's overround.\n\n**PREDICTED MARGIN:** ~8 points\nThe predicted margin is anchored to the line market, which implies a Sydney win by 13.4 points, but adjusted downward based on the Squiggle model's expected margin of 0.3 points and the teams' scoring margin averages, with St Kilda averaging a +12.6 point margin over the last 5 games and Sydney averaging a -2.2 point margin.\n\n**KEY FACTORS:**\n1. Sydney's strong home record is not directly applicable, but their away record (5/9, 56%) is still respectable, and they have a good record at Docklands (4W-1L, +27.2 point average margin).\n2. St Kilda's recent form is mixed, with 3 wins and 2 losses in their last 5 games, and their average score over the last 5 games is 86.6 points for and 74.0 points against.\n3. The head-to-head record between the two teams shows Sydney with a slight advantage, having won 4 of the last 6 meetings, including the most recent encounter.\n4. St Kilda's star forward Max King is returning from an injury setback, which may impact their scoring ability.\n\n**SCORING TRENDS ANALYSIS:**\nSt Kilda's last-5 average is 86.6 points for and 74.0 points against, while their last-3 average is 85.0 points for and 79.0 points against. Their attack and defence are both trending stable. Sydney's last-5 average is 91.2 points for and 93.4 points against, while their last-3 average is 94.3 points for and 95.3 points against. Their attack and defence are also both trending stable. Sydney's scoring profile gives them an advantage due to their higher average score over the last 5 games.\n\n**HOME GROUND ADVANTAGE:**\nSt Kilda has a 4/8 (50%) home record and a 5/11 (45%) away record this season, while Sydney has a 9/10 (90%) home record and a 5/9 (56%) away record. At Docklands, St Kilda has a 180W-147L (55% win rate) historical record, while Sydney has a 45W-29L (61% win rate) record. The point value of home advantage for this match is estimated to be around 5-8 points, based on the historical records and the season data.\n\n**MARKET & MODEL ANALYSIS:**\nThe head-to-head market implies a Sydney win probability of 68.1%, while the line market implies a Sydney win by 13.4 points. The Squiggle model predicts a Sydney win by 0.3 points. The market and model do not entirely agree, but the model's prediction is given more weight due to its more nuanced assessment of the teams' relative strengths.\n\n**FATIGUE & TRAVEL IMPACT:**\nSt Kilda has 6 days of rest, while Sydney has 7 days of rest. Sydney has a short travel distance from Sydney to Melbourne. Fatigue is not considered a significant factor for this match, given the relatively short rest periods for both teams.\n\n**WEATHER IMPACT:**\nThe weather forecast is neutral, as the game is being played at Marvel Stadium, which has a roof. Therefore, the weather conditions will not favour one team over the other.\n\n**TEAM NEWS IMPACT:**\nSt Kilda's star forward Max King is returning from an injury setback, which may impact their scoring ability. There is no other significant team news available.\n\n**CONFIDENCE:** Medium\nThe data sources generally agree on a Sydney win, but the margin predictions vary, and the head-to-head record is not overwhelmingly in favour of either team.\n\n**UPSET RISK:** Medium\nSpecific data points that support an upset include St Kilda's decent home record (4/8, 50%) and their ability to score an average of 86.6 points over the last 5 games. Additionally, Sydney's recent form has been mixed, with 2 wins and 3 losses in their last 5 games.\n\n**DATA CONFLICTS:** None identified\nThere are no significant conflicts between the data sources, although the market and model predictions do not entirely agree on the margin of the game."
   },
   {
-    "round": 20,
-    "date": "2026-07-25",
-    "date_full": "2026-07-25 19:40:00",
-    "venue": "Docklands",
-    "home_team": "Western Bulldogs",
-    "away_team": "Richmond",
+    "round": 21,
+    "date": "2026-08-01",
+    "date_full": "2026-08-01 13:35:00",
+    "venue": "York Park",
+    "home_team": "Hawthorn",
+    "away_team": "North Melbourne",
     "betting_odds": {
-      "home_team": "Western Bulldogs",
-      "away_team": "Richmond Tigers",
-      "home_odds": 1.09,
-      "away_odds": 7.62,
-      "home_implied_prob": 91.7,
-      "away_implied_prob": 13.1,
-      "line_home_spread": -41.6,
-      "line_summary": "Western Bulldogs giving 41.6 pts",
-      "total_line": 173.1,
-      "total_summary": "Market expects total score ~173 pts"
+      "home_team": "Hawthorn Hawks",
+      "away_team": "North Melbourne Kangaroos",
+      "home_odds": 1.15,
+      "away_odds": 5.54,
+      "home_implied_prob": 87.1,
+      "away_implied_prob": 18.1,
+      "line_home_spread": -35.4,
+      "line_summary": "Hawthorn Hawks giving 35.4 pts"
     },
     "home_scoring": {
-      "avg_for_5": 73.0,
-      "avg_against_5": 82.0,
-      "avg_for_3": 72.7,
-      "avg_against_3": 76.0,
-      "attack_trend": "stable",
-      "defense_trend": "stable",
-      "wins_last_5": 3,
+      "avg_for_5": 108.6,
+      "avg_against_5": 67.4,
+      "avg_for_3": 119.0,
+      "avg_against_3": 43.3,
+      "attack_trend": "improving \u2191",
+      "defense_trend": "tightening \u2193",
+      "wins_last_5": 4,
       "sample_size": 5,
-      "avg_margin_5": -9.0
+      "avg_margin_5": 41.2
     },
     "away_scoring": {
-      "avg_for_5": 61.8,
-      "avg_against_5": 97.2,
-      "avg_for_3": 63.0,
-      "avg_against_3": 102.3,
+      "avg_for_5": 70.8,
+      "avg_against_5": 82.4,
+      "avg_for_3": 74.3,
+      "avg_against_3": 91.3,
       "attack_trend": "stable",
-      "defense_trend": "stable",
-      "wins_last_5": 0,
+      "defense_trend": "leaking more \u2191",
+      "wins_last_5": 1,
       "sample_size": 5,
-      "avg_margin_5": -35.4
+      "avg_margin_5": -11.6
     },
     "home_rest": {
-      "days": 6,
-      "last_game": "2026-07-19",
-      "flag": "\u26a0\ufe0f SHORT TURNAROUND",
-      "description": "6 days rest (short turnaround \u2014 fatigue risk)"
+      "days": 7,
+      "last_game": "2026-07-25",
+      "flag": "",
+      "description": "7 days rest"
     },
     "away_rest": {
       "days": 6,
-      "last_game": "2026-07-19",
+      "last_game": "2026-07-26",
       "flag": "\u26a0\ufe0f SHORT TURNAROUND",
       "description": "6 days rest (short turnaround \u2014 fatigue risk)"
     },
     "home_travel": {
       "travelling": false,
-      "fatigue_level": "none",
-      "description": "Playing at home in Melbourne"
+      "fatigue_level": "unknown",
+      "description": "Travel unknown \u2014 venue 'York Park' not mapped. Hawthorn home: Melbourne. Add to VENUE_CITIES to fix."
     },
     "away_travel": {
       "travelling": false,
-      "fatigue_level": "none",
-      "description": "Playing at home in Melbourne"
+      "fatigue_level": "unknown",
+      "description": "Travel unknown \u2014 venue 'York Park' not mapped. North Melbourne home: Melbourne. Add to VENUE_CITIES to fix."
     },
     "home_ha_split": {
       "home": {
-        "wins": 5,
-        "games": 8,
-        "pct": 62
+        "wins": 8,
+        "games": 10,
+        "pct": 80
       },
       "away": {
         "wins": 6,
-        "games": 10,
-        "pct": 60
+        "games": 9,
+        "pct": 67
       }
     },
     "away_ha_split": {
       "home": {
-        "wins": 1,
-        "games": 9,
-        "pct": 11
-      },
-      "away": {
-        "wins": 1,
-        "games": 9,
-        "pct": 11
-      }
-    },
-    "prediction": "**PREDICTED WINNER:** Western Bulldogs\n\n**WIN PROBABILITY:** Western Bulldogs: 78% | Richmond: 22%\nThe win probability is derived from a weighted blend of the betting market (40%), Squiggle model (30%), and form data (30%), with the market's implied probabilities adjusted to remove the bookmaker's overround.\n\n**PREDICTED MARGIN:** ~38 points\nThe predicted margin is anchored to the line market (41.6 points) and adjusted based on the Western Bulldogs' average margin over the last 5 games (-9.0 points) and Richmond's average margin over the last 5 games (-35.4 points), suggesting a slightly lower margin than the market expects.\n\n**KEY FACTORS:**\n1. The Western Bulldogs have a strong head-to-head record against Richmond, with a 4-1 win-loss record over the last 5 meetings and an average score of 108.8 vs 70.4.\n2. Richmond's recent form has been poor, with 0 wins over the last 5 games and an average score of 61.8 vs 97.2.\n3. The Western Bulldogs have a higher percentage (93.1747025673137%) than Richmond (61.7322834645669%), indicating a significant difference in team performance.\n4. The Western Bulldogs have a strong home ground advantage, with a 62% win rate at home this season and a historical win rate of 54% at Docklands.\n\n**SCORING TRENDS ANALYSIS:**\nThe Western Bulldogs have averaged 73.0 points for and 82.0 points against over the last 5 games, with stable attack and defence trends. Over the last 3 games, they have averaged 72.7 points for and 76.0 points against. Richmond has averaged 61.8 points for and 97.2 points against over the last 5 games, with stable attack and defence trends. Over the last 3 games, they have averaged 63.0 points for and 102.3 points against. The Western Bulldogs' scoring profile gives them an advantage due to their higher average score and more stable defence.\n\n**HOME GROUND ADVANTAGE:**\nThe Western Bulldogs have a 62% win rate at home this season, while Richmond has an 11% win rate away from home. At Docklands, the Western Bulldogs have a 53% win rate and an average margin of +4.6 points, while Richmond has a 39% win rate and an average margin of -11.7 points. The estimated point value of home advantage for this match is around 10-12 points.\n\n**MARKET & MODEL ANALYSIS:**\nThe head-to-head market implies a 91.7% chance of a Western Bulldogs win, while the line market implies a 41.6-point margin. The Squiggle model predicts a 37.5-point margin and a 72.9% chance of a Western Bulldogs win. The market and model generally agree, with the model predicting a slightly lower margin than the market.\n\n**FATIGUE & TRAVEL IMPACT:**\nBoth teams have had 6 days of rest, which is a short turnaround but not excessive. Neither team has significant travel, as the match is being played at Docklands in Melbourne. Fatigue is not a significant factor for this match.\n\n**WEATHER IMPACT:**\nThe weather forecast is neutral, as the match is being played at a stadium with a roof. Conditions do not favour one team over the other.\n\n**TEAM NEWS IMPACT:**\nThere is limited team news available, with only one relevant article mentioning that Western Bulldogs' Matthew Kennedy has escaped with a fine at the AFL Tribunal. There are no confirmed ins or outs for either team.\n\n**CONFIDENCE:** High\nThe data sources generally agree, with the market, model, and form data all suggesting a Western Bulldogs win.\n\n**UPSET RISK:** Low\nThe data points that support an upset are limited, with Richmond's poor recent form and low percentage making it unlikely that they will win.\n\n**DATA CONFLICTS:** None identified\nThere are no significant conflicts between the data sources, with the market, model, and form data all generally agreeing on a Western Bulldogs win."
-  },
-  {
-    "round": 20,
-    "date": "2026-07-26",
-    "date_full": "2026-07-26 13:10:00",
-    "venue": "Gabba",
-    "home_team": "Brisbane Lions",
-    "away_team": "Port Adelaide",
-    "betting_odds": {
-      "home_team": "Brisbane Lions",
-      "away_team": "Port Adelaide Power",
-      "home_odds": 1.12,
-      "away_odds": 6.27,
-      "home_implied_prob": 89.3,
-      "away_implied_prob": 15.9,
-      "line_home_spread": -38.4,
-      "line_summary": "Brisbane Lions giving 38.4 pts",
-      "total_line": 188.1,
-      "total_summary": "Market expects total score ~188 pts"
-    },
-    "home_scoring": {
-      "avg_for_5": 121.2,
-      "avg_against_5": 78.4,
-      "avg_for_3": 121.7,
-      "avg_against_3": 76.3,
-      "attack_trend": "stable",
-      "defense_trend": "stable",
-      "wins_last_5": 5,
-      "sample_size": 5,
-      "avg_margin_5": 42.8
-    },
-    "away_scoring": {
-      "avg_for_5": 73.8,
-      "avg_against_5": 78.2,
-      "avg_for_3": 73.7,
-      "avg_against_3": 80.7,
-      "attack_trend": "stable",
-      "defense_trend": "stable",
-      "wins_last_5": 2,
-      "sample_size": 5,
-      "avg_margin_5": -4.4
-    },
-    "home_rest": {
-      "days": 8,
-      "last_game": "2026-07-18",
-      "flag": "",
-      "description": "8 days rest"
-    },
-    "away_rest": {
-      "days": 8,
-      "last_game": "2026-07-18",
-      "flag": "",
-      "description": "8 days rest"
-    },
-    "home_travel": {
-      "travelling": false,
-      "fatigue_level": "none",
-      "description": "Playing at home in Brisbane"
-    },
-    "away_travel": {
-      "travelling": true,
-      "fatigue_level": "moderate",
-      "flight_mins": 150,
-      "home_city": "Adelaide",
-      "venue_city": "Brisbane",
-      "description": "Moderate travel: Adelaide \u2192 Brisbane (~2h30m flight)"
-    },
-    "home_ha_split": {
-      "home": {
-        "wins": 5,
-        "games": 8,
-        "pct": 62
-      },
-      "away": {
-        "wins": 7,
-        "games": 10,
-        "pct": 70
-      }
-    },
-    "away_ha_split": {
-      "home": {
-        "wins": 4,
-        "games": 10,
-        "pct": 40
+        "wins": 6,
+        "games": 11,
+        "pct": 55
       },
       "away": {
         "wins": 2,
@@ -721,58 +353,416 @@
         "pct": 25
       }
     },
-    "prediction": "**PREDICTED WINNER:** Brisbane Lions\n\n**WIN PROBABILITY:** Brisbane Lions: 73% | Port Adelaide: 27%\nThe probability is driven by a weighted blend of the betting market (40%), Squiggle model (30%), and form data (30%), with the market's implied probability of 89.3% for Brisbane Lions being adjusted downward to account for the overround and the Squiggle model's predicted margin.\n\n**PREDICTED MARGIN:** ~32 points\nThe predicted margin is anchored to the line market of 38.4 points and adjusted downward based on the Squiggle model's expected margin of 28.7 points and Brisbane's average margin of +42.8 points over the last 5 games.\n\n**KEY FACTORS:**\n1. Brisbane's strong recent form, with 5 consecutive wins and an average margin of +42.8 points over the last 5 games.\n2. Port Adelaide's relatively weak recent form, with only 2 wins in the last 5 games and an average margin of -4.4 points.\n3. Brisbane's historical home ground advantage, with a 61% win rate at the Gabba and an average margin of +12.0 points.\n4. Port Adelaide's poor record at the Gabba, with a 35% win rate and an average margin of -8.8 points.\n\n**SCORING TRENDS ANALYSIS:**\nBrisbane's last-5 average is 121.2 points for and 78.4 points against, while their last-3 average is 121.7 points for and 76.3 points against. Their attack and defence are both trending stable. Port Adelaide's last-5 average is 73.8 points for and 78.2 points against, while their last-3 average is 73.7 points for and 80.7 points against. Their attack and defence are both trending stable. Brisbane's scoring profile gives them an advantage due to their higher average score and stronger attack.\n\n**HOME GROUND ADVANTAGE:**\nBrisbane has a 62% win rate at home and a 70% win rate away, while Port Adelaide has a 40% win rate at home and a 25% win rate away. At the Gabba, Brisbane has a 61% win rate and an average margin of +12.0 points, while Port Adelaide has a 35% win rate and an average margin of -8.8 points. The estimated point value of home advantage for this match is around 10-12 points.\n\n**MARKET & MODEL ANALYSIS:**\nThe head-to-head market implies a 89.3% chance of Brisbane winning, while the line market implies a 38.4-point margin. The Squiggle model predicts a 28.7-point margin and a 68.1% chance of Brisbane winning. The market and model generally agree, but the model is slightly more conservative in its prediction.\n\n**FATIGUE & TRAVEL IMPACT:**\nBoth teams have 8 days of rest, and Port Adelaide has moderate travel from Adelaide to Brisbane. Fatigue is not a significant factor for this match.\n\n**WEATHER IMPACT:**\nThe forecast is for fine conditions with a 0% chance of rain and a 10 km/h wind. The weather is unlikely to significantly affect the result.\n\n**TEAM NEWS IMPACT:**\nPort Adelaide has lost midfielder Joe Richards for the season due to a fractured finger. This may have some impact on their midfield performance.\n\n**CONFIDENCE:** Medium\nThe data sources generally agree, but there is some variation in the predicted margin and win probability, which reduces confidence.\n\n**UPSET RISK:** Low\nThe data points that support an upset are Port Adelaide's occasional ability to win against stronger teams, such as their win against North Melbourne in round 17, and the potential for Brisbane to be complacent after a long winning streak.\n\n**DATA CONFLICTS:** None identified."
+    "prediction": "**PREDICTED WINNER:** Hawthorn\n\n**WIN PROBABILITY:** Hawthorn: 72% | North Melbourne: 28%\nThe probability is driven by a weighted blend of the betting market (40%), Squiggle model (30%), and form data (30%), with the market's implied probability of 87.1% for Hawthorn being adjusted downward to account for the overround and the Squiggle model's predicted margin of 26.5 points.\n\n**PREDICTED MARGIN:** ~38 points\nThe predicted margin is anchored to the line market of 35.4 points and the average margin of +41.2 points for Hawthorn over the last 5 games, with an adjustment downward to account for North Melbourne's ability to score an average of 70.8 points per game over the last 5 games.\n\n**KEY FACTORS:**\n1. Hawthorn's recent form, with 4 wins in the last 5 games, including a +93 point win over Essendon and a +70 point win over Richmond, suggests a strong team with a high scoring potential.\n2. North Melbourne's recent form, with only 1 win in the last 5 games, and an average margin of -11.6 points, suggests a struggling team with defensive issues.\n3. The head-to-head record between the two teams, with Hawthorn winning the last 7 meetings, including a 150-65 win at York Park in 2025, suggests a significant advantage for Hawthorn.\n4. Hawthorn's home ground advantage, with a 75% win rate at York Park and an average margin of +21.4 points, suggests a significant advantage for the home team.\n\n**SCORING TRENDS ANALYSIS:**\nHawthorn's last-5 average is 108.6 points for and 67.4 points against, while their last-3 average is 119.0 points for and 43.3 points against, with their attack trending upward and their defence trending downward. North Melbourne's last-5 average is 70.8 points for and 82.4 points against, while their last-3 average is 74.3 points for and 91.3 points against, with their attack trending stable and their defence trending downward. Hawthorn's scoring profile gives them an advantage due to their high scoring potential and strong recent form.\n\n**HOME GROUND ADVANTAGE:**\nHawthorn has a 80% win rate at home and a 67% win rate away, while North Melbourne has a 55% win rate at home and a 25% win rate away. At York Park, Hawthorn has a 75% win rate and an average margin of +21.4 points, while North Melbourne has a 27% win rate and an average margin of -32.9 points. The estimated point value of home advantage for this match is around 15-20 points.\n\n**MARKET & MODEL ANALYSIS:**\nThe head-to-head market implies a 87.1% chance of Hawthorn winning, while the line market implies a 35.4 point margin. The Squiggle model predicts a 26.5 point margin in favor of Hawthorn. The market and model agree on Hawthorn winning, but the market implies a larger margin. The Squiggle model is weighted more heavily due to its ability to account for team trends and form.\n\n**FATIGUE & TRAVEL IMPACT:**\nHawthorn has 7 days rest, while North Melbourne has 6 days rest, which may be a fatigue factor for North Melbourne. However, the travel impact is unknown due to the venue not being mapped.\n\n**WEATHER IMPACT:**\nThe weather forecast is unavailable, so it is unclear whether the conditions will favor one team over the other.\n\n**TEAM NEWS IMPACT:**\nThere is no relevant team news available for either team.\n\n**CONFIDENCE:** High\nThe data sources agree on Hawthorn winning, with the market, model, and form data all suggesting a strong advantage for the home team.\n\n**UPSET RISK:** Low\nThe specific data points that support a low upset risk include Hawthorn's strong recent form, their head-to-head record against North Melbourne, and their home ground advantage.\n\n**DATA CONFLICTS:** None identified"
   },
   {
-    "round": 20,
-    "date": "2026-07-26",
-    "date_full": "2026-07-26 15:15:00",
-    "venue": "Docklands",
-    "home_team": "North Melbourne",
-    "away_team": "St Kilda",
+    "round": 21,
+    "date": "2026-08-01",
+    "date_full": "2026-08-01 18:35:00",
+    "venue": "Adelaide Oval",
+    "home_team": "Port Adelaide",
+    "away_team": "GWS Giants",
     "betting_odds": {
-      "home_team": "North Melbourne Kangaroos",
-      "away_team": "St Kilda Saints",
-      "home_odds": 2.63,
-      "away_odds": 1.5,
-      "home_implied_prob": 38.0,
-      "away_implied_prob": 66.8,
-      "line_home_spread": 12.5,
-      "line_summary": "St Kilda Saints giving 12.5 pts",
-      "total_line": 175.5,
-      "total_summary": "Market expects total score ~176 pts"
+      "home_team": "Port Adelaide Power",
+      "away_team": "Greater Western Sydney Giants",
+      "home_odds": 1.88,
+      "away_odds": 1.91,
+      "home_implied_prob": 53.1,
+      "away_implied_prob": 52.3,
+      "line_home_spread": -0.8,
+      "line_summary": "Port Adelaide Power giving 0.8 pts"
     },
     "home_scoring": {
-      "avg_for_5": 73.0,
-      "avg_against_5": 73.4,
-      "avg_for_3": 71.0,
-      "avg_against_3": 84.7,
+      "avg_for_5": 77.0,
+      "avg_against_5": 87.8,
+      "avg_for_3": 71.7,
+      "avg_against_3": 105.3,
       "attack_trend": "stable",
       "defense_trend": "leaking more \u2191",
       "wins_last_5": 2,
       "sample_size": 5,
-      "avg_margin_5": -0.4
+      "avg_margin_5": -10.8
     },
     "away_scoring": {
-      "avg_for_5": 87.2,
-      "avg_against_5": 79.2,
-      "avg_for_3": 93.0,
-      "avg_against_3": 75.0,
+      "avg_for_5": 85.8,
+      "avg_against_5": 92.6,
+      "avg_for_3": 79.3,
+      "avg_against_3": 93.0,
+      "attack_trend": "stable",
+      "defense_trend": "stable",
+      "wins_last_5": 2,
+      "sample_size": 5,
+      "avg_margin_5": -6.8
+    },
+    "home_rest": {
+      "days": 6,
+      "last_game": "2026-07-26",
+      "flag": "\u26a0\ufe0f SHORT TURNAROUND",
+      "description": "6 days rest (short turnaround \u2014 fatigue risk)"
+    },
+    "away_rest": {
+      "days": 7,
+      "last_game": "2026-07-25",
+      "flag": "",
+      "description": "7 days rest"
+    },
+    "home_travel": {
+      "travelling": false,
+      "fatigue_level": "none",
+      "description": "Playing at home in Adelaide"
+    },
+    "away_travel": {
+      "travelling": true,
+      "fatigue_level": "low",
+      "flight_mins": 105,
+      "home_city": "Sydney",
+      "venue_city": "Adelaide",
+      "description": "Short travel: Sydney \u2192 Adelaide (~1h45m flight)"
+    },
+    "home_ha_split": {
+      "home": {
+        "wins": 4,
+        "games": 10,
+        "pct": 40
+      },
+      "away": {
+        "wins": 2,
+        "games": 9,
+        "pct": 22
+      }
+    },
+    "away_ha_split": {
+      "home": {
+        "wins": 7,
+        "games": 10,
+        "pct": 70
+      },
+      "away": {
+        "wins": 1,
+        "games": 9,
+        "pct": 11
+      }
+    },
+    "prediction": "**PREDICTED WINNER:** \nPort Adelaide\n\n**WIN PROBABILITY:** \nPort Adelaide: 55% | GWS Giants: 45%\nThe win probability is derived from a weighted blend of the betting market (40%), form data (30%), and home ground advantage (30%), with the market's implied probabilities adjusted to remove the bookmaker's overround.\n\n**PREDICTED MARGIN:** \n~5 points\nThe predicted margin is anchored to the line market, which gives Port Adelaide a 0.8-point advantage, and the scoring margin averages, with Port Adelaide's average margin over the last 5 games being -10.8 points and GWS Giants' average margin being -6.8 points.\n\n**KEY FACTORS:**\n1. Port Adelaide's home ground advantage, with a 40% win rate at home this season and a 60% historical win rate at Adelaide Oval, is expected to give them an edge.\n2. GWS Giants' away record this season is 11%, which is significantly lower than their home win rate, suggesting they may struggle on the road.\n3. Port Adelaide's attack trend is stable, while their defence trend is leaking more, which may be a concern, but their overall scoring average over the last 5 games is 77.0 points.\n4. The head-to-head record between the two teams shows Port Adelaide with a 60% win rate over the last 5 meetings, which may give them a psychological advantage.\n\n**SCORING TRENDS ANALYSIS:** \nPort Adelaide's last-5 average is 77.0 points, and their last-3 average is 71.7 points, with their attack trending stable and their defence trending down. GWS Giants' last-5 average is 85.8 points, and their last-3 average is 79.3 points, with both their attack and defence trending stable. Port Adelaide's scoring profile may be at a disadvantage due to their leaking defence.\n\n**HOME GROUND ADVANTAGE:** \nPort Adelaide has a 40% win rate at home this season and a 60% historical win rate at Adelaide Oval. GWS Giants have an 11% away win rate this season and a 42% historical win rate at Adelaide Oval. The estimated point value of home advantage for this match is around 8-10 points, given the significant difference in win rates.\n\n**MARKET & MODEL ANALYSIS:** \nThe head-to-head market implies a close game, with Port Adelaide at 53.1% and GWS Giants at 52.3%. The line market gives Port Adelaide a 0.8-point advantage. Unfortunately, the Squiggle model prediction is not available for this match. Given the market's close implied probabilities, the prediction is based more heavily on form data and home ground advantage.\n\n**FATIGUE & TRAVEL IMPACT:** \nPort Adelaide has 6 days of rest, while GWS Giants have 7 days of rest. GWS Giants have a short travel distance from Sydney to Adelaide. Fatigue is not expected to be a significant factor for this match, given the relatively short rest period for both teams.\n\n**WEATHER IMPACT:** \nThe forecast is for a fine day with a maximum temperature of 13\u00b0C, 0.0mm of rain, and 17 km/h wind. The weather conditions are neutral and are not expected to favour one team over the other.\n\n**TEAM NEWS IMPACT:** \nThere is limited team news available, with Finn Callaghan from GWS Giants suffering an injury scare, but the extent of the injury is unknown. Mitch Georgiades from Port Adelaide was involved in an incident, but there is no indication that he will miss the game.\n\n**CONFIDENCE:** \nMedium\nThe data sources generally agree, but the close head-to-head market and the uncertainty around team news introduce some uncertainty into the prediction.\n\n**UPSET RISK:** \nMedium\nThe upset risk is supported by GWS Giants' stable attack and defence trends, as well as their ability to win away from home, albeit at a lower rate than at home. Additionally, Port Adelaide's leaking defence trend may give GWS Giants an opportunity to capitalize and cause an upset.\n\n**DATA CONFLICTS:** \nNone identified\nThere are no significant conflicts between the data sources, with the head-to-head market, form data, and home ground advantage all pointing towards a closely contested game."
+  },
+  {
+    "round": 21,
+    "date": "2026-08-01",
+    "date_full": "2026-08-01 19:40:00",
+    "venue": "Docklands",
+    "home_team": "Carlton",
+    "away_team": "Brisbane Lions",
+    "betting_odds": {
+      "home_team": "Carlton Blues",
+      "away_team": "Brisbane Lions",
+      "home_odds": 3.76,
+      "away_odds": 1.27,
+      "home_implied_prob": 26.6,
+      "away_implied_prob": 78.9,
+      "line_home_spread": 24.5,
+      "line_summary": "Brisbane Lions giving 24.5 pts"
+    },
+    "home_scoring": {
+      "avg_for_5": 81.8,
+      "avg_against_5": 85.2,
+      "avg_for_3": 72.7,
+      "avg_against_3": 96.7,
+      "attack_trend": "declining \u2193",
+      "defense_trend": "leaking more \u2191",
+      "wins_last_5": 3,
+      "sample_size": 5,
+      "avg_margin_5": -3.4
+    },
+    "away_scoring": {
+      "avg_for_5": 123.4,
+      "avg_against_5": 75.8,
+      "avg_for_3": 122.7,
+      "avg_against_3": 65.0,
+      "attack_trend": "stable",
+      "defense_trend": "tightening \u2193",
+      "wins_last_5": 5,
+      "sample_size": 5,
+      "avg_margin_5": 47.6
+    },
+    "home_rest": {
+      "days": 7,
+      "last_game": "2026-07-25",
+      "flag": "",
+      "description": "7 days rest"
+    },
+    "away_rest": {
+      "days": 6,
+      "last_game": "2026-07-26",
+      "flag": "\u26a0\ufe0f SHORT TURNAROUND",
+      "description": "6 days rest (short turnaround \u2014 fatigue risk)"
+    },
+    "home_travel": {
+      "travelling": false,
+      "fatigue_level": "none",
+      "description": "Playing at home in Melbourne"
+    },
+    "away_travel": {
+      "travelling": true,
+      "fatigue_level": "moderate",
+      "flight_mins": 150,
+      "home_city": "Brisbane",
+      "venue_city": "Melbourne",
+      "description": "Moderate travel: Brisbane \u2192 Melbourne (~2h30m flight)"
+    },
+    "home_ha_split": {
+      "home": {
+        "wins": 5,
+        "games": 9,
+        "pct": 56
+      },
+      "away": {
+        "wins": 4,
+        "games": 10,
+        "pct": 40
+      }
+    },
+    "away_ha_split": {
+      "home": {
+        "wins": 6,
+        "games": 9,
+        "pct": 67
+      },
+      "away": {
+        "wins": 7,
+        "games": 10,
+        "pct": 70
+      }
+    },
+    "prediction": "**PREDICTED WINNER:** Brisbane Lions\n\n**WIN PROBABILITY:** Carlton: 32% | Brisbane Lions: 68%\nThe betting market, Squiggle model, and form data all point to a Brisbane Lions win, with the market implying a 78.9% chance of a Lions victory, the Squiggle model predicting a 58.4% chance, and the form data showing the Lions' strong recent performance, so I weighted the market and Squiggle model more heavily.\n\n**PREDICTED MARGIN:** ~20 points\nThe line market implies a 24.5-point margin, while the scoring margin averages for the two teams are -3.4 points for Carlton and +47.6 points for Brisbane Lions, so I anchored to the line market and adjusted downward slightly due to Carlton's home ground advantage.\n\n**KEY FACTORS:**\n1. Brisbane Lions' strong recent form, with 5 wins in their last 5 games, including a +59-point win over Port Adelaide.\n2. Carlton's declining attack trend, with their average score over the last 3 games being 72.7 points, down from 81.8 points over the last 5 games.\n3. The head-to-head record between the two teams, with Brisbane Lions winning 6 of the last 7 meetings, including a 100-89 win at the Gabba in 2026.\n4. Brisbane Lions' strong record at Docklands, with 5 wins in their last 5 games at the venue, and an average margin of +52.8 points.\n\n**SCORING TRENDS ANALYSIS:**\nCarlton's last-5 average is 81.8 points for and 85.2 points against, while their last-3 average is 72.7 points for and 96.7 points against, indicating a declining attack trend and a leaking defence trend. Brisbane Lions' last-5 average is 123.4 points for and 75.8 points against, while their last-3 average is 122.7 points for and 65.0 points against, indicating a stable attack trend and a tightening defence trend. Brisbane Lions' scoring profile gives them an advantage due to their high-scoring attack and strong defence.\n\n**HOME GROUND ADVANTAGE:**\nCarlton has a 56% win rate at home this season, while Brisbane Lions has a 67% win rate at home. At Docklands, Carlton has a 38% win rate historically, while Brisbane Lions has a 45% win rate. I estimate the point value of home advantage for this match to be around 8-10 points, which is slightly lower than the average due to Brisbane Lions' strong record at the venue.\n\n**MARKET & MODEL ANALYSIS:**\nThe head-to-head market implies a 78.9% chance of a Brisbane Lions win, while the line market implies a 24.5-point margin. The Squiggle model predicts a 12.8-point margin and a 58.4% chance of a Brisbane Lions win. The market and model agree on a Brisbane Lions win, but disagree on the margin, with the market implying a larger margin.\n\n**FATIGUE & TRAVEL IMPACT:**\nCarlton has 7 days rest, while Brisbane Lions has 6 days rest and moderate travel from Brisbane to Melbourne. Fatigue is not a significant factor for this match, but the travel may have a slight impact on Brisbane Lions' performance.\n\n**WEATHER IMPACT:**\nThe weather forecast is neutral, with the game being played at Marvel Stadium, which has a roof. The conditions will not favour one team over the other.\n\n**TEAM NEWS IMPACT:**\nTy Gallop is looking at a stint on the sidelines for Brisbane Lions due to a suspension, while Patrick Cripps has had his staging fine dismissed for Carlton. The team news has a minimal impact on the predicted outcome.\n\n**CONFIDENCE:** Medium\nThe data sources generally agree on a Brisbane Lions win, but the margin is uncertain due to the conflicting signals from the market and model.\n\n**UPSET RISK:** Low\nThe data points that support an upset are Carlton's home ground advantage and their recent win over Gold Coast, but these are outweighed by Brisbane Lions' strong recent form and head-to-head record.\n\n**DATA CONFLICTS:** None identified."
+  },
+  {
+    "round": 21,
+    "date": "2026-08-02",
+    "date_full": "2026-08-02 13:10:00",
+    "venue": "MCG",
+    "home_team": "Richmond",
+    "away_team": "West Coast",
+    "betting_odds": {
+      "home_team": "Richmond Tigers",
+      "away_team": "West Coast Eagles",
+      "home_odds": 1.95,
+      "away_odds": 1.86,
+      "home_implied_prob": 51.4,
+      "away_implied_prob": 53.7,
+      "line_home_spread": 0.4,
+      "line_summary": "West Coast Eagles giving 0.4 pts"
+    },
+    "home_scoring": {
+      "avg_for_5": 61.8,
+      "avg_against_5": 103.6,
+      "avg_for_3": 55.0,
+      "avg_against_3": 112.7,
+      "attack_trend": "stable",
+      "defense_trend": "leaking more \u2191",
+      "wins_last_5": 0,
+      "sample_size": 5,
+      "avg_margin_5": -41.8
+    },
+    "away_scoring": {
+      "avg_for_5": 63.8,
+      "avg_against_5": 101.4,
+      "avg_for_3": 60.3,
+      "avg_against_3": 97.0,
+      "attack_trend": "stable",
+      "defense_trend": "stable",
+      "wins_last_5": 0,
+      "sample_size": 5,
+      "avg_margin_5": -37.6
+    },
+    "home_rest": {
+      "days": 8,
+      "last_game": "2026-07-25",
+      "flag": "",
+      "description": "8 days rest"
+    },
+    "away_rest": {
+      "days": 9,
+      "last_game": "2026-07-24",
+      "flag": "",
+      "description": "9 days rest"
+    },
+    "home_travel": {
+      "travelling": false,
+      "fatigue_level": "none",
+      "description": "Playing at home in Melbourne"
+    },
+    "away_travel": {
+      "travelling": true,
+      "fatigue_level": "high",
+      "flight_mins": 225,
+      "home_city": "Perth",
+      "venue_city": "Melbourne",
+      "description": "\u26a0\ufe0f LONG-HAUL TRAVEL: Perth \u2192 Melbourne (~3h45m flight)"
+    },
+    "home_ha_split": {
+      "home": {
+        "wins": 1,
+        "games": 9,
+        "pct": 11
+      },
+      "away": {
+        "wins": 1,
+        "games": 10,
+        "pct": 10
+      }
+    },
+    "away_ha_split": {
+      "home": {
+        "wins": 3,
+        "games": 9,
+        "pct": 33
+      },
+      "away": {
+        "wins": 1,
+        "games": 10,
+        "pct": 10
+      }
+    },
+    "prediction": "**PREDICTED WINNER:** Richmond\n\n**WIN PROBABILITY:** Richmond: 52% | West Coast: 48%\nThe win probability is driven by a weighted blend of the betting market (30%), Squiggle model (40%), and form data (30%), with the Squiggle model's expected margin of 4.9 points and the historical head-to-head record between the two teams being the primary influences.\n\n**PREDICTED MARGIN:** ~2 points\nThe predicted margin is anchored to the line market, which has West Coast giving 0.4 points, and the average scoring margins of the two teams, with Richmond's average margin over the last 5 games being -41.8 points and West Coast's being -37.6 points.\n\n**KEY FACTORS:**\n1. Richmond's historical head-to-head record against West Coast, with a 7-1 win-loss record over the last 8 meetings, averaging 106.2 points for and 74.9 points against.\n2. West Coast's significant home ground advantage, with a 23pp higher win rate at home, but this advantage is negated as they are playing away in this match.\n3. Richmond's stable attack trend and leaking defence trend, with an average score of 61.8 points for and 103.6 points against over the last 5 games.\n4. West Coast's stable attack and defence trends, with an average score of 63.8 points for and 101.4 points against over the last 5 games.\n\n**SCORING TRENDS ANALYSIS:**\nRichmond's last-5 average is 61.8 points for and 103.6 points against, while their last-3 average is 55.0 points for and 112.7 points against. Their attack is stable, and their defence is leaking more. West Coast's last-5 average is 63.8 points for and 101.4 points against, while their last-3 average is 60.3 points for and 97.0 points against. Their attack and defence are both stable. Richmond's scoring profile does not give them a clear advantage, but their historical head-to-head record against West Coast is a positive factor.\n\n**HOME GROUND ADVANTAGE:**\nRichmond has a 1-9 home record and a 1-10 away record, while West Coast has a 3-9 home record and a 1-10 away record. At the MCG, Richmond has a 0-5 record over the last 5 games, with an average margin of -35.4 points, while West Coast has a 0-5 record over the last 5 games, with an average margin of -27.4 points. The estimated point value of home advantage for this match is around 8-15 points, but given the teams' poor records at the MCG, this advantage may be reduced.\n\n**MARKET & MODEL ANALYSIS:**\nThe head-to-head market implies a 51.4% chance of Richmond winning and a 53.7% chance of West Coast winning. The line market implies West Coast giving 0.4 points. The Squiggle model predicts Richmond to win with an expected margin of 4.9 points. The market and model do not strongly agree, but the Squiggle model's prediction is given more weight due to its historical accuracy.\n\n**FATIGUE & TRAVEL IMPACT:**\nRichmond has 8 days of rest, while West Coast has 9 days of rest. West Coast has to travel from Perth to Melbourne, which may cause some fatigue. However, given the number of rest days, fatigue is not a significant factor for this match.\n\n**WEATHER IMPACT:**\nThe forecast is for a mild day with a 16% chance of rain and a wind of 15 km/h. The conditions are neutral and do not favour one team over the other based on their scoring style.\n\n**TEAM NEWS IMPACT:**\nThere is no relevant team news available for either Richmond or West Coast.\n\n**CONFIDENCE:** Medium\nThe data sources do not strongly agree, with the market implying a slight advantage to West Coast and the Squiggle model predicting a Richmond win. The historical head-to-head record and home ground advantage are the primary factors driving the prediction.\n\n**UPSET RISK:** Medium\nThe upset risk is supported by West Coast's stable attack and defence trends, as well as their ability to keep matches close, with an average margin of -37.6 points over the last 5 games.\n\n**DATA CONFLICTS:** None identified."
+  },
+  {
+    "round": 21,
+    "date": "2026-08-02",
+    "date_full": "2026-08-02 15:15:00",
+    "venue": "Carrara",
+    "home_team": "Gold Coast",
+    "away_team": "Melbourne",
+    "betting_odds": {
+      "home_team": "Gold Coast Suns",
+      "away_team": "Melbourne Demons",
+      "home_odds": 2.1,
+      "away_odds": 1.73,
+      "home_implied_prob": 47.6,
+      "away_implied_prob": 57.7,
+      "line_home_spread": 4.5,
+      "line_summary": "Melbourne Demons giving 4.5 pts"
+    },
+    "home_scoring": {
+      "avg_for_5": 68.2,
+      "avg_against_5": 99.8,
+      "avg_for_3": 71.3,
+      "avg_against_3": 105.0,
+      "attack_trend": "stable",
+      "defense_trend": "stable",
+      "wins_last_5": 0,
+      "sample_size": 5,
+      "avg_margin_5": -31.6
+    },
+    "away_scoring": {
+      "avg_for_5": 97.4,
+      "avg_against_5": 85.4,
+      "avg_for_3": 100.0,
+      "avg_against_3": 86.0,
       "attack_trend": "stable",
       "defense_trend": "stable",
       "wins_last_5": 3,
       "sample_size": 5,
-      "avg_margin_5": 8.0
+      "avg_margin_5": 12.0
     },
     "home_rest": {
       "days": 8,
-      "last_game": "2026-07-18",
+      "last_game": "2026-07-25",
+      "flag": "",
+      "description": "8 days rest"
+    },
+    "away_rest": {
+      "days": 9,
+      "last_game": "2026-07-24",
+      "flag": "",
+      "description": "9 days rest"
+    },
+    "home_travel": {
+      "travelling": false,
+      "fatigue_level": "none",
+      "description": "Playing at home in Gold Coast"
+    },
+    "away_travel": {
+      "travelling": true,
+      "fatigue_level": "moderate",
+      "flight_mins": 150,
+      "home_city": "Melbourne",
+      "venue_city": "Gold Coast",
+      "description": "Moderate travel: Melbourne \u2192 Gold Coast (~2h30m flight)"
+    },
+    "home_ha_split": {
+      "home": {
+        "wins": 6,
+        "games": 10,
+        "pct": 60
+      },
+      "away": {
+        "wins": 1,
+        "games": 9,
+        "pct": 11
+      }
+    },
+    "away_ha_split": {
+      "home": {
+        "wins": 7,
+        "games": 9,
+        "pct": 78
+      },
+      "away": {
+        "wins": 5,
+        "games": 10,
+        "pct": 50
+      }
+    },
+    "prediction": "**PREDICTED WINNER:** Melbourne\n\n**WIN PROBABILITY:** Gold Coast: 42% | Melbourne: 58%\nThe probability is derived from a weighted blend of the betting market (45% weight), Squiggle model (30% weight), and form data (25% weight), with the Squiggle model and betting market implying a slight advantage to Melbourne, while the form data suggests a closer contest.\n\n**PREDICTED MARGIN:** ~6 points\nThe predicted margin is anchored to the line market, which implies a 4.5-point margin in favour of Melbourne, and is adjusted based on the average scoring margins of the two teams, with Melbourne's average margin over the last 5 games being +12.0 points and Gold Coast's being -31.6 points.\n\n**KEY FACTORS:**\n\n1. Melbourne's superior recent form, with an average score of 97.4 points for and 85.4 points against over the last 5 games, compared to Gold Coast's 68.2 points for and 99.8 points against.\n2. Gold Coast's poor record at Carrara, with a 1-4 win-loss record over the last 5 games and an average margin of -8.4 points.\n3. Melbourne's strong record at Carrara, with a 3-1 win-loss record over the last 4 games and an average margin of +13.2 points.\n4. The significant home ground advantage, with Gold Coast's win rate being 49 percentage points higher at home, and Melbourne's win rate being 28 percentage points higher at home.\n\n**SCORING TRENDS ANALYSIS:**\nGold Coast's last-5 average is 68.2 points for and 99.8 points against, with their last-3 average being 71.3 points for and 105.0 points against. Their attack and defence are both trending stable. Melbourne's last-5 average is 97.4 points for and 85.4 points against, with their last-3 average being 100.0 points for and 86.0 points against. Their attack and defence are both trending stable. Melbourne's scoring profile gives them an advantage due to their higher average score and lower average points against.\n\n**HOME GROUND ADVANTAGE:**\nGold Coast's home win rate is 60% (6/10), while their away win rate is 11% (1/9). Melbourne's home win rate is 78% (7/9), while their away win rate is 50% (5/10). At Carrara, Gold Coast has a 42% win rate (63/150) and an average margin of -6.2 points, while Melbourne has a 50% win rate (8/16) and an average margin of +6.6 points. The estimated point value of home advantage for this match is around 8-10 points, which slightly favours Gold Coast.\n\n**MARKET & MODEL ANALYSIS:**\nThe head-to-head market implies a 57.7% chance of Melbourne winning, while the line market implies a 4.5-point margin in favour of Melbourne. The Squiggle model predicts a 9.0-point margin in favour of Melbourne. The market and model generally agree, with the Squiggle model being slightly more bullish on Melbourne's chances.\n\n**FATIGUE & TRAVEL IMPACT:**\nGold Coast has 8 days of rest, while Melbourne has 9 days of rest. Melbourne has moderate travel, with a 2-hour 30-minute flight from Melbourne to Gold Coast. Fatigue is not a significant factor for this match, as both teams have sufficient rest.\n\n**WEATHER IMPACT:**\nThe forecast is for a mild day with a 33% chance of rain and a moderate wind. The conditions are neutral and do not favour one team over the other.\n\n**TEAM NEWS IMPACT:**\nThere is no significant team news available for this match, with no confirmed ins or outs for either team.\n\n**CONFIDENCE:** Medium\nThe data sources generally agree, but there is some uncertainty due to Gold Coast's significant home ground advantage and Melbourne's moderate travel.\n\n**UPSET RISK:** Medium\nSpecific data points that support an upset include Gold Coast's 49% higher win rate at home and their average margin of -6.2 points at Carrara, which is not as poor as their overall record suggests.\n\n**DATA CONFLICTS:** None identified."
+  },
+  {
+    "round": 21,
+    "date": "2026-08-02",
+    "date_full": "2026-08-02 16:40:00",
+    "venue": "Docklands",
+    "home_team": "Essendon",
+    "away_team": "Adelaide",
+    "betting_odds": {
+      "home_team": "Essendon Bombers",
+      "away_team": "Adelaide Crows",
+      "home_odds": 9.12,
+      "away_odds": 1.06,
+      "home_implied_prob": 11.0,
+      "away_implied_prob": 94.1,
+      "line_home_spread": 45.5,
+      "line_summary": "Adelaide Crows giving 45.5 pts"
+    },
+    "home_scoring": {
+      "avg_for_5": 56.0,
+      "avg_against_5": 108.2,
+      "avg_for_3": 55.0,
+      "avg_against_3": 115.0,
+      "attack_trend": "stable",
+      "defense_trend": "stable",
+      "wins_last_5": 1,
+      "sample_size": 5,
+      "avg_margin_5": -52.2
+    },
+    "away_scoring": {
+      "avg_for_5": 91.8,
+      "avg_against_5": 79.8,
+      "avg_for_3": 96.3,
+      "avg_against_3": 76.0,
+      "attack_trend": "stable",
+      "defense_trend": "stable",
+      "wins_last_5": 3,
+      "sample_size": 5,
+      "avg_margin_5": 12.0
+    },
+    "home_rest": {
+      "days": 8,
+      "last_game": "2026-07-25",
       "flag": "",
       "description": "8 days rest"
     },
     "away_rest": {
       "days": 10,
-      "last_game": "2026-07-16",
+      "last_game": "2026-07-23",
       "flag": "",
       "description": "10 days rest"
     },
@@ -782,34 +772,37 @@
       "description": "Playing at home in Melbourne"
     },
     "away_travel": {
-      "travelling": false,
-      "fatigue_level": "none",
-      "description": "Playing at home in Melbourne"
+      "travelling": true,
+      "fatigue_level": "low",
+      "flight_mins": 75,
+      "home_city": "Adelaide",
+      "venue_city": "Melbourne",
+      "description": "Short travel: Adelaide \u2192 Melbourne (~1h15m flight)"
     },
     "home_ha_split": {
       "home": {
-        "wins": 6,
-        "games": 10,
-        "pct": 60
+        "wins": 2,
+        "games": 9,
+        "pct": 22
       },
       "away": {
-        "wins": 2,
-        "games": 8,
-        "pct": 25
+        "wins": 0,
+        "games": 10,
+        "pct": 0
       }
     },
     "away_ha_split": {
       "home": {
-        "wins": 4,
-        "games": 8,
-        "pct": 50
+        "wins": 7,
+        "games": 10,
+        "pct": 70
       },
       "away": {
-        "wins": 4,
-        "games": 10,
-        "pct": 40
+        "wins": 5,
+        "games": 9,
+        "pct": 56
       }
     },
-    "prediction": "**PREDICTED WINNER:** St Kilda\n\n**WIN PROBABILITY:** North Melbourne: 42% | St Kilda: 58%\nThe win probability is derived from a weighted blend of the betting market (40% weight), Squiggle model (30% weight), and form data (30% weight), with the market's implied probabilities adjusted to remove the bookmaker's overround. The Squiggle model's prediction and the teams' recent form data drove the probability, with St Kilda's stronger average margin and scoring trends contributing to their higher win probability.\n\n**PREDICTED MARGIN:** ~10 points\nThe predicted margin is anchored to the line market, which implies a 12.5-point margin, and adjusted based on the teams' scoring margin averages, with St Kilda's average margin of +8.0 points over the last 5 games contributing to the prediction.\n\n**KEY FACTORS:**\n1. St Kilda's stronger average score over the last 5 games (87.2 points) compared to North Melbourne (73.0 points) suggests they have a scoring advantage.\n2. North Melbourne's defence trend is \"leaking more\", with an average of 73.4 points conceded over the last 5 games, which could be exploited by St Kilda's stable attack.\n3. The head-to-head record between the teams shows St Kilda with a significant advantage, having won the last 5 meetings with an average margin of 27.6 points.\n4. North Melbourne's home ground advantage is significant, with a 35pp higher win rate at home, but St Kilda's historical record at Docklands is still strong, with a 55% win rate.\n\n**SCORING TRENDS ANALYSIS:**\nNorth Melbourne's last-5 average is 73.0 points, and their last-3 average is 71.0 points, with their attack trending stable and their defence trending down. St Kilda's last-5 average is 87.2 points, and their last-3 average is 93.0 points, with both their attack and defence trending stable. St Kilda's scoring profile gives them an advantage due to their higher average score and stable trends.\n\n**HOME GROUND ADVANTAGE:**\nNorth Melbourne's home win rate is 60%, and their away win rate is 25%, while St Kilda's home win rate is 50%, and their away win rate is 40%. At Docklands, North Melbourne have a 48% win rate, and St Kilda have a 55% win rate. The estimated point value of home advantage for this match is around 8-10 points, but North Melbourne's significant home ground advantage is partially offset by St Kilda's strong record at the venue.\n\n**MARKET & MODEL ANALYSIS:**\nThe head-to-head market implies a 66.8% chance of St Kilda winning, while the line market implies a 12.5-point margin. The Squiggle model predicts a 14.5-point margin in favour of St Kilda. The market and model generally agree, with the Squiggle model's prediction given slightly more weight due to its more detailed analysis of team trends.\n\n**FATIGUE & TRAVEL IMPACT:**\nNorth Melbourne have 8 days of rest, while St Kilda have 10 days of rest. Neither team has significant travel, as both are playing in Melbourne. Fatigue is not a significant factor for this match.\n\n**WEATHER IMPACT:**\nThe weather forecast is neutral, as the match is being played at Marvel Stadium, which has a roof. The conditions will not favour one team over the other.\n\n**TEAM NEWS IMPACT:**\nThere is no significant team news available for either team, with no confirmed ins or outs that would impact the match.\n\n**CONFIDENCE:** Medium\nThe data sources generally agree, but there is some uncertainty due to North Melbourne's significant home ground advantage and St Kilda's strong record at Docklands.\n\n**UPSET RISK:** Medium\nThe upset risk is supported by North Melbourne's strong home ground advantage and their ability to score well at Docklands, with an average score of 94.1 points over their last 5 games at the venue.\n\n**DATA CONFLICTS:** None identified\nThere are no significant conflicts between the data sources, with the market, model, and form data generally agreeing on St Kilda's favouritism."
+    "prediction": "**PREDICTED WINNER:** Adelaide\n\n**WIN PROBABILITY:** Essendon: 24% | Adelaide: 76%\nThe probability is driven by a weighted blend of the betting market (45% weight), Squiggle model (30% weight), and form data (25% weight), with the market's implied probability of 11% for Essendon and 94.1% for Adelaide being adjusted to account for the bookmaker's overround and the Squiggle model's expected margin of 26.9 points.\n\n**PREDICTED MARGIN:** ~30 points\nThe predicted margin is anchored to the line market of 45.5 points and the average scoring margins of both teams, with Adelaide's average margin of +12.0 points over the last 5 games and Essendon's average margin of -52.2 points over the last 5 games.\n\n**KEY FACTORS:**\n1. Adelaide's strong recent form, with an average score of 91.8 points for and 79.8 points against over the last 5 games, compared to Essendon's average score of 56.0 points for and 108.2 points against.\n2. Essendon's poor defensive trend, with an average of 115.0 points against over the last 3 games, indicating a stable but weak defence.\n3. Adelaide's significant home ground advantage, with a +24pp stronger record at home, although this is mitigated by the fact that they are playing away in this match.\n4. The head-to-head record between the two teams, with Adelaide winning 2 of the last 5 meetings, although Essendon has a 60% win rate over the last 5 meetings.\n\n**SCORING TRENDS ANALYSIS:**\nEssendon's last-5 average is 56.0 points for and 108.2 points against, while their last-3 average is 55.0 points for and 115.0 points against, with a stable attack and defence trend. Adelaide's last-5 average is 91.8 points for and 79.8 points against, while their last-3 average is 96.3 points for and 76.0 points against, with a stable attack and defence trend. Adelaide's scoring profile gives them an advantage due to their higher average score and stronger defence.\n\n**HOME GROUND ADVANTAGE:**\nEssendon has a 22% win rate at home and 0% win rate away, while Adelaide has a 70% win rate at home and 56% win rate away. At Docklands, Essendon has a 54% win rate and Adelaide has a 51% win rate. The point value of home advantage for this match is estimated to be around 8-10 points, although this is mitigated by Adelaide's strong away record.\n\n**MARKET & MODEL ANALYSIS:**\nThe head-to-head market implies a 94.1% chance of Adelaide winning, while the line market implies a 45.5-point margin in favour of Adelaide. The Squiggle model predicts a 26.9-point margin in favour of Adelaide, which is lower than the line market. The market and model generally agree, with the Squiggle model being given more weight due to its more nuanced prediction.\n\n**FATIGUE & TRAVEL IMPACT:**\nEssendon has 8 days of rest, while Adelaide has 10 days of rest. Adelaide has a short travel distance of approximately 1 hour and 15 minutes. Fatigue is not a significant factor for this match, with both teams having sufficient rest.\n\n**WEATHER IMPACT:**\nThe weather forecast is neutral, with the match being played at Marvel Stadium, which has a roof. The weather conditions do not favour one team over the other.\n\n**TEAM NEWS IMPACT:**\nThere is limited team news available, with Essendon's Sullivan Robey and Jordan Ridley avoiding serious injuries, although their return to play timeline is uncertain. Adelaide has no significant team news.\n\n**CONFIDENCE:** Medium\nThe data sources generally agree, although there is some uncertainty due to the limited team news and the potential impact of Essendon's injured players.\n\n**UPSET RISK:** Low\nThe upset risk is low due to Adelaide's strong recent form, significant home ground advantage, and the head-to-head record between the two teams. However, Essendon's home ground advantage and potential return of injured players could contribute to an upset.\n\n**DATA CONFLICTS:** None identified\nThere are no significant data conflicts, with the market, model, and form data generally agreeing on the outcome of the match."
   }
 ]
