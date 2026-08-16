@@ -10,7 +10,7 @@ IMPROVEMENTS IN THIS VERSION:
   - Prompt length validation
   - Request timeout constants
 
-AI backend: Groq (free tier, llama-3.3-70b-versatile, 6000 req/day)
+AI backend: Groq (free tier, configurable via GROQ_MODEL env var, 6000 req/day)
   Primary:  https://api.groq.com/openai/v1/chat/completions
   Fallback: Anthropic API (claude-haiku-4-5-20251001)
 
@@ -42,7 +42,7 @@ from data_fetcher import get_squiggle_tips, format_squiggle_tips_for_prompt
 API_TIMEOUT = 60  # seconds
 MAX_RETRIES = 3
 RETRY_DELAY_BASE = 2  # exponential backoff base (2^attempt seconds)
-MAX_PROMPT_LENGTH = 16000  # characters (approx 4000 tokens — llama-3.3-70b supports 128k)
+MAX_PROMPT_LENGTH = 16000  # characters — Groq Llama/Qwen models support 128k context window
 
 
 # ── AI backend with retry logic ───────────────────────────────────────────────
@@ -61,6 +61,8 @@ def _call_ai_with_retry(prompt: str, max_retries: int = MAX_RETRIES) -> str:
     """
     groq_key = os.getenv("GROQ_API_KEY")
     anthropic_key = os.getenv("ANTHROPIC_API_KEY")
+    # Model is configurable so a decommission only requires updating the secret, not code
+    groq_model = os.getenv("GROQ_MODEL", "moonshotai/kimi-k2-instruct")
     
     # Validate prompt length
     if len(prompt) > MAX_PROMPT_LENGTH:
@@ -68,9 +70,10 @@ def _call_ai_with_retry(prompt: str, max_retries: int = MAX_RETRIES) -> str:
         prompt = prompt[:MAX_PROMPT_LENGTH] + "\n\n[Prompt truncated due to length]"
     
     last_error = None
-    
+
     # Try Groq first with retries
     if groq_key:
+        logger.info("Using Groq model: %s", groq_model)
         for attempt in range(max_retries):
             try:
                 response = requests.post(
@@ -80,7 +83,7 @@ def _call_ai_with_retry(prompt: str, max_retries: int = MAX_RETRIES) -> str:
                         "Content-Type":  "application/json",
                     },
                     json={
-                        "model":       "llama-3.3-70b-versatile",
+                        "model":       groq_model,
                         "max_tokens":  2000,
                         "temperature": 0.3,
                         "messages":    [{"role": "user", "content": prompt}],
@@ -120,7 +123,7 @@ def _call_ai_with_retry(prompt: str, max_retries: int = MAX_RETRIES) -> str:
                 logger.error(last_error)
                 break
 
-        logger.warning("Groq failed after %d attempts — trying Anthropic fallback", max_retries)
+        logger.warning("Groq (%s) failed after %d attempts — trying Anthropic fallback", groq_model, max_retries)
     
     # Try Anthropic fallback
     if anthropic_key:
