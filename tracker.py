@@ -462,14 +462,20 @@ def check_and_update_results(year: Optional[int] = None) -> Optional[Dict]:
         if home_score > away_score:
             actual_winner = pred["home_team"]
             actual_margin = home_score - away_score
-        else:
+        elif away_score > home_score:
             actual_winner = pred["away_team"]
             actual_margin = away_score - home_score
-        
-        # Check if prediction was correct (normalize for comparison)
-        predicted_winner_norm = normalize_team_name(pred.get("predicted_winner", ""))
-        actual_winner_norm = normalize_team_name(actual_winner)
-        is_correct = (predicted_winner_norm == actual_winner_norm)
+        else:
+            actual_winner = "Draw"
+            actual_margin = 0
+
+        # Draws are always correct per afl.com.au tipping rules
+        if actual_winner == "Draw":
+            is_correct = True
+        else:
+            predicted_winner_norm = normalize_team_name(pred.get("predicted_winner", ""))
+            actual_winner_norm = normalize_team_name(actual_winner)
+            is_correct = (predicted_winner_norm == actual_winner_norm)
         
         # Update prediction
         pred["actual_winner"] = actual_winner

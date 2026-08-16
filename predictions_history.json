@@ -3220,11 +3220,11 @@
       "predicted_probability": 58.0,
       "predicted_margin": 12,
       "prediction_text": "**PREDICTED WINNER:** Hawthorn\n\n**WIN PROBABILITY:** Hawthorn: 58% | Collingwood: 42%\nThe probability is derived from a weighted blend of the betting market (40%), Squiggle model (30%), and form data (30%), with the market's implied probabilities adjusted to remove the overround and the Squiggle model's prediction given slightly more weight due to its objective nature.\n\n**PREDICTED MARGIN:** ~12 points\nThe predicted margin is anchored to the line market of 19.5 points and adjusted downwards based on the average scoring margins of both teams, with Hawthorn's average margin over the last 5 games being +35.2 points and Collingwood's being +10.6 points.\n\n**KEY FACTORS:**\n1. Hawthorn's significant home ground advantage, with a 22% higher win rate at home (82% vs 60% away), which translates to an estimated 8-15 point advantage.\n2. Collingwood's short turnaround of 6 days, which may lead to fatigue and impact their performance, as they have a lower average margin over the last 5 games (+10.6 points) compared to Hawthorn (+35.2 points).\n3. Hawthorn's strong recent form, with 4 wins in their last 5 games, including a +93 point win over Essendon and a +70 point win over Richmond.\n4. The return of Collingwood's star duo Jordan De Goey and Scott Pendlebury, which may boost their chances, but may not be enough to overcome Hawthorn's home ground advantage and recent form.\n\n**SCORING TRENDS ANALYSIS:**\nHawthorn's last-5 average is 102.8 points for and 67.6 points against, while their last-3 average is 96.3 points for and 82.3 points against. Their attack is stable, but their defence is leaking more. Collingwood's last-5 average is 95.2 points for and 84.6 points against, while their last-3 average is 99.0 points for and 89.7 points against. Their attack and defence are both stable. Hawthorn's scoring profile gives them an advantage due to their higher average score and stronger defence.\n\n**HOME GROUND ADVANTAGE:**\nHawthorn has a home win rate of 82% (9/11) and an away win rate of 60% (6/10), while Collingwood has a home win rate of 55% (6/11) and an away win rate of 60% (6/10). At the MCG, Hawthorn has a record of 4W-1L with an average margin of +47.0 points, while Collingwood has a record of 3W-2L with an average margin of +9.6 points. The estimated point value of home advantage for this match is 10-12 points.\n\n**MARKET & MODEL ANALYSIS:**\nThe head-to-head market implies a 74.3% chance of Hawthorn winning, while the line market implies a 19.5-point margin in favour of Hawthorn. The Squiggle model predicts a 3.9-point margin in favour of Hawthorn, with a 52.6% chance of winning. The data sources generally agree, with the market and Squiggle model both favouring Hawthorn, although the market implies a larger margin.\n\n**FATIGUE & TRAVEL IMPACT:**\nHawthorn has 8 days of rest, while Collingwood has 6 days of rest, which may lead to fatigue for Collingwood. Neither team has to travel, as the game is being played at the MCG. Fatigue is a potential factor for Collingwood due to their short turnaround.\n\n**WEATHER IMPACT:**\nThe forecast is for a max temperature of 14\u00b0C, with a 31% chance of rain and a wind of 12 km/h. The conditions are neutral and unlikely to favour one team over the other.\n\n**TEAM NEWS IMPACT:**\nCollingwood's star duo Jordan De Goey and Scott Pendlebury are set to return, which may boost their chances. Jeremy Howe, Brayden Maynard, and Patrick Lipinski are also nearing a return, but their availability is uncertain. Harry Perryman is working his way back from a hamstring injury.\n\n**CONFIDENCE:** Medium\nThe data sources generally agree, but there is some uncertainty due to Collingwood's returning players and potential fatigue.\n\n**UPSET RISK:** Medium\nThe upset risk is supported by Collingwood's returning players, including Jordan De Goey and Scott Pendlebury, and their recent form, which includes a +19 point win over West Coast and a +34 point win over Adelaide.\n\n**DATA CONFLICTS:** None identified\nThere are no significant conflicts between the data sources, with the market, Squiggle model, and form data all generally favouring Hawthorn.",
-      "actual_winner": "Collingwood",
+      "actual_winner": "Draw",
       "actual_margin": 0,
-      "correct": false,
+      "correct": true,
       "saved_at": "2026-08-14T02:56:37.326570",
-      "checked_at": "2026-08-16T10:43:19.717930"
+      "checked_at": "2026-08-16T20:24:25.647683"
     },
     {
       "year": 2026,
@@ -3271,11 +3271,11 @@
       "predicted_probability": 58.0,
       "predicted_margin": 10,
       "prediction_text": "**PREDICTED WINNER:** Carlton\n\n**WIN PROBABILITY:** Western Bulldogs: 42% | Carlton: 58%\nThe probability is derived from a weighted blend of the betting market (40% weight), Squiggle model (30% weight), and form data (30% weight), with the market's implied probabilities adjusted to remove the bookmaker's overround. The betting market and Squiggle model both suggest a Carlton win, while the form data is more evenly balanced.\n\n**PREDICTED MARGIN:** ~10 points\nThe predicted margin is anchored to the line market, which gives Carlton a 24.8-point advantage, but adjusted downward based on the Squiggle model's expected margin of 2.8 points and the teams' recent scoring trends.\n\n**KEY FACTORS:**\n1. Carlton's improving attack trend (\u2191) and high average score over the last 5 games (95.6 pts) suggest they have a strong scoring potential.\n2. Western Bulldogs' stable defence trend and average margin of +4.4 pts over the last 5 games indicate they can contain opponents, but may struggle against a high-scoring team like Carlton.\n3. Carlton's strong record at Docklands (5W-0L, avg margin +39.6 pts) gives them a significant venue advantage.\n4. The loss of Western Bulldogs' ruckman Tim English to injury may impact their ability to compete in the ruck and gain clearances.\n\n**SCORING TRENDS ANALYSIS:**\nWestern Bulldogs: last-5 avg 77.2 pts, last-3 avg 74.3 pts, attack trend stable, defence trend stable.\nCarlton: last-5 avg 95.6 pts, last-3 avg 123.3 pts, attack trend improving \u2191, defence trend stable.\nCarlton's high-scoring attack gives them an advantage, particularly given their strong record at Docklands.\n\n**HOME GROUND ADVANTAGE:**\nWestern Bulldogs: home win rate 60% (6/10), away win rate 55% (6/11).\nCarlton: home win rate 60% (6/10), away win rate 45% (5/11).\nWestern Bulldogs' home record is decent, but Carlton's strong record at Docklands (5W-0L) suggests they can overcome the home ground advantage. Estimated point value of home advantage for this match: 0-5 points.\n\n**MARKET & MODEL ANALYSIS:**\nThe h2h market implies a Carlton win (79.2% implied probability).\nThe line market implies a Carlton win by 24.8 points.\nThe Squiggle model predicts a Carlton win by 2.8 points.\nThe market and model agree on a Carlton win, but disagree on the margin. The Squiggle model's prediction is given more weight due to its more nuanced assessment of team strengths.\n\n**FATIGUE & TRAVEL IMPACT:**\nWestern Bulldogs: 10 days rest, no travel.\nCarlton: 7 days rest, no travel.\nFatigue is not a significant factor for this match, as both teams have had sufficient rest.\n\n**WEATHER IMPACT:**\nThe weather forecast is neutral, as the game is played at Marvel Stadium with a roof.\nConditions do not favour one team over the other.\n\n**TEAM NEWS IMPACT:**\nWestern Bulldogs: Tim English (ruckman) is out with a knee injury.\nCarlton: No significant team news.\nThe loss of Tim English may impact Western Bulldogs' ruck and clearance capabilities.\n\n**CONFIDENCE:** Medium\nThe data sources generally agree on a Carlton win, but the margin is uncertain due to the discrepancy between the market and Squiggle model predictions.\n\n**UPSET RISK:** Medium\nSpecific data points that support an upset include Western Bulldogs' stable defence trend and average margin of +4.4 pts over the last 5 games, which suggest they can contain Carlton's attack.\n\n**DATA CONFLICTS:** None identified.",
-      "actual_winner": "Carlton",
+      "actual_winner": "Draw",
       "actual_margin": 0,
       "correct": true,
       "saved_at": "2026-08-14T02:56:37.327024",
-      "checked_at": "2026-08-16T10:43:19.718131"
+      "checked_at": "2026-08-16T20:24:25.647704"
     },
     {
       "year": 2026,
@@ -3296,9 +3296,9 @@
     }
   ],
   "accuracy_summary": {
-    "overall_correct": 146,
+    "overall_correct": 147,
     "overall_total": 198,
-    "overall_accuracy_pct": 73.7,
+    "overall_accuracy_pct": 74.2,
     "by_round": {
       "0": {
         "correct": 3,
@@ -3416,19 +3416,19 @@
         "pct": 66.7
       },
       "23": {
-        "correct": 8,
+        "correct": 9,
         "total": 9,
-        "pct": 88.9
+        "pct": 100.0
       }
     },
     "favourite_picks": {
-      "correct": 136,
+      "correct": 137,
       "total": 179
     },
     "upset_picks": {
       "correct": 10,
       "total": 19
     },
-    "last_updated": "2026-08-16T10:43:19.718430"
+    "last_updated": "2026-08-16T20:24:25.782621"
   }
 }
