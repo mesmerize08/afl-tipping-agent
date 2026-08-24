@@ -62,20 +62,32 @@ The agent is **self-learning**: every prediction is stored in `predictions_histo
 
 ## Season 2026 Results (v1.0)
 
-### Overall performance
+### Competition result
 
 | Metric | Result |
 |--------|--------|
-| Rounds completed | 20 of 24 (Round 21 in progress) |
-| Total predictions | 171 resolved + 9 pending |
-| **Overall accuracy** | **73.1% (125/171)** |
-| Favourite tips (≥65% confidence) | **84.6% (55/65)** |
-| Underdog tips (<65% confidence) | **66.0% (70/106)** |
-| High confidence (75%+) | **89.7% (26/29)** |
-| Medium confidence (65–74%) | **80.6% (29/36)** |
-| Low confidence (<65%) | **66.0% (70/106)** |
-| Best round | Rd 18 — **9/9 (100%)** |
-| Worst round | Rd 10 — 5/9 (56%) |
+| **Competition score** | **153 / 207 (73.9%)** |
+| **Final ranking** | **#11,603** |
+| Top tipper score | 164 / 207 (79.2%) |
+| Gap to top | −11 tips (0.46 tips/round) |
+| Season margin total | 649 pts |
+
+### AI-tracked accuracy (Rounds 0–23)
+
+| Metric | Result |
+|--------|--------|
+| Rounds completed | 24 (Rounds 0–23) |
+| Total predictions tracked | 198 |
+| **Overall accuracy** | **74.2% (147/198)** |
+| High confidence (75%+) | **91.4% (32/35)** |
+| Medium confidence (55–74%) | **72.9% (105/144)** |
+| Low confidence (<55%) | **52.6% (10/19)** |
+| Home team tips | **78.2% (93/119)** |
+| Away team tips | **68.4% (54/79)** |
+| Avg margin prediction error | 20.6 pts (126 games) |
+| Best winning streak | 13 consecutive |
+| Perfect rounds (100%) | Rd 18 and Rd 23 |
+| Worst rounds | Rds 12, 14, 15 — 4/7 (57%) |
 
 ### Round-by-round breakdown
 
@@ -101,22 +113,26 @@ Rd 17:  5/ 9  56%  #####     ← slump ends
 Rd 18:  9/ 9 100%  ##########  ← perfect round
 Rd 19:  6/ 9  67%  ######
 Rd 20:  7/ 9  78%  #######
+Rd 21:  7/ 9  78%  #######
+Rd 22:  6/ 9  67%  ######
+Rd 23:  9/ 9 100%  ##########  ← perfect round (incl. 2 draws)
+Rd 24:  6/ 9  67%  ######      (competition only — not AI-tracked)
 ```
 
 ### What happened
 
 **Rounds 5–9 (best stretch):** Strong form, averaging 89%. The agent's home-advantage weighting and betting-market blending were well-calibrated for this period.
 
-**Rounds 10–17 (mid-season slump):** Six rounds below 70%, averaging ~62%. Post-analysis identified three contributing factors:
-- **Abnormally high upset rate** in this stretch of the draw — teams mid-table were volatile
-- **Away-team overconfidence** — a systemic bias toward backing away teams that were market favourites; corrected mid-season by adding a calibration note to the history prompt
-- **Prompt truncation** — some prompts exceeded the 12,000-character limit (later raised to 16,000), causing the output template instructions to be clipped and producing malformed AI responses
+**Rounds 10–17 (mid-season slump):** Six rounds below 70%, averaging ~61%. Post-analysis identified three contributing factors:
+- **Ladder fluidity** — mid-table teams were highly volatile; established form became less predictive
+- **Away-team overconfidence** — a systemic bias toward backing away-team market favourites; corrected mid-season via history prompt calibration notes
+- **Prompt truncation** — some prompts exceeded the 12,000-character limit (raised to 16,000), causing output template instructions to be clipped and producing malformed AI responses
 
-**Rounds 18–20 (recovery):** Strong close to the season. Rd 18 was a perfect 9/9. The self-learning system's calibration notes on away-team errors and team-specific weaknesses contributed to improved accuracy.
+**Rounds 18–23 (recovery):** Strong finish. Rounds 18 and 23 were perfect 9/9. Round 23 included two correctly scored drawn matches (Hawthorn v Collingwood, Western Bulldogs v Carlton) — fixed by a bug patch applied mid-season (draws are always correct per AFL.com.au rules).
 
 ### Confidence calibration verdict
 
-The confidence tiers are well-calibrated: high-confidence tips (75%+) hit at 89.7%, medium at 80.6%, and low at 66.0%. The system correctly assigns uncertainty — when it says it's confident, it usually is right.
+The calibration is working well at the extremes. High-confidence tips (75%+) hit at 91.4%, significantly outperforming medium (72.9%) and low (52.6%). The 18.5pp gap between high and medium suggests the agent may be over-hedging in the medium band — flagged as a 2027 improvement target.
 
 ---
 
@@ -124,7 +140,7 @@ The confidence tiers are well-calibrated: high-confidence tips (75%+) hit at 89.
 
 | | |
 |---|---|
-| **AI predictions** | Groq Llama 3.3 70B (primary, free) with Anthropic Claude fallback |
+| **AI predictions** | Groq (configurable via `GROQ_MODEL` env var, default `openai/gpt-oss-120b`) with Anthropic Claude fallback |
 | **Confidence ratings** | High / Medium / Low with one-sentence justification |
 | **Summary table** | Scan the full round at a glance |
 | **Match cards** | Expand for the full AI analysis |
@@ -150,7 +166,7 @@ The confidence tiers are well-calibrated: high-confidence tips (75%+) hit at 89.
 | [Zero Hanger](https://www.zerohanger.com) | Injuries/suspensions + tribunal RSS feeds and pages | Free |
 | [AFL.com.au](https://www.afl.com.au) | Official injury list + tribunal/MRP decisions | Free |
 | [Open-Meteo](https://open-meteo.com) | Venue weather forecasts | Free |
-| [Groq](https://groq.com) | Primary AI engine (Llama 3.3 70B) | Free tier |
+| [Groq](https://groq.com) | Primary AI engine (model configurable via `GROQ_MODEL`) | Free tier |
 | [Anthropic Claude](https://www.anthropic.com) | Fallback AI engine (Haiku) | ~$0.013/round |
 
 **Estimated cost for a full 24-round season: ~$0.30** (Anthropic fallback only fires if Groq fails)
@@ -216,6 +232,7 @@ Edit `.env`:
 
 ```bash
 GROQ_API_KEY=gsk_your_groq_key_here
+GROQ_MODEL=openai/gpt-oss-120b          # optional — overrides default model
 ODDS_API_KEY=your_odds_api_key_here
 ANTHROPIC_API_KEY=sk-ant-api03-your_key_here   # optional fallback
 ```
@@ -385,4 +402,4 @@ MIT — see [LICENSE](LICENSE).
 
 ---
 
-*v1.0 · Season 2026 · Updated July 2026*
+*v1.0 · Season 2026 · Final — August 2026*
