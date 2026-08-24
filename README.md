@@ -72,19 +72,19 @@ The agent is **self-learning**: every prediction is stored in `predictions_histo
 | Gap to top | −11 tips (0.46 tips/round) |
 | Season margin total | 649 pts |
 
-### AI-tracked accuracy (Rounds 0–23)
+### AI-tracked accuracy (all 207 games, Rounds 0–24)
 
 | Metric | Result |
 |--------|--------|
-| Rounds completed | 24 (Rounds 0–23) |
-| Total predictions tracked | 198 |
-| **Overall accuracy** | **74.2% (147/198)** |
-| High confidence (75%+) | **91.4% (32/35)** |
-| Medium confidence (55–74%) | **72.9% (105/144)** |
+| Rounds completed | 25 (Rounds 0–24) |
+| Total predictions | 207 |
+| **Overall accuracy** | **73.9% (153/207)** |
+| High confidence (75%+) | **91.9% (34/37)** |
+| Medium confidence (55–74%) | **72.2% (109/151)** |
 | Low confidence (<55%) | **52.6% (10/19)** |
-| Home team tips | **78.2% (93/119)** |
-| Away team tips | **68.4% (54/79)** |
-| Avg margin prediction error | 20.6 pts (126 games) |
+| Home team tips | **77.4% (96/124)** |
+| Away team tips | **68.7% (57/83)** |
+| Avg margin prediction error | 20.7 pts (135 games) |
 | Best winning streak | 13 consecutive |
 | Perfect rounds (100%) | Rd 18 and Rd 23 |
 | Worst rounds | Rds 12, 14, 15 — 4/7 (57%) |
@@ -116,7 +116,7 @@ Rd 20:  7/ 9  78%  #######
 Rd 21:  7/ 9  78%  #######
 Rd 22:  6/ 9  67%  ######
 Rd 23:  9/ 9 100%  ##########  ← perfect round (incl. 2 draws)
-Rd 24:  6/ 9  67%  ######      (competition only — not AI-tracked)
+Rd 24:  6/ 9  67%  ######
 ```
 
 ### What happened
