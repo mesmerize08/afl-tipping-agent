@@ -3446,6 +3446,38 @@
       "correct": true,
       "saved_at": "2026-08-20T04:17:45.913317",
       "checked_at": "2026-08-24T00:28:10.086579"
+    },
+    {
+      "year": 2026,
+      "round": 25,
+      "date": "2026-08-28",
+      "venue": "MCG",
+      "home_team": "Western Bulldogs",
+      "away_team": "Collingwood",
+      "predicted_winner": "Western Bulldogs",
+      "predicted_probability": 54.0,
+      "predicted_margin": 2,
+      "prediction_text": "**PREDICTED WINNER:** Western Bulldogs  \n\n**WIN PROBABILITY:** Western Bulldogs: 54% | Collingwood: 46%  \n*Derived by weighting the normalized betting market (\u224848%\u202fBulldogs, 52%\u202fCollingwood) 40%, the Squiggle model (55.7%\u202fBulldogs) 40%, and the recent\u2011form signal (\u224860%\u202fBulldogs based on +3.6\u202fpts margin vs \u20137.0\u202fpts) 20%.*\n\n**PREDICTED MARGIN:** ~2 points  \n*Anchored to the line market (Collingwood +1.9\u202fpts) and the scoring\u2011margin differential from recent form (+10.6\u202fpts in favour of the Bulldogs). A 70\u202f% weight on the line market and 30\u202f% on the form differential yields a net \u2248+2\u202fpts for the Bulldogs.*\n\n**KEY FACTORS**  \n1. **Head\u2011to\u2011head edge:** Bulldogs have won 3 of the last\u202f5 meetings (60\u202f% win rate) and average 88.6\u202fpts vs 78.2\u202fpts for Collingwood.  \n2. **Defensive superiority:** Bulldogs concede 79.0\u202fpts (last\u202f5) versus Collingwood\u2019s 104.0\u202fpts, a 25\u2011point defensive gap.  \n3. **Recent margin trend:** Bulldogs\u2019 average margin over the last\u202f5 is +3.6\u202fpts, while Collingwood\u2019s is \u20137.0\u202fpts, indicating a 10.6\u2011point swing toward the Bulldogs.  \n4. **Squiggle model output:** Predicts a Bulldogs win with a 55.7\u202f% probability and a 6.3\u2011point expected margin.\n\n**SCORING TRENDS ANALYSIS**  \n- *Western Bulldogs:* last\u202f5\u202favg\u202f82.6\u202fpts\u202ffor,\u202f79.0\u202fpts\u202fagainst; last\u202f3\u202favg\u202f89.0\u202fpts\u202ffor,\u202f89.7\u202fpts\u202fagainst. Attack trend\u202fstable; defence\u202fleaking\u202f\u2191 (79\u202f\u2192\u202f89.7\u202fagainst).  \n- *Collingwood:* last\u202f5\u202favg\u202f97.0\u202fpts\u202ffor,\u202f104.0\u202fpts\u202fagainst; last\u202f3\u202favg\u202f101.7\u202fpts\u202ffor,\u202f116.3\u202fpts\u202fagainst. Attack trend\u202fstable; defence\u202fleaking\u202f\u2191 (104\u202f\u2192\u202f116.3\u202fagainst).  \n*Bulldogs\u2019 lower concession rate gives them a scoring\u2011efficiency advantage despite scoring fewer points themselves.*\n\n**HOME GROUND ADVANTAGE**  \n- Season home win %: Bulldogs 6/11\u202f\u2248\u202f55\u202f%; Collingwood 6/12\u202f\u2248\u202f50\u202f%.  \n- MCG record (last\u202f5): Bulldogs 3\u20112 (avg\u202f\u20112.0\u202fpts margin); Collingwood 2\u20113 (avg\u202f\u20116.6\u202fpts margin).  \n- Historical MCG win %: Bulldogs 41\u202f% (avg\u202f\u20117.8\u202fpts); Collingwood 54\u202f% (avg\u202f+4.3\u202fpts).  \n*Given both clubs are Melbourne\u2011based, the \u201chome\u201d effect is modest; using the recent MCG differential (\u2248\u202f5\u202fpts) as the venue advantage for the Bulldogs is reasonable.*\n\n**MARKET & MODEL ANALYSIS**  \n- *H2H market implication:* Bulldogs 60\u202f% win rate in the last\u202f5 suggests a slight edge.  \n- *Line market:* Collingwood listed as +1.9\u202fpts (implies Collingwood favourite by ~2\u202fpts).  \n- *Squiggle model:* Bulldogs win probability 55.7\u202f% with a +6.3\u202fpt expected margin.  \n*The market line favours Collingwood, while both the H2H record and the Squiggle model favour the Bulldogs. The model is weighted more heavily (40\u202f% vs 20\u202f% line) because it aligns with the defensive advantage and recent margin data.*\n\n**FATIGUE & TRAVEL IMPACT**  \n- Bulldogs: 6\u202fdays rest (short turnaround).  \n- Collingwood: 7\u202fdays rest",
+      "actual_winner": null,
+      "actual_margin": null,
+      "correct": null,
+      "saved_at": "2026-08-27T04:25:34.169670"
+    },
+    {
+      "year": 2026,
+      "round": 25,
+      "date": "2026-08-29",
+      "venue": "MCG",
+      "home_team": "Melbourne",
+      "away_team": "Carlton",
+      "predicted_winner": "Carlton",
+      "predicted_probability": 55.0,
+      "predicted_margin": 3,
+      "prediction_text": "**PREDICTED WINNER:** Carlton  \n\n**WIN PROBABILITY:** Melbourne: 45% | Carlton: 55%  \n*Weighting:* market implied odds (30%), Squiggle model (30%), recent form (40%). The market (45%\u202f/\u202f55% after normalising) and strong recent form (60%\u202f/\u202f80% win rates) pull the blend toward Carlton, while the Squiggle model\u2019s slight Melbourne edge is outweighed.\n\n**PREDICTED MARGIN:** ~+3 points (Carlton)  \n*Justification:* the line market gives Carlton a 6.1\u2011point advantage, the 5\u2011game scoring differential (114.2\u202f\u2013\u202f108.6\u202f=\u202f5.6\u202fpts) also favours Carlton, and Melbourne\u2019s home\u2011ground edge (\u2248\u202f8\u202fpts) reduces the net to roughly 2\u20134\u202fpts in Carlton\u2019s favour; the midpoint is ~+3\u202fpts.\n\n**KEY FACTORS**  \n1. **Scoring superiority:** Carlton\u2019s last\u20115 average is 114.2\u202fpts for and 80.2\u202fpts against, a +34.0\u202fpt margin, versus Melbourne\u2019s 108.6\u202fpts for, 99.0\u202fpts against and +9.6\u202fpt margin.  \n2. **Recent head\u2011to\u2011head:** In the last five MCG meetings, Carlton have won four (Melbourne\u2019s record: W\u202fL\u202fL\u202fL\u202fL).  \n3. **Form margin:** Carlton\u2019s average winning margin over the last five games (+34.0\u202fpts) is more than three times Melbourne\u2019s (+9.6\u202fpts).  \n4. **Betting market:** The bookmakers\u2019 implied probability favours Carlton (58.7% vs 46.2%) and the line market lists Carlton \u20136.1\u202fpts.\n\n**SCORING TRENDS ANALYSIS**  \n- *Melbourne:* last\u20115\u202f=\u202f108.6\u202ffor / 99.0\u202fagainst; last\u20113\u202f=\u202f110.7\u202ffor / 91.0\u202fagainst. Attack: stable; Defence: stable.  \n- *Carlton:* last\u20115\u202f=\u202f114.2\u202ffor / 80.2\u202fagainst; last\u20113\u202f=\u202f102.3\u202ffor / 75.3\u202fagainst. Attack: declining (down from 114.2 to 102.3); Defence: stable.  \n- *Advantage:* Despite a dip in attacking output over the last three games, Carlton\u2019s defence remains tighter (\u2248\u202f5\u202fpts fewer conceded per game) and its overall scoring average is still higher, giving it the edge.\n\n**HOME GROUND ADVANTAGE**  \n- *Season home win rates:* Melbourne 73% (8/11), Carlton 64% (7/11).  \n- *MCG record (last 5):* both 3\u20112, but Melbourne\u2019s historical MCG margin is +2.0\u202fpts, Carlton\u2019s is +0.2\u202fpts.  \n- *Estimated point value:* typical home advantage 8\u201312\u202fpts; applying the lower end (\u2248\u202f8\u202fpts) to Melbourne reduces Carlton\u2019s line",
+      "actual_winner": null,
+      "actual_margin": null,
+      "correct": null,
+      "saved_at": "2026-08-27T04:25:34.169738"
     }
   ],
   "accuracy_summary": {
