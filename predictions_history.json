@@ -3458,10 +3458,11 @@
       "predicted_probability": 54.0,
       "predicted_margin": 2,
       "prediction_text": "**PREDICTED WINNER:** Western Bulldogs  \n\n**WIN PROBABILITY:** Western Bulldogs: 54% | Collingwood: 46%  \n*Derived by weighting the normalized betting market (\u224848%\u202fBulldogs, 52%\u202fCollingwood) 40%, the Squiggle model (55.7%\u202fBulldogs) 40%, and the recent\u2011form signal (\u224860%\u202fBulldogs based on +3.6\u202fpts margin vs \u20137.0\u202fpts) 20%.*\n\n**PREDICTED MARGIN:** ~2 points  \n*Anchored to the line market (Collingwood +1.9\u202fpts) and the scoring\u2011margin differential from recent form (+10.6\u202fpts in favour of the Bulldogs). A 70\u202f% weight on the line market and 30\u202f% on the form differential yields a net \u2248+2\u202fpts for the Bulldogs.*\n\n**KEY FACTORS**  \n1. **Head\u2011to\u2011head edge:** Bulldogs have won 3 of the last\u202f5 meetings (60\u202f% win rate) and average 88.6\u202fpts vs 78.2\u202fpts for Collingwood.  \n2. **Defensive superiority:** Bulldogs concede 79.0\u202fpts (last\u202f5) versus Collingwood\u2019s 104.0\u202fpts, a 25\u2011point defensive gap.  \n3. **Recent margin trend:** Bulldogs\u2019 average margin over the last\u202f5 is +3.6\u202fpts, while Collingwood\u2019s is \u20137.0\u202fpts, indicating a 10.6\u2011point swing toward the Bulldogs.  \n4. **Squiggle model output:** Predicts a Bulldogs win with a 55.7\u202f% probability and a 6.3\u2011point expected margin.\n\n**SCORING TRENDS ANALYSIS**  \n- *Western Bulldogs:* last\u202f5\u202favg\u202f82.6\u202fpts\u202ffor,\u202f79.0\u202fpts\u202fagainst; last\u202f3\u202favg\u202f89.0\u202fpts\u202ffor,\u202f89.7\u202fpts\u202fagainst. Attack trend\u202fstable; defence\u202fleaking\u202f\u2191 (79\u202f\u2192\u202f89.7\u202fagainst).  \n- *Collingwood:* last\u202f5\u202favg\u202f97.0\u202fpts\u202ffor,\u202f104.0\u202fpts\u202fagainst; last\u202f3\u202favg\u202f101.7\u202fpts\u202ffor,\u202f116.3\u202fpts\u202fagainst. Attack trend\u202fstable; defence\u202fleaking\u202f\u2191 (104\u202f\u2192\u202f116.3\u202fagainst).  \n*Bulldogs\u2019 lower concession rate gives them a scoring\u2011efficiency advantage despite scoring fewer points themselves.*\n\n**HOME GROUND ADVANTAGE**  \n- Season home win %: Bulldogs 6/11\u202f\u2248\u202f55\u202f%; Collingwood 6/12\u202f\u2248\u202f50\u202f%.  \n- MCG record (last\u202f5): Bulldogs 3\u20112 (avg\u202f\u20112.0\u202fpts margin); Collingwood 2\u20113 (avg\u202f\u20116.6\u202fpts margin).  \n- Historical MCG win %: Bulldogs 41\u202f% (avg\u202f\u20117.8\u202fpts); Collingwood 54\u202f% (avg\u202f+4.3\u202fpts).  \n*Given both clubs are Melbourne\u2011based, the \u201chome\u201d effect is modest; using the recent MCG differential (\u2248\u202f5\u202fpts) as the venue advantage for the Bulldogs is reasonable.*\n\n**MARKET & MODEL ANALYSIS**  \n- *H2H market implication:* Bulldogs 60\u202f% win rate in the last\u202f5 suggests a slight edge.  \n- *Line market:* Collingwood listed as +1.9\u202fpts (implies Collingwood favourite by ~2\u202fpts).  \n- *Squiggle model:* Bulldogs win probability 55.7\u202f% with a +6.3\u202fpt expected margin.  \n*The market line favours Collingwood, while both the H2H record and the Squiggle model favour the Bulldogs. The model is weighted more heavily (40\u202f% vs 20\u202f% line) because it aligns with the defensive advantage and recent margin data.*\n\n**FATIGUE & TRAVEL IMPACT**  \n- Bulldogs: 6\u202fdays rest (short turnaround).  \n- Collingwood: 7\u202fdays rest",
-      "actual_winner": null,
-      "actual_margin": null,
-      "correct": null,
-      "saved_at": "2026-08-27T04:25:34.169670"
+      "actual_winner": "Western Bulldogs",
+      "actual_margin": 3,
+      "correct": true,
+      "saved_at": "2026-08-27T04:25:34.169670",
+      "checked_at": "2026-09-03T00:59:59.774370"
     },
     {
       "year": 2026,
@@ -3474,16 +3475,81 @@
       "predicted_probability": 55.0,
       "predicted_margin": 3,
       "prediction_text": "**PREDICTED WINNER:** Carlton  \n\n**WIN PROBABILITY:** Melbourne: 45% | Carlton: 55%  \n*Weighting:* market implied odds (30%), Squiggle model (30%), recent form (40%). The market (45%\u202f/\u202f55% after normalising) and strong recent form (60%\u202f/\u202f80% win rates) pull the blend toward Carlton, while the Squiggle model\u2019s slight Melbourne edge is outweighed.\n\n**PREDICTED MARGIN:** ~+3 points (Carlton)  \n*Justification:* the line market gives Carlton a 6.1\u2011point advantage, the 5\u2011game scoring differential (114.2\u202f\u2013\u202f108.6\u202f=\u202f5.6\u202fpts) also favours Carlton, and Melbourne\u2019s home\u2011ground edge (\u2248\u202f8\u202fpts) reduces the net to roughly 2\u20134\u202fpts in Carlton\u2019s favour; the midpoint is ~+3\u202fpts.\n\n**KEY FACTORS**  \n1. **Scoring superiority:** Carlton\u2019s last\u20115 average is 114.2\u202fpts for and 80.2\u202fpts against, a +34.0\u202fpt margin, versus Melbourne\u2019s 108.6\u202fpts for, 99.0\u202fpts against and +9.6\u202fpt margin.  \n2. **Recent head\u2011to\u2011head:** In the last five MCG meetings, Carlton have won four (Melbourne\u2019s record: W\u202fL\u202fL\u202fL\u202fL).  \n3. **Form margin:** Carlton\u2019s average winning margin over the last five games (+34.0\u202fpts) is more than three times Melbourne\u2019s (+9.6\u202fpts).  \n4. **Betting market:** The bookmakers\u2019 implied probability favours Carlton (58.7% vs 46.2%) and the line market lists Carlton \u20136.1\u202fpts.\n\n**SCORING TRENDS ANALYSIS**  \n- *Melbourne:* last\u20115\u202f=\u202f108.6\u202ffor / 99.0\u202fagainst; last\u20113\u202f=\u202f110.7\u202ffor / 91.0\u202fagainst. Attack: stable; Defence: stable.  \n- *Carlton:* last\u20115\u202f=\u202f114.2\u202ffor / 80.2\u202fagainst; last\u20113\u202f=\u202f102.3\u202ffor / 75.3\u202fagainst. Attack: declining (down from 114.2 to 102.3); Defence: stable.  \n- *Advantage:* Despite a dip in attacking output over the last three games, Carlton\u2019s defence remains tighter (\u2248\u202f5\u202fpts fewer conceded per game) and its overall scoring average is still higher, giving it the edge.\n\n**HOME GROUND ADVANTAGE**  \n- *Season home win rates:* Melbourne 73% (8/11), Carlton 64% (7/11).  \n- *MCG record (last 5):* both 3\u20112, but Melbourne\u2019s historical MCG margin is +2.0\u202fpts, Carlton\u2019s is +0.2\u202fpts.  \n- *Estimated point value:* typical home advantage 8\u201312\u202fpts; applying the lower end (\u2248\u202f8\u202fpts) to Melbourne reduces Carlton\u2019s line",
+      "actual_winner": "Carlton",
+      "actual_margin": 19,
+      "correct": true,
+      "saved_at": "2026-08-27T04:25:34.169738",
+      "checked_at": "2026-09-03T00:59:59.774401"
+    },
+    {
+      "year": 2026,
+      "round": 26,
+      "date": "2026-09-03",
+      "venue": "Perth Stadium",
+      "home_team": "Fremantle",
+      "away_team": "Hawthorn",
+      "predicted_winner": "Fremantle",
+      "predicted_probability": 61.0,
+      "predicted_margin": 16,
+      "prediction_text": "**PREDICTED WINNER:** Fremantle  \n\n**WIN PROBABILITY:** Fremantle: 61% | Hawthorn: 39%  \n*Derived by weighting the market implied probability (65.7% after over\u2011round removal) 40%, the Squiggle model (61.5%) 30%, and recent form/scoring trends (\u224855% for Fremantle) 30%.*\n\n**PREDICTED MARGIN:** ~16 points  \n*The line market gives Fremantle \u201314.5\u202fpts and the Squiggle model expects a 17.7\u202fpt margin; the average of those two (\u224816\u202fpts) aligns with Fremantle\u2019s recent 5\u2011game average margin of +18\u202fpts.*\n\n**KEY FACTORS:**  \n1. **Home ground dominance:** Fremantle are 11\u20110 at Perth Stadium this season (average win margin\u202f+44\u202fpts); Hawthorn are 2\u20113 there (average win margin\u202f+5.2\u202fpts).  \n2. **Head\u2011to\u2011head record:** In the last 6 meetings Fremantle are 5\u20111 (83% win rate) with an average score of 90.7\u202fpts vs Hawthorn\u2019s 68.3\u202fpts.  \n3. **Recent form:** Both clubs are 3\u20112 in the last 5, but Fremantle\u2019s defence has been leaking more (average\u202f106.7\u202fpts against in the last 3) whereas Hawthorn\u2019s defence is allowing\u202f87.3\u202fpts, giving Fremantle a larger offensive output to offset the defensive dip.  \n4. **Team news:** Fremantle replace Judd\u202fMcVee with Brandon\u202fWalker (185\u202fcm, experienced small\u2011forward defender) to blunt Hawthorn\u2019s dangerous small\u2011forward line; Hawthorn have no reported changes.\n\n**SCORING TRENDS ANALYSIS:**  \n- **Fremantle:** last\u202f5\u202favg\u202f98.6\u202fpts for /\u202f80.6\u202fpts against; last\u202f3\u202favg\u202f101.0\u202fpts for /\u202f106.7\u202fpts against. Attack trend\u202fstable; defence trend\u202fleaking\u202fmore (\u2191).  \n- **Hawthorn:** last\u202f5\u202favg\u202f97.6\u202fpts for /\u202f76.8\u202fpts against; last\u202f3\u202favg\u202f85.7\u202fpts for /\u202f87.3\u202fpts against. Attack trend\u202fdeclining (\u2193); defence trend\u202fleaking\u202fmore (\u2191).  \n- **Advantage:** Fremantle\u2019s higher recent scoring (\u2248101\u202fpts) versus Hawthorn\u2019s recent dip (\u224886\u202fpts) gives Fremantle a scoring edge despite a weaker recent defence.\n\n**HOME GROUND ADVANTAGE:**  \n- **Season home/away win rates:** Fremantle\u202f100% at home (11\u20110) vs\u202f67% away; Hawthorn\u202f75% at home vs\u202f64% away.  \n- **Venue record (Perth Stadium):** Fremantle\u202f5\u20110 (avg\u202f+44\u202fpts); Hawthorn\u202f2\u20113 (avg\u202f+5.2\u202fpts).  \n- **Estimated point value:** Based on the typical 8\u201115\u202fpt home\u2011field effect and Fremantle\u2019s +44\u202fpt venue margin, a conservative home advantage of **\u22489\u202fpts** is applied to Fremantle.\n\n**MARKET & MODEL ANALYSIS:**  \n- **Win market:** Implied probabilities 68.9% (Fremantle) vs 36.0% (Hawthorn) \u2192 normalized 65.7% / 34.3%.  \n- **Line market:** Fremantle \u201314.5\u202fpts suggests a 14\u201115\u202fpt expected margin.  \n- **Squiggle model:** Predicts Fremantle win with 61.5% probability and a 17.7\u202fpt margin.  \n- **Agreement:** All three sources favour Fremantle; the line and model margins (14.5\u202fpts vs 17.7\u202fpts) are close, so they are weighted equally.\n\n**FATIGUE & TRAVEL IMPACT:**  \n- Rest: Fremantle\u202f12\u202fdays, Hawthorn\u202f11\u202fdays.  \n- Travel: Hawthorn travel from Melbourne to Perth (\u22483\u202fh flight); Fremantle are at home. The rest differential is minimal, so fatigue is unlikely to be a decisive factor.\n\n**WEATHER IMPACT:**  \n- No forecast available; assume neutral conditions with no discernible advantage to either side.\n\n**TEAM NEWS IMPACT:**  \n- **Fremantle:** Brandon\u202fWalker (185\u202fcm, 67\u2011game veteran) replaces Judd\u202fMcVee to strengthen the small\u2011forward defensive match\u2011up.  \n- **Hawthorn:** No injuries, suspensions, or selection changes reported in the last 7\u202fdays.\n\n**CONFIDENCE:** High \u2013 market odds,",
       "actual_winner": null,
       "actual_margin": null,
       "correct": null,
-      "saved_at": "2026-08-27T04:25:34.169738"
+      "saved_at": "2026-09-03T01:03:16.853622"
+    },
+    {
+      "year": 2026,
+      "round": 26,
+      "date": "2026-09-04",
+      "venue": "MCG",
+      "home_team": "Geelong",
+      "away_team": "Carlton",
+      "predicted_winner": "Geelong",
+      "predicted_probability": 54.0,
+      "predicted_margin": 7,
+      "prediction_text": "**PREDICTED WINNER:** Geelong  \n\n**WIN PROBABILITY:** Geelong: 54% | Carlton: 46%  \n*Derived by normalising the betting market (Geelong 59.5% after over\u2011round removal) and giving it 40\u202f% weight, the Squiggle model (Geelong 46.2%) 30\u202f% weight, and recent form (Geelong ~55% based on higher scoring and similar margin) 30\u202f% weight.*\n\n**PREDICTED MARGIN:** ~7 points  \n*The line market lists Geelong +8.5\u202fpts; Geelong\u2019s recent average margin (36.8\u202fpts) is only 1.6\u202fpts higher than Carlton\u2019s (35.2\u202fpts). Heavy rain (see Weather Impact) is expected to compress margins, so we reduce the line by roughly 1.5\u202fpts.*\n\n**KEY FACTORS:**  \n1. **Current Form:** Geelong are 5\u20110 in the last five games with an average winning margin of **+36.8\u202fpts**; Carlton are 4\u20111 with **+35.2\u202fpts**.  \n2. **Home Advantage:** Geelong\u2019s season home win rate is **92\u202f% (11/12)** and they are **+5.8\u202fpts** on average at the MCG historically; Carlton\u2019s home win rate is **64\u202f% (7/11)** and only **+0.2\u202fpts** historically at the MCG.  \n3. **Rest/Fatigue:** Geelong have **13\u202fdays** rest (full bye week) versus Carlton\u2019s **6\u202fdays** \u2013 a potential fatigue disadvantage for Carlton.  \n4. **Team Availability:** Geelong are expected to field three returning stars (Max Holmes, Oliver Wiltshire, Mark Blicavs), giving them a depth boost; no comparable senior\u2011player news for Carlton.\n\n**SCORING TRENDS ANALYSIS:**  \n- **Geelong:** Last\u202f5\u202favg\u202f117.8\u202fpts for / 81.0\u202fpts against; last\u202f3\u202favg\u202f125.0\u202fpts for / 78.7\u202fpts against. Attack trend **stable to rising**, defence **stable**.  \n- **Carlton:** Last\u202f5\u202favg\u202f107.0\u202fpts for / 71.8\u202fpts against; last\u202f3\u202favg\u202f91.7\u202fpts for / 73.0\u202fpts against. Attack trend **declining \u2193**, defence **stable**.  \n*Geelong\u2019s higher and improving scoring (+10.8\u202fpts vs Carlton) gives them a clear offensive edge, while defensive numbers are comparable.*\n\n**HOME GROUND ADVANTAGE:**  \n- **Geelong:** Season home win\u202f%\u202f=\u202f92\u202f% (11/12). At the MCG (last\u202f5) 3\u20112, historical win\u202f%\u202f=\u202f55\u202f% (209/378) with **+5.8\u202fpts** average margin.  \n- **Carlton:** Season home win\u202f%\u202f=\u202f64\u202f% (7/11). At the MCG (last\u202f5) 3\u20112, historical win\u202f%\u202f=\u202f47\u202f% (232/492) with **+0.2\u202fpts** average margin.  \n*Using the typical AFL home\u2011field boost of 8\u201115\u202fpts and the 9\u2011point differential between Geelong\u2019s and Carlton\u2019s home records, we estimate a **\u22489\u2011point** advantage for Geelong at this venue.*\n\n**MARKET & MODEL ANALYSIS:**  \n- **Betting win market:** Implied Geelong win\u202f\u2248\u202f62\u202f% (bookmakers).  \n- **Line market:** Geelong +8.5\u202fpts (implies ~8\u20119\u202fpt advantage).  \n- **Squiggle model:** Predicts a **Carlton win** with an expected margin of **+5.8\u202fpts** for Carlton.  \n*The market and line favour Geelong, while the model favours Carlton. Because the market aligns with home\u2011advantage and form data, we weight it higher (40\u202f% vs 30\u202f% for the model).*\n\n**FATIGUE & TRAVEL IMPACT:**  \n- **Geelong:** 13\u202fdays rest,",
+      "actual_winner": null,
+      "actual_margin": null,
+      "correct": null,
+      "saved_at": "2026-09-03T01:03:16.853698"
+    },
+    {
+      "year": 2026,
+      "round": 26,
+      "date": "2026-09-05",
+      "venue": "SCG",
+      "home_team": "Sydney",
+      "away_team": "Brisbane Lions",
+      "predicted_winner": "Sydney",
+      "predicted_probability": 55.0,
+      "predicted_margin": 8,
+      "prediction_text": "**PREDICTED WINNER:** Sydney  \n\n**WIN PROBABILITY:** Sydney: 55% | Brisbane Lions: 45%  \n*Probability derived from a weighted blend: betting market (30\u202f% weight, giving Sydney 24.6\u202f% after normalising), Squiggle model (40\u202f% weight, giving Sydney 57.5\u202f%), and recent form/average margins (30\u202f% weight, approximating Sydney ~65\u202f% based on a +51.2\u202fpt five\u2011game margin vs Brisbane +31.0\u202fpt). The combined weighted average yields ~55\u202f% for Sydney.*\n\n**PREDICTED MARGIN:** ~8 points  \n*The line market expects Brisbane to win by 24.6\u202fpts, but Sydney\u2019s recent five\u2011game scoring average (129.6\u202fpts) exceeds Brisbane\u2019s (116.6\u202fpts) by 13\u202fpts, and the Squiggle model forecasts an 11.4\u2011pt Sydney win. Balancing these, an expected Sydney advantage of roughly 8\u202fpts is reasonable.*\n\n**KEY FACTORS**  \n1. **Recent form:** Sydney are 5\u20110 in the last five games with an average winning margin of **+51.2\u202fpts**, whereas Brisbane are 4\u20111 with **+31.0\u202fpts**.  \n2. **Home ground advantage:** Sydney\u2019s season home win rate is **92\u202f%** (11\u20111) and they are **4\u20111** at the SCG in the last five matches (avg\u202f+34.2\u202fpts). Brisbane are **2\u20111** at the SCG in the last three (avg\u202f\u20115.3\u202fpts).  \n3. **Scoring trends:** Sydney\u2019s attack is stable at **129.6\u202fpts** (last\u202f5) and defence at **78.4\u202fpts** against; Brisbane\u2019s attack is improving to **126.3\u202fpts** (last\u202f3) but defence is still allowing **69.0\u202fpts** (last\u202f3).  \n4. **Betting market vs model divergence:** The market heavily favours Brisbane (79\u202f% implied), while the Squiggle model and form data both favour Sydney, indicating a potential market over\u2011valuation of Brisbane.\n\n**SCORING TRENDS ANALYSIS**  \n- **Sydney:** last\u202f5\u202favg\u202f129.6\u202fpts for / 78.4\u202fpts against; last\u202f3\u202favg\u202f134.0\u202fpts for / 72.0\u202fpts against. Attack trend **stable**, defence trend **stable**.  \n- **Brisbane Lions:** last\u202f5\u202favg\u202f116.6\u202fpts for / 85.6\u202fpts against; last\u202f3\u202favg\u202f126.3\u202fpts for / 69.0\u202fpts against. Attack trend **improving**, defence trend **tightening**.  \n*Sydney\u2019s higher five\u2011game scoring average and lower points\u2011against give them a modest scoring advantage despite Brisbane\u2019s recent defensive improvement.*\n\n**HOME GROUND ADVANTAGE**  \n- **Sydney season home win rate:** 11\u20111 (**92\u202f%**) vs away 7\u201111 (**64\u202f%**) \u2192 +28\u202fpp home benefit.  \n- **Brisbane Lions season home win rate:** 8\u20113 (**73\u202f%**) vs away 8\u201112 (**67\u202f%**) \u2192 +6\u202fpp home benefit.  \n- **Venue record (SCG):** Sydney 4\u20111 in last\u202f5 (avg\u202f+34.2\u202fpts); Brisbane 2\u20111 in last\u202f3 (avg\u202f\u20115.3\u202fpts).  \n*Estimating a home\u2011field value of roughly **+8 to +10\u202fpts** for Sydney in this match.*\n\n**MARKET & MODEL ANALYSIS**  \n- **Betting odds:** imply Brisbane win probability **79\u202f%**; line market gives Brisbane **+24.6\u202fpts**.  \n- **Squiggle model:** predicts Sydney win with **57.5\u202f%** probability and an **11.4\u2011pt** margin.  \n- **Agreement:** Market and model disagree. Because the market\u2019s implied probability is far from the form\u2011based expectation and the model incorporates recent scoring data, the model and form are weighted more heavily (70\u202f% combined) in the final probability.\n\n**FATIGUE & TRAVEL IMPACT**  \n- **Rest days:** Sydney 13\u202fdays, Brisbane 15\u202fdays (both after a bye).  \n- **Travel:** Brisbane\u2019s flight to Sydney is ~1.5\u202fh.  \n*No meaningful fatigue or travel disadvantage for",
+      "actual_winner": null,
+      "actual_margin": null,
+      "correct": null,
+      "saved_at": "2026-09-03T01:03:16.853765"
+    },
+    {
+      "year": 2026,
+      "round": 26,
+      "date": "2026-09-05",
+      "venue": "Adelaide Oval",
+      "home_team": "Adelaide",
+      "away_team": "Western Bulldogs",
+      "predicted_winner": "Adelaide",
+      "predicted_probability": 61.0,
+      "predicted_margin": 12,
+      "prediction_text": "**PREDICTED WINNER:** Adelaide  \n\n**WIN PROBABILITY:** Adelaide: 61% | Western Bulldogs: 39%  \n*Weighting:* betting market (68% normalized)\u202f\u00d7\u202f40\u202f%\u202f=\u202f27.2\u202fpts, Squiggle model (51.5%)\u202f\u00d7\u202f30\u202f%\u202f=\u202f15.5\u202fpts, recent form & scoring (\u224860% based on +15.8\u202fpts avg margin vs \u20137.2\u202fpts)\u202f\u00d7\u202f30\u202f%\u202f=\u202f18\u202fpts \u2192 total \u224860.7\u202f% for Adelaide.\n\n**PREDICTED MARGIN:** ~12 points  \n*Justification:* line market expects Adelaide +16.8\u202fpts; Adelaide\u2019s 5\u2011game scoring advantage is +24.6\u202fpts (105.4\u202ffor vs 80.8\u202ffor). Heavy rain is likely to cut scores and compress margins, so we reduce the market line by roughly 4\u20135\u202fpts, landing at ~12\u202fpts.\n\n**KEY FACTORS**  \n1. **Home advantage:** Adelaide\u2019s 2026 home win rate\u202f=\u202f75% (9\u2011of\u201112) vs Bulldogs\u2019 away win rate\u202f=\u202f58% (7\u2011of\u201112); at Adelaide Oval Adelaide are +16.8\u202fpts over last\u202f5, Bulldogs \u201323.8\u202fpts.  \n2. **Recent scoring gap:** Adelaide average 105.4\u202fpts (last\u202f5) and concede 89.6\u202fpts; Bulldogs average 80.8\u202fpts and concede 88.0\u202fpts \u2192 net differential \u2248\u202f+15.8\u202fpts for Adelaide.  \n3. **Form momentum:** Adelaide 3\u2011of\u20115 wins (average margin\u202f+15.8\u202fpts); Bulldogs 2\u2011of\u20115 wins (average margin\u202f\u20137.2\u202fpts).  \n4. **Head\u2011to\u2011head:** In the last\u202f6 meetings Adelaide 4\u20112 (67% win) and historically 60% win at Adelaide Oval (avg margin\u202f+13.2\u202fpts).\n\n**SCORING TRENDS ANALYSIS**  \n- *Adelaide:* last\u202f5\u202favg\u202f105.4\u202fpts for / 89.6\u202fpts against; last\u202f3\u202favg\u202f102.7\u202fpts for / 89.0\u202fpts against. Attack trend\u202f=\u202fstable, defence\u202f=\u202fstable.  \n- *Western Bulldogs:* last\u202f5\u202favg\u202f80.8\u202fpts for / 88.0\u202fpts against; last\u202f3\u202favg\u202f95.3\u202fpts for / 87.3\u202fpts against. Attack trend\u202f=\u202fimproving \u2191, defence\u202f=\u202fstable.  \n- *Advantage:* Adelaide\u2019s attack is ~24\u202fpts higher than the Bulldogs\u2019, while defensive numbers are similar, giving Adelaide a clear scoring advantage.\n\n**HOME GROUND ADVANTAGE**  \n- Adelaide home win %\u202f=\u202f75% (season); Bulldogs away win %\u202f=\u202f58% (season).  \n- At Adelaide Oval (last\u202f5): Adelaide 3\u20112 (+16.8\u202fpts avg margin); Bulldogs 2\u20113 (\u201123.8\u202fpts avg margin).  \n- Historical venue win %: Adelaide 60% (avg margin\u202f+13.2\u202fpts); Bulldogs 37% (avg margin\u202f\u201114.5\u202fpts).  \n- *Estimated point value:* \u2248\u202f+8\u201310\u202fpts for Adelaide in this fixture.\n\n**MARKET & MODEL ANALYSIS**  \n- *Betting odds* imply normalized win probability\u202f\u2248\u202f68% for Adelaide; *line market* gives Adelaide \u201316.8\u202fpts.  \n- *Squiggle model* predicts Adelaide win probability\u202f=\u202f51.5% with expected margin\u202f=\u202f2.3\u202fpts.  \n- *Agreement:* market and recent form both favor Adelaide strongly; the model is much closer to parity. Because market odds incorporate home advantage and season\u2011long performance, we weight them higher (40% vs 30% for the model).\n\n**FATIGUE & TRAVEL IMPACT**  \n- Adelaide: 14\u202fdays rest (bye week).  \n- Western Bulldogs: 8\u202fdays rest; short flight (~1\u202fh\u202f15\u202fmin) from Melbourne to Adelaide.  \n- *Impact:* Adelaide enjoys a clear rest advantage; travel fatigue for the Bulldogs is minimal.\n\n**WEATHER IMPACT**  \n- Forecast: 16\u202f\u00b0C, 3.3\u202fmm rain (98% chance), wind 33\u202fkm/h.  \n- Heavy rain and moderate wind typically lower total scores and compress margins, which slightly benefits the underdog and reduces the effectiveness of high\u2011scoring attacks. This moderates Adelaide\u2019s expected margin but does not overturn the home\u2011field edge.\n\n**TEAM NEWS IMPACT**  \n- Adelaide: no player injuries or suspensions reported; only coach comments (no on\u2011field effect).  \n- Western Bulldogs: no relevant news in the past\u202f7\u202fdays.  \n- *Impact:* Squad selections appear unchanged for both sides.\n\n**CONFIDENCE:** Medium \u2013 market odds and recent form align strongly for Adelaide, but the Squiggle model is near\u2011even and weather could narrow the margin, creating some uncertainty.\n\n**UPSET RISK:** Medium \u2013 the Squiggle model\u2019s 48.5% win probability for the Bulldogs, the Bulldogs\u2019 improving 3\u2011game attack average (95.3\u202fpts), and rain\u2011induced low\u2011scoring conditions (which historically benefit underdogs) all point to a non\u2011trivial upset chance.\n\n**DATA CONFLICTS:**  \n- Squiggle model (Adelaide +2.3\u202fpts) vs betting market & form (Adelaide +16\u201320\u202fpts).  \n- No other contradictions identified.",
+      "actual_winner": null,
+      "actual_margin": null,
+      "correct": null,
+      "saved_at": "2026-09-03T01:03:16.853842"
     }
   ],
   "accuracy_summary": {
-    "overall_correct": 153,
-    "overall_total": 207,
-    "overall_accuracy_pct": 73.9,
+    "overall_correct": 155,
+    "overall_total": 209,
+    "overall_accuracy_pct": 74.2,
     "by_round": {
       "0": {
         "correct": 3,
@@ -3609,16 +3675,21 @@
         "correct": 6,
         "total": 9,
         "pct": 66.7
+      },
+      "25": {
+        "correct": 2,
+        "total": 2,
+        "pct": 100.0
       }
     },
     "favourite_picks": {
-      "correct": 143,
-      "total": 188
+      "correct": 144,
+      "total": 189
     },
     "upset_picks": {
-      "correct": 10,
-      "total": 19
+      "correct": 11,
+      "total": 20
     },
-    "last_updated": "2026-08-24T11:54:55.332188"
+    "last_updated": "2026-09-03T00:59:59.774565"
   }
 }
