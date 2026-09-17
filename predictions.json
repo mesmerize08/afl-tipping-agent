@@ -1,77 +1,80 @@
 [
   {
-    "round": 27,
-    "date": "2026-09-11",
-    "date_full": "2026-09-11 20:10:00",
-    "venue": "Perth Stadium",
-    "home_team": "Fremantle",
-    "away_team": "Geelong",
+    "round": 28,
+    "date": "2026-09-18",
+    "date_full": "2026-09-18 19:40:00",
+    "venue": "SCG",
+    "home_team": "Sydney",
+    "away_team": "Fremantle",
     "betting_odds": {
-      "home_team": "Fremantle Dockers",
-      "away_team": "Geelong Cats",
-      "home_odds": 1.55,
-      "away_odds": 2.47,
-      "home_implied_prob": 64.6,
-      "away_implied_prob": 40.5,
-      "line_home_spread": -10.5,
-      "line_summary": "Fremantle Dockers giving 10.5 pts",
-      "total_line": 174.3,
-      "total_summary": "Market expects total score ~174 pts"
+      "home_team": "Sydney Swans",
+      "away_team": "Fremantle Dockers",
+      "home_odds": 2.49,
+      "away_odds": 1.54,
+      "home_implied_prob": 40.2,
+      "away_implied_prob": 64.8,
+      "line_home_spread": 11.2,
+      "line_summary": "Fremantle Dockers giving 11.2 pts",
+      "total_line": 188.8,
+      "total_summary": "Market expects total score ~189 pts"
     },
     "home_scoring": {
-      "avg_for_5": 84.2,
-      "avg_against_5": 86.6,
-      "avg_for_3": 78.0,
-      "avg_against_3": 93.0,
+      "avg_for_5": 130.0,
+      "avg_against_5": 78.4,
+      "avg_for_3": 125.3,
+      "avg_against_3": 78.0,
       "attack_trend": "stable",
+      "defense_trend": "stable",
+      "wins_last_5": 5,
+      "sample_size": 5,
+      "avg_margin_5": 51.6
+    },
+    "away_scoring": {
+      "avg_for_5": 92.6,
+      "avg_against_5": 99.6,
+      "avg_for_3": 80.7,
+      "avg_against_3": 99.0,
+      "attack_trend": "declining \u2193",
       "defense_trend": "stable",
       "wins_last_5": 2,
       "sample_size": 5,
-      "avg_margin_5": -2.4
-    },
-    "away_scoring": {
-      "avg_for_5": 115.8,
-      "avg_against_5": 76.4,
-      "avg_for_3": 121.7,
-      "avg_against_3": 86.7,
-      "attack_trend": "stable",
-      "defense_trend": "leaking more \u2191",
-      "wins_last_5": 5,
-      "sample_size": 5,
-      "avg_margin_5": 39.4
+      "avg_margin_5": -7.0
     },
     "home_rest": {
-      "days": 8,
-      "last_game": "2026-09-03",
-      "flag": "",
-      "description": "8 days rest"
+      "days": 13,
+      "last_game": "2026-09-05",
+      "flag": "\u2705 BYE WEEK",
+      "description": "13 days rest (bye week \u2014 full recovery)"
     },
     "away_rest": {
       "days": 7,
-      "last_game": "2026-09-04",
+      "last_game": "2026-09-11",
       "flag": "",
       "description": "7 days rest"
     },
     "home_travel": {
       "travelling": false,
-      "fatigue_level": "unknown",
-      "description": "Travel unknown \u2014 venue 'Perth Stadium' not mapped. Fremantle home: Perth. Add to VENUE_CITIES to fix."
+      "fatigue_level": "none",
+      "description": "Playing at home in Sydney"
     },
     "away_travel": {
-      "travelling": false,
-      "fatigue_level": "unknown",
-      "description": "Travel unknown \u2014 venue 'Perth Stadium' not mapped. Geelong home: Geelong. Add to VENUE_CITIES to fix."
+      "travelling": true,
+      "fatigue_level": "very_high",
+      "flight_mins": 250,
+      "home_city": "Perth",
+      "venue_city": "Sydney",
+      "description": "\u26a0\ufe0f VERY LONG-HAUL TRAVEL: Perth \u2192 Sydney (~4h10m flight)"
     },
     "home_ha_split": {
       "home": {
-        "wins": 11,
-        "games": 12,
+        "wins": 12,
+        "games": 13,
         "pct": 92
       },
       "away": {
-        "wins": 8,
-        "games": 12,
-        "pct": 67
+        "wins": 7,
+        "games": 11,
+        "pct": 64
       }
     },
     "away_ha_split": {
@@ -81,84 +84,96 @@
         "pct": 92
       },
       "away": {
-        "wins": 4,
-        "games": 11,
-        "pct": 36
+        "wins": 8,
+        "games": 12,
+        "pct": 67
       }
     },
-    "prediction": "**PREDICTED WINNER:** Geelong  \n\n**WIN PROBABILITY:** Fremantle: 52% | Geelong: 48%  \n*Derived by normalising the betting market odds (Fremantle 61.5%\u202f\u2192\u202fweight\u202f35%), applying the Squiggle model (Fremantle 60.5%\u202f\u2192\u202fweight\u202f35%), and incorporating recent form (Fremantle 30% win rate over the last\u202f5\u202fgames\u202f\u2192\u202fweight\u202f30%). The blended result gives Fremantle a slight edge, but the margin is narrow.*\n\n**PREDICTED MARGIN:** ~+3 points (Geelong)  \n*The line market favours Fremantle by 10.5\u202fpts and the Squiggle model expects a 16.1\u202fpt Fremantle win (total\u202f+26.6\u202fpts). Geelong\u2019s recent scoring advantage of +31.6\u202fpts per game (115.8\u202ffor\u202fvs\u202f84.2\u202ffor) offsets most of that, leaving an estimated net swing of about\u202f+3\u202fpts to Geelong.*\n\n**KEY FACTORS**  \n1. **Form differential:** Geelong are 5\u2011wins\u20110\u2011losses in the last\u202f5\u202fgames with an average margin of **+39.4\u202fpts**, whereas Fremantle are 2\u2011wins\u20113\u2011losses with an average margin of **\u20112.4\u202fpts**.  \n2. **Scoring power:** Geelong\u2019s last\u20115 scoring average (**115.8\u202fpts**) is **31.6\u202fpts** higher than Fremantle\u2019s (**84.2\u202fpts**); defensively they concede **10.2\u202fpts** fewer (**76.4\u202fvs\u202f86.6**).  \n3. **Home\u2011ground record:** Fremantle are **92\u202f%** win\u2011rate at home this season (11\u20111) and **4\u20111** at Perth Stadium (avg\u202f+27.4\u202fpts). Geelong are **36\u202f%** win\u2011rate away this season (4\u201111) and **3\u20112** at Perth Stadium (avg\u202f+6.8\u202fpts).  \n4. **Injuries:** Fremantle will be without key defender **Brennan\u202fCox** (calf), reducing defensive depth; Geelong lose midfielder **James\u202fWorpel** (hamstring), a midfield loss but less directly tied to defensive structure.\n\n**SCORING TRENDS ANALYSIS**  \n- **Fremantle last\u202f5:** 84.2\u202fpts\u202ffor, 86.6\u202fpts\u202fagainst; last\u202f3: 78.0\u202fpts\u202ffor, 93.0\u202fpts\u202fagainst. Attack\u202f=\u202fstable, Defence\u202f=\u202fstable, but both below league average.  \n- **Geelong last\u202f5:** 115.8\u202fpts\u202ffor, 76.4\u202fpts\u202fagainst; last\u202f3: 121.7\u202fpts\u202ffor, 86.7\u202fpts\u202fagainst. Attack\u202f=\u202fstable, Defence\u202f=\u202fleaking more (\u2191).  \n- **Advantage:** Geelong\u2019s higher scoring output and tighter defence give them a clear scoring\u2011profile edge despite a slight defensive leakage trend.\n\n**HOME GROUND ADVANTAGE**  \n- **Fremantle:** 92\u202f% home win\u2011rate (11\u20111) this season; **4\u20111** at Perth Stadium (avg\u202f+27.4\u202fpts).  \n- **Geelong:** 36\u202f% away win\u2011rate (4\u201111) this season; **3\u20112** at Perth Stadium (avg\u202f+6.8\u202fpts).  \n- **Estimated point value:** Using the typical 8\u201115\u202fpt home advantage range and Fremantle\u2019s strong venue record, assign"
+    "prediction": "**PREDICTED WINNER:** Sydney  \n\n**WIN PROBABILITY:** Sydney: 57% | Fremantle: 43%  \n*Weighted blend:* market implied probability (38.3% after over\u2011round removal)\u202f\u00d7\u202f30\u202f%\u202f=\u202f11.5%; Squiggle model (59.9%)\u202f\u00d7\u202f35\u202f%\u202f=\u202f21.0%; recent form (\u224870% Sydney win based on 5 straight wins, +51.6\u202fpt avg margin)\u202f\u00d7\u202f35\u202f%\u202f=\u202f24.5%; total\u202f\u2248\u202f57% for Sydney.  \n\n**PREDICTED MARGIN:** ~+13 points  \n*Justification:* Sydney\u2019s 5\u2011game scoring average (130\u202fpts) exceeds Fremantle\u2019s (92.6\u202fpts) by 37.4\u202fpts, while the line market expects Fremantle to win by 11.2\u202fpts. Averaging these opposite signals ((37.4\u202f\u2013\u202f11.2)/2) yields an expected Sydney advantage of roughly 13\u202fpts.  \n\n**KEY FACTORS**  \n1. **Recent form:** Sydney are 5\u20110 (average margin\u202f+51.6\u202fpts, 130\u202fpts for, 78.4\u202fpts against) vs. Fremantle 2\u20113 (average margin\u202f\u20137\u202fpts, 92.6\u202fpts for, 99.6\u202fpts against).  \n2. **Home\u2011ground advantage:** Sydney\u2019s season home win rate\u202f92% vs. Fremantle\u2019s away win rate\u202f67%; at the SCG Sydney are 4\u20111 in the last\u202f5 (avg\u202f+44.4\u202fpts) while Fremantle are 2\u20111 (avg\u202f+2.3\u202fpts).  \n3. **Travel & rest:** Sydney have 13\u202fdays rest and no travel; Fremantle have 7\u202fdays rest and a ~4\u202fh flight from Perth, adding fatigue risk.  \n4. **Injury impact:** Sydney lose captain Callum\u202fMills (ACL) and forward Joel\u202fAmartey, but gain midfielder Justin\u202fMcInerney; Fremantle have no confirmed absences in the data.  \n\n**SCORING TRENDS ANALYSIS**  \n- *Sydney:* last\u202f5\u202favg\u202f130\u202fpts\u202ffor /\u202f78.4\u202fpts\u202fagainst; last\u202f3\u202favg\u202f125.3\u202f/\u202f78.0 \u2013 attack stable, defence stable.  \n- *Fremantle:* last\u202f5\u202favg\u202f92.6\u202fpts\u202ffor /\u202f99.6\u202fpts\u202fagainst; last\u202f3\u202favg\u202f80.7\u202f/\u202f99.0 \u2013 attack declining, defence stable.  \n*Result:* Sydney\u2019s higher and stable scoring output gives them a clear scoring advantage.  \n\n**HOME GROUND ADVANTAGE**  \n- Sydney season home win\u202f92% (12\u20111) vs. away\u202f64% (7\u201111).  \n- Fremantle season away win\u202f67% (8\u201112).  \n- SCG specific: Sydney 4\u20111 (avg\u202f+44.4\u202fpts); Fremantle 2\u20111 (avg\u202f+2.3\u202fpts).  \n- Estimated point value of home advantage for this match: 8\u201312\u202fpts (consistent with league average 8\u201115\u202fpts and the 28\u202fpp home\u2011away differential for Sydney).  \n\n**MARKET & MODEL ANALYSIS**  \n- *Betting odds:* imply Fremantle win probability\u202f\u2248\u202f64.8% (market favours Dockers).  \n- *Line market:* Fremantle \u201311.2\u202fpts (expects Dockers to win by ~11\u202fpts).  \n- *Squiggle model:* predicts Sydney win with 59.9% probability and a +15.2\u202fpt expected margin.  \n- *Agreement:* Model and form data agree (Sydney favoured); market odds and line disagree (Fremant"
   },
   {
-    "round": 27,
-    "date": "2026-09-12",
-    "date_full": "2026-09-12 19:35:00",
-    "venue": "Gabba",
-    "home_team": "Brisbane Lions",
-    "away_team": "Adelaide",
+    "round": 28,
+    "date": "2026-09-19",
+    "date_full": "2026-09-19 17:15:00",
+    "venue": "MCG",
+    "home_team": "Hawthorn",
+    "away_team": "Brisbane Lions",
     "betting_odds": {
-      "home_team": "Brisbane Lions",
-      "away_team": "Adelaide Crows",
-      "home_odds": 1.32,
-      "away_odds": 3.45,
-      "home_implied_prob": 75.9,
-      "away_implied_prob": 28.9,
-      "line_home_spread": -21.5,
-      "line_summary": "Brisbane Lions giving 21.5 pts",
-      "total_line": 179.9,
-      "total_summary": "Market expects total score ~180 pts"
+      "home_team": "Hawthorn Hawks",
+      "away_team": "Brisbane Lions",
+      "home_odds": 2.03,
+      "away_odds": 1.8,
+      "home_implied_prob": 49.3,
+      "away_implied_prob": 55.5,
+      "line_home_spread": 3.5,
+      "line_summary": "Brisbane Lions giving 3.5 pts",
+      "total_line": 186.8,
+      "total_summary": "Market expects total score ~187 pts"
     },
     "home_scoring": {
-      "avg_for_5": 109.0,
-      "avg_against_5": 100.4,
-      "avg_for_3": 114.0,
-      "avg_against_3": 96.7,
+      "avg_for_5": 85.6,
+      "avg_against_5": 77.0,
+      "avg_for_3": 90.3,
+      "avg_against_3": 59.0,
       "attack_trend": "stable",
-      "defense_trend": "stable",
+      "defense_trend": "tightening \u2193",
       "wins_last_5": 3,
       "sample_size": 5,
       "avg_margin_5": 8.6
     },
     "away_scoring": {
-      "avg_for_5": 108.6,
-      "avg_against_5": 81.6,
-      "avg_for_3": 111.7,
-      "avg_against_3": 93.7,
-      "attack_trend": "stable",
+      "avg_for_5": 122.2,
+      "avg_against_5": 87.8,
+      "avg_for_3": 130.3,
+      "avg_against_3": 109.3,
+      "attack_trend": "improving \u2191",
       "defense_trend": "leaking more \u2191",
       "wins_last_5": 4,
       "sample_size": 5,
-      "avg_margin_5": 27.0
+      "avg_margin_5": 34.4
     },
     "home_rest": {
-      "days": 7,
-      "last_game": "2026-09-05",
-      "flag": "",
-      "description": "7 days rest"
+      "days": 16,
+      "last_game": "2026-09-03",
+      "flag": "\u2705 BYE WEEK",
+      "description": "16 days rest (bye week \u2014 full recovery)"
     },
     "away_rest": {
       "days": 7,
-      "last_game": "2026-09-05",
+      "last_game": "2026-09-12",
       "flag": "",
       "description": "7 days rest"
     },
     "home_travel": {
       "travelling": false,
       "fatigue_level": "none",
-      "description": "Playing at home in Brisbane"
+      "description": "Playing at home in Melbourne"
     },
     "away_travel": {
       "travelling": true,
       "fatigue_level": "moderate",
       "flight_mins": 150,
-      "home_city": "Adelaide",
-      "venue_city": "Brisbane",
-      "description": "Moderate travel: Adelaide \u2192 Brisbane (~2h30m flight)"
+      "home_city": "Brisbane",
+      "venue_city": "Melbourne",
+      "description": "Moderate travel: Brisbane \u2192 Melbourne (~2h30m flight)"
     },
     "home_ha_split": {
       "home": {
+        "wins": 9,
+        "games": 12,
+        "pct": 75
+      },
+      "away": {
         "wins": 8,
-        "games": 11,
-        "pct": 73
+        "games": 12,
+        "pct": 67
+      }
+    },
+    "away_ha_split": {
+      "home": {
+        "wins": 9,
+        "games": 12,
+        "pct": 75
       },
       "away": {
         "wins": 8,
@@ -166,18 +181,6 @@
         "pct": 62
       }
     },
-    "away_ha_split": {
-      "home": {
-        "wins": 10,
-        "games": 13,
-        "pct": 77
-      },
-      "away": {
-        "wins": 6,
-        "games": 11,
-        "pct": 55
-      }
-    },
-    "prediction": "**PREDICTED WINNER:** Brisbane Lions  \n\n**WIN PROBABILITY:** Brisbane Lions: 67% | Adelaide: 33%  \n*Weighted blend:* betting market (normalized 72.4%)\u202f\u00d7\u202f40%\u202f=\u202f28.9%, Squiggle model (67%)\u202f\u00d7\u202f30%\u202f=\u202f20.1%, recent form & margins (\u224860% for Brisbane)\u202f\u00d7\u202f30%\u202f=\u202f18.0%; total\u202f\u2248\u202f67% for Brisbane.\n\n**PREDICTED MARGIN:** ~24 points  \n*Justification:* line market gives Brisbane \u201321.5\u202fpts, Squiggle model expects a 26.8\u2011pt win, and Brisbane\u2019s average margin at the Gabba this season is +60.2\u202fpts; the midpoint of the line and model (21.5\u202f+\u202f26.8\u202f\u00f7\u202f2\u202f\u2248\u202f24) is a reasonable anchor.\n\n**KEY FACTORS**  \n1. **Venue dominance:** Brisbane are 5\u20110 at the Gabba this season (avg\u202f+60.2\u202fpts) whereas Adelaide are 0\u20113 (avg\u202f\u201123\u202fpts).  \n2. **Defensive edge:** Adelaide have conceded only 81.6\u202fpts per game in the last\u202f5, compared with Brisbane\u2019s 100.4\u202fpts.  \n3. **Recent margin disparity:** Adelaide\u2019s last\u20115 average winning margin is +27\u202fpts, more than three times Brisbane\u2019s +8.6\u202fpts.  \n4. **Head\u2011to\u2011head record:** Brisbane lead the recent 7\u2011match H2H 5\u20112 (71% win rate) and beat Adelaide 127\u201175 at the Gabba in 2026.\n\n**SCORING TRENDS ANALYSIS**  \n- *Brisbane (last\u202f5):* 109.0\u202fpts\u202ffor, 100.4\u202fpts\u202fagainst; last\u202f3: 114.0\u202fpts\u202ffor, 96.7\u202fpts\u202fagainst. Attack\u202f=\u202fstable, Defence\u202f=\u202fstable.  \n- *Adelaide (last\u202f5):* 108.6\u202fpts\u202ffor, 81.6\u202fpts\u202fagainst; last\u202f3: 111.7\u202fpts\u202ffor, 93.7\u202fpts\u202fagainst. Attack\u202f=\u202fstable, Defence\u202f=\u202fleaking more \u2191 (but still better than Brisbane).  \n- *Advantage:* Adelaide\u2019s defence is statistically tighter, but Brisbane\u2019s home\u2011ground scoring boost (average +60.2\u202fpts at the Gabba) outweighs the modest attack difference.\n\n**HOME GROUND ADVANTAGE**  \n- Season home win %: Brisbane 73% (8/11), Adelaide 77% (10/13).  \n- Gabba this season: Brisbane 5\u20110 (avg\u202f+60.2\u202fpts), Adelaide 0\u20113 (avg\u202f\u201123\u202fpts).  \n- Historical Gabba win %: Brisbane 62% (219/355), Adelaide 43% (13/30).  \n- *Estimated point value:* typical AFL home edge 8\u201115\u202fpts; given Brisbane\u2019s +60.2\u202fpts recent margin at this venue, a conservative additive value of **\u224812\u202fpts** is applied to Brisbane\u2019s expected score.\n\n**MARKET & MODEL ANALYSIS**  \n- *Betting odds* imply 75.9% win probability for Brisbane (28.9% for Adelaide).  \n- *Line market* sets Brisbane \u201321.5\u202fpts, indicating a strong expected margin.  \n- *Squiggle model* predicts Brisbane win with 67% probability and a 26.8\u2011pt margin.  \n- *Agreement:* all three sources favour Brisbane; the market and model are weighted more heavily than form because they incorporate broader data sets.\n\n**FATIGUE & TRAVEL IMPACT**  \n- Rest: both teams have 7\u202fdays.  \n- Travel: Adelaide face a moderate 2\u202fh\u202f30\u202fmin flight to Brisbane.  \n- *Impact:* negligible; equal rest and only modest travel for Adelaide.\n\n**WEATHER IMPACT**  \n- Forecast: 21\u202f\u00b0C, 0.7\u202fmm rain (67% chance), 14\u202fkm/h wind.  \n- Slight rain could marginally reduce kicking accuracy for both sides; no clear advantage to either team.\n\n**TEAM NEWS IMPACT**  \n- No confirmed injuries or suspensions for Brisbane.  \n- Adelaide\u2019s forward Zac Taylor is recovering from a hamstring strain; his availability is *uncertain* but not confirmed as absent.  \n- Overall, no definitive lineup changes are known, so team news does not materially shift the outlook.\n\n**CONFIDENCE:** High \u2013 market odds, Squiggle model, and home\u2011ground data all point to a Brisbane win with consistent magnitude.\n\n**UPSET RISK:** Low \u2013 the only"
+    "prediction": "**PREDICTED WINNER:** Brisbane Lions  \n\n**WIN PROBABILITY:** Hawthorn: 44% | Brisbane Lions: 56%  \n*Derived by weighting the betting market (30\u202f% \u2192 47.1\u202f% Hawthorn, 52.9\u202f% Brisbane), the Squiggle model (35\u202f% \u2192 49.1\u202f% Hawthorn, 50.9\u202f% Brisbane) and recent form (35\u202f% \u2192 35\u202f% Hawthorn, 65\u202f% Brisbane). The blended result gives 43.6\u202f% for Hawthorn (rounded to 44\u202f%) and 56.4\u202f% for Brisbane (rounded to 56\u202f%).*  \n\n**PREDICTED MARGIN:** ~+5 points (Brisbane)  \n*The line market has Brisbane giving 3.5\u202fpts, but Brisbane\u2019s 5\u2011game average margin (+34.4\u202fpts) is far larger than Hawthorn\u2019s (+8.6\u202fpts). Anchoring to the line and tempering with the scoring gap yields an expected Brisbane win of roughly five points.*  \n\n**KEY FACTORS**  \n1. **Scoring power:** Brisbane\u2019s last\u20115 average of 122.2\u202fpts for vs Hawthorn\u2019s 85.6\u202fpts (difference\u202f\u2248\u202f36\u202fpts).  \n2. **Head\u2011to\u2011head recent result:** Brisbane beat Hawthorn 125\u201158 on 7\u202fAug (67\u2011point margin).  \n3. **Home\u2011ground edge:** Hawthorn at the MCG are 4\u2011W\u20111\u2011L in the last five games with an average +48.2\u202fpt margin, whereas Brisbane\u2019s MCG record is 3\u2011W\u20112\u2011L with +19.8\u202fpt.  \n4. **Rest & travel:** Hawthorn have 16\u202fdays rest (bye week) and no travel; Brisbane have only 7\u202fdays rest and a 2\u00bd\u2011hour flight to Melbourne.  \n\n**SCORING TRENDS ANALYSIS**  \n- **Hawthorn:** last\u20115\u202f=\u202f85.6\u202fpts for, 77.0\u202fpts against (avg\u202f+8.6\u202fpt margin); last\u20113\u202f=\u202f90.3\u202fpts for, 59.0\u202fpts against (avg\u202f+31.3\u202fpt). Attack is *stable*; defence is *tightening* (points against falling).  \n- **Brisbane Lions:** last\u20115\u202f=\u202f122.2\u202fpts for, 87.8\u202fpts against (avg\u202f+34.4\u202fpt); last\u20113\u202f=\u202f130.3\u202fpts for, 109.3\u202fpts against (avg\u202f+21.0\u202fpt). Attack is *improving*; defence is *leaking more* (points against rising).  \n- **Advantage:** Brisbane\u2019s far higher scoring output outweighs their defensive drift, giving them the superior overall scoring profile.  \n\n**HOME GROUND ADVANTAGE**  \n- Season home win\u2011rates: Hawthorn 75\u202f% (9/12), Brisbane 75\u202f% (9/12).  \n- MCG record (last\u202f5): Hawthorn 4\u2011W\u20111\u2011L, avg\u202f+48.2\u202fpts; Brisbane 3\u2011W\u20112\u2011L, avg\u202f+19.8\u202fpts.  \n- Historical MCG win\u2011rates: Hawthorn 56\u202f% (238/425), avg\u202f+7\u202fpts; Brisbane 35\u202f% (25/72), avg\u202f\u20118.5\u202fpts.  \n- **Estimated home\u2011field value:** ~9\u202fpts in favour of Hawthorn (mid\u2011point of typical 8\u201115\u202fpt advantage and the 48.2\u202fpt vs 19.8\u202fpt recent differentials).  \n\n**MARKET & MODEL ANALYSIS**  \n- **Betting odds:** Brisbane odds $1.80 \u2192 55.5\u202f% implied; Hawthorn $2.03 \u2192 49.3\u202f% implied.  \n- **Line market:** Brisbane \u20133.5\u202fpts (Brisbane expected to win by ~3\u20114\u202fpts).  \n- **Squiggle model:** Predicts Brisbane win by 1.3\u202fpts (50.9\u202f% win prob).  \n- **Agreement:** All three sources favour Brisbane; the market and line give a slightly larger expected margin than the model.  \n\n**FATIGUE & TRAVEL IMPACT**  \n- Hawthorn: 16\u202fdays rest, no travel.  \n- Brisbane: 7\u202fdays rest, ~2\u202fh\u202f30\u202fmin flight from Brisbane to Melbourne.  \n- **Impact:** Brisbane\u2019s shorter recovery window and travel"
   }
 ]
