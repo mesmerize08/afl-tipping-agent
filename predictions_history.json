@@ -3628,16 +3628,17 @@
       "predicted_probability": 61.0,
       "predicted_margin": 5,
       "prediction_text": "**PREDICTED WINNER:** Brisbane Lions  \n\n**WIN PROBABILITY:** Fremantle: 39% | Brisbane Lions: 61%  \n*Weighted blend:* market\u2011derived probability (43.8%\u202f/\u202f56.2%) 30\u202f%\u202f+\u202fSquiggle model (46.7%\u202f/\u202f53.3%) 30\u202f%\u202f+\u202fform\u2011based estimate (\u224830%\u202f/\u202f70% from the +22.8\u202fpts vs \u20133.8\u202fpts average margins) 40\u202f%.  \n\n**PREDICTED MARGIN:** ~5 points  \n*Justification:* the line market has Brisbane giving\u202f6\u202fpts, the Squiggle model expects a 5\u2011pt win, and Brisbane\u2019s season MCG margin (+29.2\u202fpts) is far higher than Fremantle\u2019s (+5.8\u202fpts); the rain forecast is likely to compress the margin, pulling it toward the modest 5\u2011pt figure.  \n\n**KEY FACTORS**  \n1. **Scoring power:** Brisbane\u2019s last\u20115 average of 123.4\u202fpts for vs Fremantle\u2019s 87.4\u202fpts (\u2248\u202f36\u202fpts higher).  \n2. **Recent margin:** Brisbane\u2019s +22.8\u202fpt average margin over the last\u202f5 games versus Fremantle\u2019s \u20133.8\u202fpt (a 26.6\u202fpt swing).  \n3. **MCG performance this season:** Brisbane 4\u20111 (avg\u202f+29.2\u202fpts) while Fremantle 2\u20113 (avg\u202f+5.8\u202fpts).  \n4. **Personnel impact:** Brisbane will be without Brownlow\u2011medallist Lachie\u202fNeale (suspended), removing a key midfield contributor",
-      "actual_winner": null,
-      "actual_margin": null,
-      "correct": null,
-      "saved_at": "2026-09-24T01:14:29.065778"
+      "actual_winner": "Brisbane Lions",
+      "actual_margin": 7,
+      "correct": true,
+      "saved_at": "2026-09-24T01:14:29.065778",
+      "checked_at": "2026-10-01T01:51:41.343874"
     }
   ],
   "accuracy_summary": {
-    "overall_correct": 160,
-    "overall_total": 217,
-    "overall_accuracy_pct": 73.7,
+    "overall_correct": 161,
+    "overall_total": 218,
+    "overall_accuracy_pct": 73.9,
     "by_round": {
       "0": {
         "correct": 3,
@@ -3783,16 +3784,21 @@
         "correct": 1,
         "total": 2,
         "pct": 50.0
+      },
+      "29": {
+        "correct": 1,
+        "total": 1,
+        "pct": 100.0
       }
     },
     "favourite_picks": {
-      "correct": 148,
-      "total": 195
+      "correct": 149,
+      "total": 196
     },
     "upset_picks": {
       "correct": 12,
       "total": 22
     },
-    "last_updated": "2026-09-24T01:13:32.816383"
+    "last_updated": "2026-10-01T01:51:41.344081"
   }
 }
